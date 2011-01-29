@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="ds" targetNamespace="http://tempuri.org/DataSet1.xsd" xmlns:mstns="http://tempuri.org/DataSet1.xsd" xmlns="http://tempuri.org/DataSet1.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="ds" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_DataSetName="ds" msprop:Generator_UserDSName="ds">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="data" msprop:Generator_TableClassName="dataDataTable" msprop:Generator_TableVarName="tabledata" msprop:Generator_TablePropName="data" msprop:Generator_RowDeletingName="dataRowDeleting" msprop:Generator_UserTableName="data" msprop:Generator_RowChangingName="dataRowChanging" msprop:Generator_RowEvHandlerName="dataRowChangeEventHandler" msprop:Generator_RowDeletedName="dataRowDeleted" msprop:Generator_RowEvArgName="dataRowChangeEvent" msprop:Generator_RowChangedName="dataRowChanged" msprop:Generator_RowClassName="dataRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="ig_status" msprop:Generator_ColumnVarNameInTable="columnig_status" msprop:Generator_ColumnPropNameInRow="ig_status" msprop:Generator_ColumnPropNameInTable="ig_statusColumn" msprop:Generator_UserColumnName="ig_status" type="xs:string" minOccurs="0" />
+              <xs:element name="ig_upc" msprop:Generator_ColumnVarNameInTable="columnig_upc" msprop:Generator_ColumnPropNameInRow="ig_upc" msprop:Generator_ColumnPropNameInTable="ig_upcColumn" msprop:Generator_UserColumnName="ig_upc" type="xs:string" minOccurs="0" />
+              <xs:element name="ig_description" msprop:Generator_ColumnVarNameInTable="columnig_description" msprop:Generator_ColumnPropNameInRow="ig_description" msprop:Generator_ColumnPropNameInTable="ig_descriptionColumn" msprop:Generator_UserColumnName="ig_description" type="xs:string" minOccurs="0" />
+              <xs:element name="ig_price_minimum" msprop:Generator_ColumnVarNameInTable="columnig_price_minimum" msprop:Generator_ColumnPropNameInRow="ig_price_minimum" msprop:Generator_ColumnPropNameInTable="ig_price_minimumColumn" msprop:Generator_UserColumnName="ig_price_minimum" type="xs:string" minOccurs="0" />
+              <xs:element name="ig_price_suggested" msprop:Generator_ColumnVarNameInTable="columnig_price_suggested" msprop:Generator_ColumnPropNameInRow="ig_price_suggested" msprop:Generator_ColumnPropNameInTable="ig_price_suggestedColumn" msprop:Generator_UserColumnName="ig_price_suggested" type="xs:string" minOccurs="0" />
+              <xs:element name="ig_price_sale" msprop:Generator_ColumnVarNameInTable="columnig_price_sale" msprop:Generator_ColumnPropNameInRow="ig_price_sale" msprop:Generator_ColumnPropNameInTable="ig_price_saleColumn" msprop:Generator_UserColumnName="ig_price_sale" type="xs:string" minOccurs="0" />
+              <xs:element name="ig_share" msprop:Generator_ColumnVarNameInTable="columnig_share" msprop:Generator_ColumnPropNameInRow="ig_share" msprop:Generator_ColumnPropNameInTable="ig_shareColumn" msprop:Generator_UserColumnName="ig_share" type="xs:string" minOccurs="0" />
+              <xs:element name="ig_share_type" msprop:Generator_ColumnVarNameInTable="columnig_share_type" msprop:Generator_ColumnPropNameInRow="ig_share_type" msprop:Generator_ColumnPropNameInTable="ig_share_typeColumn" msprop:Generator_UserColumnName="ig_share_type" type="xs:string" minOccurs="0" />
+              <xs:element name="ig_date_received" msprop:Generator_ColumnVarNameInTable="columnig_date_received" msprop:Generator_ColumnPropNameInRow="ig_date_received" msprop:Generator_ColumnPropNameInTable="ig_date_receivedColumn" msprop:Generator_UserColumnName="ig_date_received" type="xs:string" minOccurs="0" />
+              <xs:element name="ig_date_sold" msprop:Generator_ColumnVarNameInTable="columnig_date_sold" msprop:Generator_ColumnPropNameInRow="ig_date_sold" msprop:Generator_ColumnPropNameInTable="ig_date_soldColumn" msprop:Generator_UserColumnName="ig_date_sold" type="xs:string" minOccurs="0" />
+              <xs:element name="ig_date_expiry" msprop:Generator_ColumnVarNameInTable="columnig_date_expiry" msprop:Generator_ColumnPropNameInRow="ig_date_expiry" msprop:Generator_ColumnPropNameInTable="ig_date_expiryColumn" msprop:Generator_UserColumnName="ig_date_expiry" type="xs:string" minOccurs="0" />
+              <xs:element name="ig_display_date_expiry" msprop:Generator_ColumnVarNameInTable="columnig_display_date_expiry" msprop:Generator_ColumnPropNameInRow="ig_display_date_expiry" msprop:Generator_ColumnPropNameInTable="ig_display_date_expiryColumn" msprop:Generator_UserColumnName="ig_display_date_expiry" type="xs:string" minOccurs="0" />
+              <xs:element name="ig_date_paid" msprop:Generator_ColumnVarNameInTable="columnig_date_paid" msprop:Generator_ColumnPropNameInRow="ig_date_paid" msprop:Generator_ColumnPropNameInTable="ig_date_paidColumn" msprop:Generator_UserColumnName="ig_date_paid" type="xs:string" minOccurs="0" />
+              <xs:element name="ig_desc_brand" msprop:Generator_ColumnVarNameInTable="columnig_desc_brand" msprop:Generator_ColumnPropNameInRow="ig_desc_brand" msprop:Generator_ColumnPropNameInTable="ig_desc_brandColumn" msprop:Generator_UserColumnName="ig_desc_brand" type="xs:string" minOccurs="0" />
+              <xs:element name="ig_desc_gender" msprop:Generator_ColumnVarNameInTable="columnig_desc_gender" msprop:Generator_ColumnPropNameInRow="ig_desc_gender" msprop:Generator_ColumnPropNameInTable="ig_desc_genderColumn" msprop:Generator_UserColumnName="ig_desc_gender" type="xs:string" minOccurs="0" />
+              <xs:element name="ig_desc_garment" msprop:Generator_ColumnVarNameInTable="columnig_desc_garment" msprop:Generator_ColumnPropNameInRow="ig_desc_garment" msprop:Generator_ColumnPropNameInTable="ig_desc_garmentColumn" msprop:Generator_UserColumnName="ig_desc_garment" type="xs:string" minOccurs="0" />
+              <xs:element name="ig_desc_material" msprop:Generator_ColumnVarNameInTable="columnig_desc_material" msprop:Generator_ColumnPropNameInRow="ig_desc_material" msprop:Generator_ColumnPropNameInTable="ig_desc_materialColumn" msprop:Generator_UserColumnName="ig_desc_material" type="xs:string" minOccurs="0" />
+              <xs:element name="ig_desc_colour" msprop:Generator_ColumnVarNameInTable="columnig_desc_colour" msprop:Generator_ColumnPropNameInRow="ig_desc_colour" msprop:Generator_ColumnPropNameInTable="ig_desc_colourColumn" msprop:Generator_UserColumnName="ig_desc_colour" type="xs:string" minOccurs="0" />
+              <xs:element name="ig_desc_size" msprop:Generator_ColumnVarNameInTable="columnig_desc_size" msprop:Generator_ColumnPropNameInRow="ig_desc_size" msprop:Generator_ColumnPropNameInTable="ig_desc_sizeColumn" msprop:Generator_UserColumnName="ig_desc_size" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
