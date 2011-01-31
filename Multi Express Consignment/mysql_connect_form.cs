@@ -31,6 +31,7 @@ namespace Multi_Express_Consignment
             InitializeComponent();
             m_parent = frm1;
             
+            
         }
 
         private void panel1_Paint(object sender, PaintEventArgs e)
@@ -52,7 +53,7 @@ namespace Multi_Express_Consignment
                 /* Now Connected, Close Self and Notify Form 1 */
                 timer1.Enabled = false;
                 this.Close(); // Close Self
-                m_parent.onConnect(); // Trigger on Connect Routine                              
+                if (m_parent != null) m_parent.onConnect(); // Trigger on Connect Routine                              
                 this.Dispose();
             }
 
@@ -109,9 +110,7 @@ namespace Multi_Express_Consignment
 
         private void MysqlConnectForm_Shown(object sender, EventArgs e)
         {
-            // Center in Parent Window
-            this.Top = m_parent.Top + (m_parent.Height / 2) - (this.Height / 2);
-            this.Left = m_parent.Left + (m_parent.Width / 2) - (this.Width / 2);
+
         }
     }
 }
