@@ -1,6 +1,6 @@
 ﻿namespace Multi_Express_Consignment
 {
-    partial class consignment_purchase_order
+    partial class consignment_sale_order
     {
         /// <summary>
         /// Required designer variable.
@@ -28,14 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(consignment_purchase_order));
-            this.vendor_code_textbox = new System.Windows.Forms.TextBox();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(consignment_sale_order));
+            this.customer_code_textbox = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.statusButton = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
-            this.consignment_code_textbox = new System.Windows.Forms.TextBox();
+            this.order_number_textbox = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.input_CMCOUNTRY = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
@@ -76,30 +74,17 @@
             this.pg_status = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.button5 = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.button13 = new System.Windows.Forms.Button();
-            this.button11 = new System.Windows.Forms.Button();
-            this.button12 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.input_item = new System.Windows.Forms.TextBox();
+            this.label13 = new System.Windows.Forms.Label();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.ig_status = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ig_upc = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ig_description = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ig_price_minimum = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ig_price_suggested = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ig_price_sale = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ig_share = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ig_share_type = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ig_date_received = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ig_date_expiry = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ig_display_date_expiry = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ig_display_date_sold = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ig_date_sold = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ig_date_paid = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ig_desc_brand = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ig_desc_gender = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ig_desc_garment = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ig_desc_material = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ig_desc_colour = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ig_desc_size = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ig_status = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.button7 = new System.Windows.Forms.Button();
             this.button8 = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
@@ -110,7 +95,10 @@
             this.output_totalowed = new System.Windows.Forms.TextBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.label12 = new System.Windows.Forms.Label();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.button3 = new System.Windows.Forms.Button();
+            this.label14 = new System.Windows.Forms.Label();
+            this.output_totalbeforetax = new System.Windows.Forms.TextBox();
+            this.label17 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -119,33 +107,33 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
-            // vendor_code_textbox
+            // customer_code_textbox
             // 
-            this.vendor_code_textbox.Location = new System.Drawing.Point(317, 5);
-            this.vendor_code_textbox.Name = "vendor_code_textbox";
-            this.vendor_code_textbox.ReadOnly = true;
-            this.vendor_code_textbox.Size = new System.Drawing.Size(99, 20);
-            this.vendor_code_textbox.TabIndex = 1;
+            this.customer_code_textbox.Location = new System.Drawing.Point(317, 5);
+            this.customer_code_textbox.Name = "customer_code_textbox";
+            this.customer_code_textbox.ReadOnly = true;
+            this.customer_code_textbox.Size = new System.Drawing.Size(99, 20);
+            this.customer_code_textbox.TabIndex = 1;
             // 
             // button1
             // 
-            this.button1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(138)))), ((int)(((byte)(0)))));
+            this.button1.BackColor = System.Drawing.Color.Lime;
             this.button1.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button1.Location = new System.Drawing.Point(12, 3);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(110, 21);
             this.button1.TabIndex = 3;
-            this.button1.Text = "Consignment";
+            this.button1.Text = "Order";
             this.button1.UseVisualStyleBackColor = false;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(243, 9);
+            this.label1.Location = new System.Drawing.Point(237, 8);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(69, 13);
+            this.label1.Size = new System.Drawing.Size(79, 13);
             this.label1.TabIndex = 4;
-            this.label1.Text = "Vendor Code";
+            this.label1.Text = "Customer Code";
             // 
             // statusButton
             // 
@@ -159,24 +147,13 @@
             this.statusButton.UseVisualStyleBackColor = false;
             this.statusButton.Click += new System.EventHandler(this.button2_Click);
             // 
-            // button3
+            // order_number_textbox
             // 
-            this.button3.BackColor = System.Drawing.Color.Yellow;
-            this.button3.Image = ((System.Drawing.Image)(resources.GetObject("button3.Image")));
-            this.button3.Location = new System.Drawing.Point(586, 3);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(21, 21);
-            this.button3.TabIndex = 7;
-            this.button3.UseVisualStyleBackColor = false;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
-            // 
-            // consignment_code_textbox
-            // 
-            this.consignment_code_textbox.Location = new System.Drawing.Point(128, 4);
-            this.consignment_code_textbox.Name = "consignment_code_textbox";
-            this.consignment_code_textbox.ReadOnly = true;
-            this.consignment_code_textbox.Size = new System.Drawing.Size(105, 20);
-            this.consignment_code_textbox.TabIndex = 9;
+            this.order_number_textbox.Location = new System.Drawing.Point(128, 4);
+            this.order_number_textbox.Name = "order_number_textbox";
+            this.order_number_textbox.ReadOnly = true;
+            this.order_number_textbox.Size = new System.Drawing.Size(105, 20);
+            this.order_number_textbox.TabIndex = 9;
             // 
             // groupBox1
             // 
@@ -555,68 +532,54 @@
             // 
             // groupBox4
             // 
-            this.groupBox4.Controls.Add(this.button13);
-            this.groupBox4.Controls.Add(this.button11);
-            this.groupBox4.Controls.Add(this.button12);
             this.groupBox4.Controls.Add(this.button4);
+            this.groupBox4.Controls.Add(this.button2);
+            this.groupBox4.Controls.Add(this.input_item);
+            this.groupBox4.Controls.Add(this.label13);
             this.groupBox4.Controls.Add(this.dataGridView1);
             this.groupBox4.Location = new System.Drawing.Point(12, 225);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(594, 206);
             this.groupBox4.TabIndex = 32;
             this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Manage Items in Consignment";
-            // 
-            // button13
-            // 
-            this.button13.Location = new System.Drawing.Point(270, 156);
-            this.button13.Name = "button13";
-            this.button13.Size = new System.Drawing.Size(75, 23);
-            this.button13.TabIndex = 17;
-            this.button13.Text = "Debug";
-            this.button13.UseVisualStyleBackColor = true;
-            this.button13.Visible = false;
-            this.button13.Click += new System.EventHandler(this.button13_Click);
-            // 
-            // button11
-            // 
-            this.button11.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(189)))), ((int)(((byte)(182)))));
-            this.button11.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button11.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.button11.Location = new System.Drawing.Point(138, 156);
-            this.button11.Name = "button11";
-            this.button11.Size = new System.Drawing.Size(120, 37);
-            this.button11.TabIndex = 16;
-            this.button11.Text = "Edit Item";
-            this.button11.UseVisualStyleBackColor = false;
-            this.button11.Click += new System.EventHandler(this.button11_Click);
-            // 
-            // button12
-            // 
-            this.button12.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(189)))), ((int)(((byte)(182)))));
-            this.button12.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button12.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.button12.Location = new System.Drawing.Point(12, 156);
-            this.button12.Name = "button12";
-            this.button12.Size = new System.Drawing.Size(120, 37);
-            this.button12.TabIndex = 15;
-            this.button12.Text = "Delete Item";
-            this.button12.UseVisualStyleBackColor = false;
-            this.button12.Click += new System.EventHandler(this.button12_Click);
+            this.groupBox4.Text = "Manage Items in Order";
             // 
             // button4
             // 
-            this.button4.BackColor = System.Drawing.Color.Yellow;
-            this.button4.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button4.Image = ((System.Drawing.Image)(resources.GetObject("button4.Image")));
-            this.button4.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.button4.Location = new System.Drawing.Point(473, 156);
+            this.button4.Location = new System.Drawing.Point(480, 22);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(108, 37);
-            this.button4.TabIndex = 11;
-            this.button4.Text = "   Add Item";
-            this.button4.UseVisualStyleBackColor = false;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
+            this.button4.Size = new System.Drawing.Size(101, 20);
+            this.button4.TabIndex = 19;
+            this.button4.Text = "Remove Item";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click_1);
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(330, 22);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 20);
+            this.button2.TabIndex = 18;
+            this.button2.Text = "OK";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click_1);
+            // 
+            // input_item
+            // 
+            this.input_item.Location = new System.Drawing.Point(104, 22);
+            this.input_item.Name = "input_item";
+            this.input_item.Size = new System.Drawing.Size(220, 20);
+            this.input_item.TabIndex = 17;
+            this.input_item.KeyDown += new System.Windows.Forms.KeyEventHandler(this.input_item_KeyDown);
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(13, 25);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(91, 13);
+            this.label13.TabIndex = 16;
+            this.label13.Text = "Add Item by UPC:";
             // 
             // dataGridView1
             // 
@@ -625,40 +588,19 @@
             this.dataGridView1.AllowUserToResizeRows = false;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.ig_status,
             this.ig_upc,
             this.ig_description,
-            this.ig_price_minimum,
-            this.ig_price_suggested,
             this.ig_price_sale,
-            this.ig_share,
-            this.ig_share_type,
-            this.ig_date_received,
-            this.ig_date_expiry,
-            this.ig_display_date_expiry,
+            this.ig_display_date_sold,
             this.ig_date_sold,
-            this.ig_date_paid,
-            this.ig_desc_brand,
-            this.ig_desc_gender,
-            this.ig_desc_garment,
-            this.ig_desc_material,
-            this.ig_desc_colour,
-            this.ig_desc_size});
-            this.dataGridView1.Location = new System.Drawing.Point(12, 19);
+            this.ig_status});
+            this.dataGridView1.Location = new System.Drawing.Point(12, 50);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.RowHeadersVisible = false;
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(569, 131);
+            this.dataGridView1.Size = new System.Drawing.Size(569, 150);
             this.dataGridView1.TabIndex = 1;
-            this.dataGridView1.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellDoubleClick);
-            // 
-            // ig_status
-            // 
-            this.ig_status.HeaderText = "Status";
-            this.ig_status.Name = "ig_status";
-            this.ig_status.ReadOnly = true;
-            this.ig_status.Width = 50;
             // 
             // ig_upc
             // 
@@ -674,61 +616,18 @@
             this.ig_description.Name = "ig_description";
             this.ig_description.ReadOnly = true;
             // 
-            // ig_price_minimum
-            // 
-            this.ig_price_minimum.HeaderText = "Min. Price";
-            this.ig_price_minimum.Name = "ig_price_minimum";
-            this.ig_price_minimum.ReadOnly = true;
-            this.ig_price_minimum.Width = 60;
-            // 
-            // ig_price_suggested
-            // 
-            this.ig_price_suggested.HeaderText = "Suggested Price";
-            this.ig_price_suggested.Name = "ig_price_suggested";
-            this.ig_price_suggested.ReadOnly = true;
-            this.ig_price_suggested.Visible = false;
-            // 
             // ig_price_sale
             // 
             this.ig_price_sale.HeaderText = "Selling Price";
             this.ig_price_sale.Name = "ig_price_sale";
             this.ig_price_sale.ReadOnly = true;
-            this.ig_price_sale.Width = 60;
+            this.ig_price_sale.Width = 90;
             // 
-            // ig_share
+            // ig_display_date_sold
             // 
-            this.ig_share.HeaderText = "Share";
-            this.ig_share.Name = "ig_share";
-            this.ig_share.ReadOnly = true;
-            this.ig_share.Width = 60;
-            // 
-            // ig_share_type
-            // 
-            this.ig_share_type.HeaderText = "";
-            this.ig_share_type.Name = "ig_share_type";
-            this.ig_share_type.ReadOnly = true;
-            this.ig_share_type.Width = 20;
-            // 
-            // ig_date_received
-            // 
-            this.ig_date_received.HeaderText = "Date Received";
-            this.ig_date_received.Name = "ig_date_received";
-            this.ig_date_received.ReadOnly = true;
-            this.ig_date_received.Visible = false;
-            // 
-            // ig_date_expiry
-            // 
-            this.ig_date_expiry.HeaderText = "Date Expiry";
-            this.ig_date_expiry.Name = "ig_date_expiry";
-            this.ig_date_expiry.ReadOnly = true;
-            this.ig_date_expiry.Visible = false;
-            // 
-            // ig_display_date_expiry
-            // 
-            this.ig_display_date_expiry.HeaderText = "Expiry Date";
-            this.ig_display_date_expiry.Name = "ig_display_date_expiry";
-            this.ig_display_date_expiry.ReadOnly = true;
-            this.ig_display_date_expiry.Width = 80;
+            this.ig_display_date_sold.HeaderText = "Date Sold";
+            this.ig_display_date_sold.Name = "ig_display_date_sold";
+            this.ig_display_date_sold.ReadOnly = true;
             // 
             // ig_date_sold
             // 
@@ -737,54 +636,12 @@
             this.ig_date_sold.ReadOnly = true;
             this.ig_date_sold.Visible = false;
             // 
-            // ig_date_paid
+            // ig_status
             // 
-            this.ig_date_paid.HeaderText = "Date Paid";
-            this.ig_date_paid.Name = "ig_date_paid";
-            this.ig_date_paid.ReadOnly = true;
-            this.ig_date_paid.Visible = false;
-            // 
-            // ig_desc_brand
-            // 
-            this.ig_desc_brand.HeaderText = "Brand";
-            this.ig_desc_brand.Name = "ig_desc_brand";
-            this.ig_desc_brand.ReadOnly = true;
-            this.ig_desc_brand.Visible = false;
-            // 
-            // ig_desc_gender
-            // 
-            this.ig_desc_gender.HeaderText = "Gender";
-            this.ig_desc_gender.Name = "ig_desc_gender";
-            this.ig_desc_gender.ReadOnly = true;
-            this.ig_desc_gender.Visible = false;
-            // 
-            // ig_desc_garment
-            // 
-            this.ig_desc_garment.HeaderText = "Garment";
-            this.ig_desc_garment.Name = "ig_desc_garment";
-            this.ig_desc_garment.ReadOnly = true;
-            this.ig_desc_garment.Visible = false;
-            // 
-            // ig_desc_material
-            // 
-            this.ig_desc_material.HeaderText = "Material";
-            this.ig_desc_material.Name = "ig_desc_material";
-            this.ig_desc_material.ReadOnly = true;
-            this.ig_desc_material.Visible = false;
-            // 
-            // ig_desc_colour
-            // 
-            this.ig_desc_colour.HeaderText = "Colour";
-            this.ig_desc_colour.Name = "ig_desc_colour";
-            this.ig_desc_colour.ReadOnly = true;
-            this.ig_desc_colour.Visible = false;
-            // 
-            // ig_desc_size
-            // 
-            this.ig_desc_size.HeaderText = "Size";
-            this.ig_desc_size.Name = "ig_desc_size";
-            this.ig_desc_size.ReadOnly = true;
-            this.ig_desc_size.Visible = false;
+            this.ig_status.HeaderText = "status";
+            this.ig_status.Name = "ig_status";
+            this.ig_status.ReadOnly = true;
+            this.ig_status.Visible = false;
             // 
             // button7
             // 
@@ -821,7 +678,7 @@
             // 
             // output_totaloutstanding
             // 
-            this.output_totaloutstanding.Location = new System.Drawing.Point(116, 696);
+            this.output_totaloutstanding.Location = new System.Drawing.Point(116, 722);
             this.output_totaloutstanding.Name = "output_totaloutstanding";
             this.output_totaloutstanding.ReadOnly = true;
             this.output_totaloutstanding.Size = new System.Drawing.Size(132, 20);
@@ -829,7 +686,7 @@
             // 
             // output_totalpaid
             // 
-            this.output_totalpaid.Location = new System.Drawing.Point(116, 670);
+            this.output_totalpaid.Location = new System.Drawing.Point(116, 696);
             this.output_totalpaid.Name = "output_totalpaid";
             this.output_totalpaid.ReadOnly = true;
             this.output_totalpaid.Size = new System.Drawing.Size(132, 20);
@@ -838,7 +695,7 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(9, 673);
+            this.label11.Location = new System.Drawing.Point(10, 699);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(94, 13);
             this.label11.TabIndex = 44;
@@ -849,13 +706,13 @@
             this.label10.AutoSize = true;
             this.label10.Location = new System.Drawing.Point(9, 647);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(101, 13);
+            this.label10.Size = new System.Drawing.Size(86, 13);
             this.label10.TabIndex = 43;
-            this.label10.Text = "Total Amount Owed";
+            this.label10.Text = "Total Before Tax";
             // 
             // output_totalowed
             // 
-            this.output_totalowed.Location = new System.Drawing.Point(116, 644);
+            this.output_totalowed.Location = new System.Drawing.Point(116, 673);
             this.output_totalowed.Name = "output_totalowed";
             this.output_totalowed.ReadOnly = true;
             this.output_totalowed.Size = new System.Drawing.Size(132, 20);
@@ -872,22 +729,58 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(9, 699);
+            this.label12.Location = new System.Drawing.Point(13, 725);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(91, 13);
             this.label12.TabIndex = 46;
             this.label12.Text = "Total Outstanding";
             // 
-            // timer1
+            // button3
             // 
-            this.timer1.Interval = 600;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            this.button3.BackColor = System.Drawing.Color.Yellow;
+            this.button3.Image = ((System.Drawing.Image)(resources.GetObject("button3.Image")));
+            this.button3.Location = new System.Drawing.Point(586, 3);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(21, 21);
+            this.button3.TabIndex = 7;
+            this.button3.UseVisualStyleBackColor = false;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
-            // consignment_purchase_order
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(9, 673);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(101, 13);
+            this.label14.TabIndex = 48;
+            this.label14.Text = "Total Amount Owed";
+            // 
+            // output_totalbeforetax
+            // 
+            this.output_totalbeforetax.Location = new System.Drawing.Point(116, 647);
+            this.output_totalbeforetax.Name = "output_totalbeforetax";
+            this.output_totalbeforetax.ReadOnly = true;
+            this.output_totalbeforetax.Size = new System.Drawing.Size(132, 20);
+            this.output_totalbeforetax.TabIndex = 47;
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label17.Location = new System.Drawing.Point(254, 650);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(70, 13);
+            this.label17.TabIndex = 49;
+            this.label17.Text = "+ 12% HST";
+            // 
+            // consignment_sale_order
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(619, 753);
+            this.Controls.Add(this.label17);
+            this.Controls.Add(this.label14);
+            this.Controls.Add(this.output_totalbeforetax);
             this.Controls.Add(this.label12);
             this.Controls.Add(this.output_totaloutstanding);
             this.Controls.Add(this.output_totalpaid);
@@ -903,19 +796,19 @@
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.consignment_code_textbox);
+            this.Controls.Add(this.order_number_textbox);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.statusButton);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.button1);
-            this.Controls.Add(this.vendor_code_textbox);
+            this.Controls.Add(this.customer_code_textbox);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
-            this.Name = "consignment_purchase_order";
+            this.Name = "consignment_sale_order";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Consignment Purchase Order";
-            this.Load += new System.EventHandler(this.consignment_purchase_order_Load);
-            this.Shown += new System.EventHandler(this.consignment_purchase_order_Shown);
+            this.Text = "Consignment Sale Order";
+            this.Load += new System.EventHandler(this.consignment_sale_order_Load);
+            this.Shown += new System.EventHandler(this.consignment_sale_order_Shown);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -923,6 +816,7 @@
             this.groupBox3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
             this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -931,12 +825,12 @@
 
         #endregion
 
-        private System.Windows.Forms.TextBox vendor_code_textbox;
+        private System.Windows.Forms.TextBox customer_code_textbox;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button statusButton;
         private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.TextBox consignment_code_textbox;
+        private System.Windows.Forms.TextBox order_number_textbox;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.TextBox input_CMCOUNTRY;
         private System.Windows.Forms.Label label7;
@@ -963,15 +857,11 @@
         private System.Windows.Forms.TextBox input_CMNAME1ST;
         private System.Windows.Forms.DataGridView dataGridView2;
         private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.Button button7;
         private System.Windows.Forms.Button button8;
         private System.Windows.Forms.Button button10;
         private System.Windows.Forms.Button button9;
-        private System.Windows.Forms.Button button11;
-        private System.Windows.Forms.Button button12;
-        private System.Windows.Forms.Button button13;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.TextBox output_totaloutstanding;
         private System.Windows.Forms.TextBox output_totalpaid;
@@ -992,25 +882,18 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn pg_vendor_code;
         private System.Windows.Forms.DataGridViewTextBoxColumn pg_vendor_name;
         private System.Windows.Forms.DataGridViewTextBoxColumn pg_status;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ig_status;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.TextBox input_item;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button4;
         private System.Windows.Forms.DataGridViewTextBoxColumn ig_upc;
         private System.Windows.Forms.DataGridViewTextBoxColumn ig_description;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ig_price_minimum;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ig_price_suggested;
         private System.Windows.Forms.DataGridViewTextBoxColumn ig_price_sale;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ig_share;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ig_share_type;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ig_date_received;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ig_date_expiry;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ig_display_date_expiry;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ig_display_date_sold;
         private System.Windows.Forms.DataGridViewTextBoxColumn ig_date_sold;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ig_date_paid;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ig_desc_brand;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ig_desc_gender;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ig_desc_garment;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ig_desc_material;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ig_desc_colour;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ig_desc_size;
-        private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ig_status;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.TextBox output_totalbeforetax;
+        private System.Windows.Forms.Label label17;
     }
 }
