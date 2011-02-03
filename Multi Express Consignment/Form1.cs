@@ -19,6 +19,11 @@ namespace Multi_Express_Consignment
     {
 
         public Form consignment_purchase_desktop_form = null;
+        public Form consignment_sale_desktop_form = null;
+        public Form select_vendor = null;
+        public Form select_customer = null;
+        public Form print_reports_form = null;
+        public Form item_search_form = null;
 
         public Form1()
         {
@@ -41,7 +46,7 @@ namespace Multi_Express_Consignment
 
         private void toolStripButton3_Click(object sender, EventArgs e)
         {
-            if(consignment_purchase_desktop_form == null) {
+            if(consignment_purchase_desktop_form == null || consignment_purchase_desktop_form.IsDisposed == true) {
                 consignment_purchase_desktop_form = new consignment_purchase_desktop();
             }
             consignment_purchase_desktop_form.MdiParent = this;
@@ -59,10 +64,17 @@ namespace Multi_Express_Consignment
             }
             iniglobal.ini = new IniFile(iniFileName);
 
+            // Log Window
+            logglobal.log = new program_log();
+            logglobal.log.MdiParent = this;
+            
+            logglobal.log.Show();
+            logglobal.log.Visible = false;
+
 
             // Establish MySQL Connection
             MysqlConnectForm mc = new MysqlConnectForm(this); // Pass MySQL Connect Form the handle of this Form.
-            mc.Show();
+            mc.ShowDialog(this);
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -70,6 +82,81 @@ namespace Multi_Express_Consignment
             // Test Scaling
             float scaleX = ((float)Screen.PrimaryScreen.WorkingArea.Width / 1024); float scaleY = ((float)Screen.PrimaryScreen.WorkingArea.Height / 768); SizeF aSf = new SizeF(scaleX, scaleY); this.Scale(aSf);
 
+        }
+
+        private void toolStripButton2_Click(object sender, EventArgs e)
+        {
+            if (select_vendor == null)
+            {
+                select_vendor = new select_vendor_or_customer("vendor");
+            }
+            else
+            {
+                select_vendor.Dispose();
+                select_vendor = new select_vendor_or_customer("vendor");
+            }
+            select_vendor.MdiParent = this;
+            select_vendor.Show();
+        }
+
+        private void toolStripButton4_Click(object sender, EventArgs e)
+        {
+            if (select_vendor == null)
+            {
+                select_vendor = new select_vendor_or_customer("customer");
+            }
+            else
+            {
+                select_vendor.Dispose();
+                select_vendor = new select_vendor_or_customer("customer");
+            }
+            select_vendor.MdiParent = this;
+            select_vendor.Show();
+        }
+
+        private void toolStripButton6_Click(object sender, EventArgs e)
+        {
+            if (print_reports_form == null)
+            {
+                print_reports_form = new print_reports();
+            } else {
+                print_reports_form.Dispose();
+                print_reports_form = new print_reports();
+            }
+            
+            print_reports_form.MdiParent = this;
+            print_reports_form.Show();
+        }
+
+
+
+        private void toolStripButton9_Click(object sender, EventArgs e)
+        {
+            logglobal.log.Visible = true;
+            logglobal.log.Show();
+        }
+
+
+
+        private void toolStripButton5_Click(object sender, EventArgs e)
+        {
+            if (consignment_sale_desktop_form == null || consignment_sale_desktop_form.IsDisposed == true)
+            {
+                consignment_sale_desktop_form = new consignment_sale_desktop();
+            }
+            consignment_sale_desktop_form.MdiParent = this;
+            consignment_sale_desktop_form.Show();
+        }
+
+
+        private void toolStripButton10_Click(object sender, EventArgs e)
+        {
+            if (item_search_form == null || item_search_form.IsDisposed == true)
+            {
+                item_search_form = new item_search(null,null,null,null,null);
+            }
+            item_search_form.MdiParent = this;
+            item_search_form.Show();
         }
 
 
