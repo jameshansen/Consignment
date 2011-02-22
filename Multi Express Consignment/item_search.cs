@@ -353,6 +353,12 @@ namespace Multi_Express_Consignment
                 searchRoutine();       
                 e.Handled = true;         
             }
+
+            if (e.KeyCode == Keys.Down)
+            {
+                dataGridView1.Focus();
+                e.Handled = true;  
+            }
         }
 
         private void openConsignment_Click(object sender, EventArgs e)

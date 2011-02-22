@@ -148,6 +148,7 @@
             this.input_price_suggested.Enter += new System.EventHandler(this.highlightContents);
             this.input_price_suggested.KeyDown += new System.Windows.Forms.KeyEventHandler(this.currency_check_KeyDown);
             this.input_price_suggested.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.nextBox);
+            this.input_price_suggested.Leave += new System.EventHandler(this.stringToCurrencyEvt);
             // 
             // label4
             // 
@@ -181,6 +182,7 @@
             this.input_share.Enter += new System.EventHandler(this.highlightContents);
             this.input_share.KeyDown += new System.Windows.Forms.KeyEventHandler(this.currency_check_KeyDown);
             this.input_share.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.nextBox);
+            this.input_share.Leave += new System.EventHandler(this.stringToCurrencyEvt);
             // 
             // input_price_minimum
             // 
@@ -193,6 +195,7 @@
             this.input_price_minimum.Enter += new System.EventHandler(this.highlightContents);
             this.input_price_minimum.KeyDown += new System.Windows.Forms.KeyEventHandler(this.currency_check_KeyDown);
             this.input_price_minimum.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.nextBox);
+            this.input_price_minimum.Leave += new System.EventHandler(this.stringToCurrencyEvt);
             // 
             // label2
             // 

@@ -11,8 +11,24 @@
     <RootNamespace>Multi_Express_Consignment</RootNamespace>
     <AssemblyName>Multi Express Consignment</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -33,20 +49,64 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>ME.ICO</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CrystalDecisions.CrystalReports.Engine, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CrystalDecisions.ReportSource, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CrystalDecisions.Shared, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CrystalDecisions.Windows.Forms, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FlashControlV71, Version=1.0.3187.32366, Culture=neutral, PublicKeyToken=692fbea5521e1304">
+      <Private>True</Private>
+    </Reference>
     <Reference Include="MySql.Data, Version=6.3.4.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <Private>True</Private>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
+    <Reference Include="System">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Core">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Services">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CSharp">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Data">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Deployment">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="add_item_to_cpo.cs">
@@ -55,11 +115,113 @@
     <Compile Include="add_item_to_cpo.Designer.cs">
       <DependentUpon>add_item_to_cpo.cs</DependentUpon>
     </Compile>
+    <Compile Include="add_item_to_order.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="add_item_to_order.Designer.cs">
+      <DependentUpon>add_item_to_order.cs</DependentUpon>
+    </Compile>
+    <Compile Include="add_vendor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="add_vendor.Designer.cs">
+      <DependentUpon>add_vendor.cs</DependentUpon>
+    </Compile>
     <Compile Include="consignment_purchase_desktop.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="consignment_purchase_desktop.Designer.cs">
       <DependentUpon>consignment_purchase_desktop.cs</DependentUpon>
+    </Compile>
+    <Compile Include="consignment_db.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>consignment_db.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="consignment_sale_desktop.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="consignment_sale_desktop.Designer.cs">
+      <DependentUpon>consignment_sale_desktop.cs</DependentUpon>
+    </Compile>
+    <Compile Include="consignment_sale_order.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="consignment_sale_order.Designer.cs">
+      <DependentUpon>consignment_sale_order.cs</DependentUpon>
+    </Compile>
+    <Compile Include="error_dialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="error_dialog.Designer.cs">
+      <DependentUpon>error_dialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="purge_consignments.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="purge_consignments.Designer.cs">
+      <DependentUpon>purge_consignments.cs</DependentUpon>
+    </Compile>
+    <Compile Include="report_consignment_invoice.cs">
+      <DependentUpon>report_consignment_invoice.rpt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <SubType>Component</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="report_net_payment_report.cs">
+      <DependentUpon>report_net_payment_report.rpt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <SubType>Component</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="DataSet1.cs">
+      <DependentUpon>DataSet1.xsd</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="DataSet1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DataSet1.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="item_search.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="item_search.Designer.cs">
+      <DependentUpon>item_search.cs</DependentUpon>
+    </Compile>
+    <Compile Include="print_report.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="print_report.Designer.cs">
+      <DependentUpon>print_report.cs</DependentUpon>
+    </Compile>
+    <Compile Include="print_reports_options.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="print_reports_options.Designer.cs">
+      <DependentUpon>print_reports_options.cs</DependentUpon>
+    </Compile>
+    <Compile Include="report_barcode_item_labels.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>report_barcode_item_labels.rpt</DependentUpon>
+      <SubType>Component</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="report_consignment_agreement.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>report_consignment_agreement.rpt</DependentUpon>
+      <SubType>Component</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="crystalreportglobal.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="crystalreportglobal.Designer.cs">
+      <DependentUpon>crystalreportglobal.cs</DependentUpon>
     </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
@@ -73,6 +235,18 @@
     <Compile Include="consignment_purchase_order.Designer.cs">
       <DependentUpon>consignment_purchase_order.cs</DependentUpon>
     </Compile>
+    <Compile Include="change_status_cpo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="change_status_cpo.Designer.cs">
+      <DependentUpon>change_status_cpo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="program_log.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="program_log.Designer.cs">
+      <DependentUpon>program_log.cs</DependentUpon>
+    </Compile>
     <Compile Include="Ini.cs" />
     <Compile Include="mysqlglobal.cs" />
     <Compile Include="mysql_connect_form.cs">
@@ -81,13 +255,95 @@
     <Compile Include="mysql_connect_form.designer.cs">
       <DependentUpon>mysql_connect_form.cs</DependentUpon>
     </Compile>
+    <Compile Include="payment_entry.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="payment_entry.Designer.cs">
+      <DependentUpon>payment_entry.cs</DependentUpon>
+    </Compile>
+    <Compile Include="print_reports.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="print_reports.Designer.cs">
+      <DependentUpon>print_reports.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="report_payment_reports.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>report_payment_reports.rpt</DependentUpon>
+      <SubType>Component</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="report_sale_receipt.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>report_sale_receipt.rpt</DependentUpon>
+      <SubType>Component</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="select_vendor_or_customer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="select_vendor_or_customer.Designer.cs">
+      <DependentUpon>select_vendor_or_customer.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="add_item_to_cpo.resx">
       <DependentUpon>add_item_to_cpo.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="add_item_to_order.resx">
+      <DependentUpon>add_item_to_order.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="add_vendor.resx">
+      <DependentUpon>add_vendor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="consignment_purchase_desktop.resx">
       <DependentUpon>consignment_purchase_desktop.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="consignment_sale_desktop.resx">
+      <DependentUpon>consignment_sale_desktop.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="consignment_sale_order.resx">
+      <DependentUpon>consignment_sale_order.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="error_dialog.resx">
+      <DependentUpon>error_dialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="purge_consignments.resx">
+      <DependentUpon>purge_consignments.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="report_consignment_invoice.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>report_consignment_invoice.cs</LastGenOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="report_net_payment_report.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>report_net_payment_report.cs</LastGenOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="item_search.resx">
+      <DependentUpon>item_search.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="print_report.resx">
+      <DependentUpon>print_report.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="print_reports_options.resx">
+      <DependentUpon>print_reports_options.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="report_barcode_item_labels.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>report_barcode_item_labels.cs</LastGenOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="report_consignment_agreement.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>report_consignment_agreement.cs</LastGenOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="crystalreportglobal.resx">
+      <DependentUpon>crystalreportglobal.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
@@ -95,8 +351,20 @@
     <EmbeddedResource Include="consignment_purchase_order.resx">
       <DependentUpon>consignment_purchase_order.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="change_status_cpo.resx">
+      <DependentUpon>change_status_cpo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="program_log.resx">
+      <DependentUpon>program_log.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="mysql_connect_form.resx">
       <DependentUpon>mysql_connect_form.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="payment_entry.resx">
+      <DependentUpon>payment_entry.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="print_reports.resx">
+      <DependentUpon>print_reports.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -106,7 +374,46 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="report_payment_reports.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>report_payment_reports.cs</LastGenOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="report_sale_receipt.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>report_sale_receipt.cs</LastGenOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="select_vendor_or_customer.resx">
+      <DependentUpon>select_vendor_or_customer.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="app.config" />
+    <None Include="ClassDiagram1.cd" />
+    <None Include="ClassDiagram2.cd" />
+    <None Include="consignment_db.xsc">
+      <DependentUpon>consignment_db.xsd</DependentUpon>
+    </None>
+    <None Include="consignment_db.xsd">
+      <SubType>Designer</SubType>
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>consignment_db.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="consignment_db.xss">
+      <DependentUpon>consignment_db.xsd</DependentUpon>
+    </None>
+    <None Include="DataSet1.xsc">
+      <DependentUpon>DataSet1.xsd</DependentUpon>
+    </None>
+    <None Include="DataSet1.xsd">
+      <SubType>Designer</SubType>
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>DataSet1.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="DataSet1.xss">
+      <DependentUpon>DataSet1.xsd</DependentUpon>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -116,6 +423,37 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{C0C07587-41A7-46C8-8FBD-3F9C8EBE2DDC}" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="stuff\lg_print.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ME.ICO" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -67,7 +67,7 @@ namespace Multi_Express_Consignment
                 if (countdown == 0)
                 {
                     isConnected = 0;
-                    label1.Text = "Establishing Connection to MySQL Database...";
+                    label1.Text = "Establishing Connection to Database...";
                     backgroundWorker1.RunWorkerAsync(); // Retry Connection
                 }
             }

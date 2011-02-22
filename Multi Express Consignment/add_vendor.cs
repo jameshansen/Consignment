@@ -50,11 +50,11 @@ namespace Multi_Express_Consignment
             fillVendorCode();
 
             // Get Fields
-            string CMCUCODE = dbfglobal.escapeString(input_CMCUCODE.Text);
-            string CMCUNAME = dbfglobal.escapeString(input_CMCUNAME.Text);
-            string CMNAMESUR = dbfglobal.escapeString(input_CMNAMESUR.Text);
-            string CMNAME1ST = dbfglobal.escapeString(input_CMNAME1ST.Text);
-            string CMPHONE = dbfglobal.escapeString(input_CMPHONE_a.Text).PadRight(4) + dbfglobal.escapeString(input_CMPHONE_b.Text);
+            string CMCUCODE = mysqlglobal.escapeString(input_CMCUCODE.Text);
+            string CMCUNAME = mysqlglobal.escapeString(input_CMCUNAME.Text);
+            string CMNAMESUR = mysqlglobal.escapeString(input_CMNAMESUR.Text);
+            string CMNAME1ST = mysqlglobal.escapeString(input_CMNAME1ST.Text);
+            string CMPHONE = mysqlglobal.escapeString(input_CMPHONE_a.Text).PadRight(4) + mysqlglobal.escapeString(input_CMPHONE_b.Text);
             
 
             string errorMsg = "";
@@ -73,11 +73,7 @@ namespace Multi_Express_Consignment
             if (m_mode == "vendor") dbf = "PSVEMAST";
             if (m_mode == "customer") dbf = "SFCUMAST";
             string query = "INSERT INTO " + dbf + " (CMCUCODE, CMCUNAME, CMNAMESUR, CMNAME1ST, CMPHONE) VALUES (\"" + CMCUCODE + "\", \"" + CMCUNAME + "\", \"" + CMNAMESUR + "\", \"" + CMNAME1ST + "\", \"" + CMPHONE + "\")";
-            OleDbCommand insertRecord = new OleDbCommand(query, dbfglobal.dbfCon);
-
-            dbfglobal.dbfCon.Open();
-            insertRecord.ExecuteNonQuery();
-            dbfglobal.dbfCon.Close();
+            mysqlglobal.executeNonQuery(query, this);
 
             new_entry_val = input_CMCUCODE.Text;
 

@@ -52,20 +52,32 @@
             this.toolStripButton13 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton15 = new System.Windows.Forms.ToolStripButton();
             this.toolStrip2 = new System.Windows.Forms.ToolStrip();
-            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
+            this.label_searchkey = new System.Windows.Forms.ToolStripLabel();
             this.toolStripTextBox1 = new System.Windows.Forms.ToolStripTextBox();
             this.toolStripButton14 = new System.Windows.Forms.ToolStripButton();
+            this.modeDisplay = new System.Windows.Forms.ToolStripButton();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.consignment_icon = new System.Windows.Forms.DataGridViewImageColumn();
-            this.consignment_code = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.customer_code = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.vendor_first_name = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.vendor_last_name = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.customer_phone = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.date_received = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.row_total_share = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.row_total_items = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.consignment_status = new System.Windows.Forms.DataGridViewImageColumn();
+            this.cg_icon = new System.Windows.Forms.DataGridViewImageColumn();
+            this.cg_upc = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cg_consignment_code = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cg_description = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cg_vendor_code = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cg_price_minimum = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cg_price_suggested = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cg_price_sale = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cg_date_received = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cg_date_expiry = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cg_date_sold = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cg_date_paid = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cg_vendor_first_name = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cg_vendor_last_name = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cg_phone = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cg_first_date_expiry = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cg_last_date_received = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cg_total_share = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cg_total_items = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cg_status = new System.Windows.Forms.DataGridViewImageColumn();
+            this.fillercolumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panel1 = new System.Windows.Forms.Panel();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.button4 = new System.Windows.Forms.Button();
@@ -80,6 +92,8 @@
             this.checkBoxSold = new System.Windows.Forms.CheckBox();
             this.checkBoxUnsold = new System.Windows.Forms.CheckBox();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+            this.imageList2 = new System.Windows.Forms.ImageList(this.components);
+            this.toolStripButton16 = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.toolStrip2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -107,13 +121,14 @@
             this.toolStripButton10,
             this.toolStripButton11,
             this.toolStripSeparator3,
+            this.toolStripButton16,
             this.toolStripButton12,
             this.toolStripSeparator4,
             this.toolStripButton13,
             this.toolStripButton15});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(619, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(882, 25);
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -124,7 +139,8 @@
             this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton1.Name = "toolStripButton1";
             this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton1.Text = "toolStripButton1";
+            this.toolStripButton1.Text = "Close Desktop";
+            this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
             // 
             // toolStripSeparator1
             // 
@@ -138,7 +154,9 @@
             this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton2.Name = "toolStripButton2";
             this.toolStripButton2.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton2.Text = "toolStripButton2";
+            this.toolStripButton2.Text = "Create a new Consignment Purchase Transaction";
+            this.toolStripButton2.ToolTipText = "Create new Consignment Purchase Transaction";
+            this.toolStripButton2.Click += new System.EventHandler(this.toolStripButton2_Click);
             // 
             // toolStripButton3
             // 
@@ -147,7 +165,8 @@
             this.toolStripButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton3.Name = "toolStripButton3";
             this.toolStripButton3.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton3.Text = "toolStripButton3";
+            this.toolStripButton3.Text = "Open a Consignment Purchase Transaction";
+            this.toolStripButton3.Click += new System.EventHandler(this.toolStripButton3_Click);
             // 
             // toolStripButton4
             // 
@@ -156,7 +175,9 @@
             this.toolStripButton4.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton4.Name = "toolStripButton4";
             this.toolStripButton4.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton4.Text = "toolStripButton4";
+            this.toolStripButton4.Text = "Browse a Consignment Purchase Transaction";
+            this.toolStripButton4.Visible = false;
+            this.toolStripButton4.Click += new System.EventHandler(this.toolStripButton4_Click);
             // 
             // toolStripButton5
             // 
@@ -165,7 +186,8 @@
             this.toolStripButton5.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton5.Name = "toolStripButton5";
             this.toolStripButton5.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton5.Text = "toolStripButton5";
+            this.toolStripButton5.Text = "Print Transactions";
+            this.toolStripButton5.Click += new System.EventHandler(this.toolStripButton5_Click);
             // 
             // toolStripSeparator2
             // 
@@ -179,7 +201,8 @@
             this.toolStripButton6.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton6.Name = "toolStripButton6";
             this.toolStripButton6.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton6.Text = "toolStripButton6";
+            this.toolStripButton6.Text = "Go to first record";
+            this.toolStripButton6.Click += new System.EventHandler(this.toolStripButton6_Click);
             // 
             // toolStripButton7
             // 
@@ -188,7 +211,8 @@
             this.toolStripButton7.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton7.Name = "toolStripButton7";
             this.toolStripButton7.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton7.Text = "toolStripButton7";
+            this.toolStripButton7.Text = "Go up 10 records";
+            this.toolStripButton7.Click += new System.EventHandler(this.toolStripButton7_Click);
             // 
             // toolStripButton8
             // 
@@ -197,7 +221,8 @@
             this.toolStripButton8.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton8.Name = "toolStripButton8";
             this.toolStripButton8.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton8.Text = "toolStripButton8";
+            this.toolStripButton8.Text = "Go up one record";
+            this.toolStripButton8.Click += new System.EventHandler(this.toolStripButton8_Click);
             // 
             // toolStripButton9
             // 
@@ -206,7 +231,8 @@
             this.toolStripButton9.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton9.Name = "toolStripButton9";
             this.toolStripButton9.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton9.Text = "toolStripButton9";
+            this.toolStripButton9.Text = "Go down one record";
+            this.toolStripButton9.Click += new System.EventHandler(this.toolStripButton9_Click);
             // 
             // toolStripButton10
             // 
@@ -215,7 +241,8 @@
             this.toolStripButton10.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton10.Name = "toolStripButton10";
             this.toolStripButton10.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton10.Text = "toolStripButton10";
+            this.toolStripButton10.Text = "Go down 10 records";
+            this.toolStripButton10.Click += new System.EventHandler(this.toolStripButton10_Click);
             // 
             // toolStripButton11
             // 
@@ -224,7 +251,8 @@
             this.toolStripButton11.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton11.Name = "toolStripButton11";
             this.toolStripButton11.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton11.Text = "toolStripButton11";
+            this.toolStripButton11.Text = "Go to last record";
+            this.toolStripButton11.Click += new System.EventHandler(this.toolStripButton11_Click);
             // 
             // toolStripSeparator3
             // 
@@ -238,7 +266,8 @@
             this.toolStripButton12.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton12.Name = "toolStripButton12";
             this.toolStripButton12.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton12.Text = "toolStripButton12";
+            this.toolStripButton12.Text = "Refresh";
+            this.toolStripButton12.Click += new System.EventHandler(this.toolStripButton12_Click);
             // 
             // toolStripSeparator4
             // 
@@ -252,7 +281,8 @@
             this.toolStripButton13.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton13.Name = "toolStripButton13";
             this.toolStripButton13.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton13.Text = "toolStripButton13";
+            this.toolStripButton13.Text = "Sort by Consignment, Search by Consignment Code";
+            this.toolStripButton13.Click += new System.EventHandler(this.toolStripButton13_Click);
             // 
             // toolStripButton15
             // 
@@ -261,31 +291,35 @@
             this.toolStripButton15.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton15.Name = "toolStripButton15";
             this.toolStripButton15.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton15.Text = "toolStripButton15";
+            this.toolStripButton15.Text = "Sort by Items, Search by UPC";
+            this.toolStripButton15.Click += new System.EventHandler(this.toolStripButton15_Click);
             // 
             // toolStrip2
             // 
             this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripLabel1,
+            this.label_searchkey,
             this.toolStripTextBox1,
-            this.toolStripButton14});
+            this.toolStripButton14,
+            this.modeDisplay});
             this.toolStrip2.Location = new System.Drawing.Point(0, 25);
             this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(619, 25);
+            this.toolStrip2.Size = new System.Drawing.Size(882, 25);
             this.toolStrip2.TabIndex = 1;
             this.toolStrip2.Text = "toolStrip2";
             // 
-            // toolStripLabel1
+            // label_searchkey
             // 
-            this.toolStripLabel1.Name = "toolStripLabel1";
-            this.toolStripLabel1.Size = new System.Drawing.Size(173, 22);
-            this.toolStripLabel1.Text = "Search Key: By Consignment Code";
-            this.toolStripLabel1.Click += new System.EventHandler(this.toolStripLabel1_Click);
+            this.label_searchkey.Name = "label_searchkey";
+            this.label_searchkey.Size = new System.Drawing.Size(173, 22);
+            this.label_searchkey.Text = "Search Key: By Consignment Code";
+            this.label_searchkey.Click += new System.EventHandler(this.toolStripLabel1_Click);
             // 
             // toolStripTextBox1
             // 
             this.toolStripTextBox1.Name = "toolStripTextBox1";
             this.toolStripTextBox1.Size = new System.Drawing.Size(100, 25);
+            this.toolStripTextBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.toolStripTextBox1_KeyDown);
+            this.toolStripTextBox1.KeyUp += new System.Windows.Forms.KeyEventHandler(this.toolStripTextBox1_KeyUp);
             // 
             // toolStripButton14
             // 
@@ -297,90 +331,210 @@
             this.toolStripButton14.Size = new System.Drawing.Size(24, 22);
             this.toolStripButton14.Text = "Go";
             // 
+            // modeDisplay
+            // 
+            this.modeDisplay.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(138)))), ((int)(((byte)(0)))));
+            this.modeDisplay.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.modeDisplay.Enabled = false;
+            this.modeDisplay.Image = ((System.Drawing.Image)(resources.GetObject("modeDisplay.Image")));
+            this.modeDisplay.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.modeDisplay.Margin = new System.Windows.Forms.Padding(8, 1, 0, 2);
+            this.modeDisplay.Name = "modeDisplay";
+            this.modeDisplay.Size = new System.Drawing.Size(102, 22);
+            this.modeDisplay.Text = "Consignment Mode";
+            // 
             // dataGridView1
             // 
             this.dataGridView1.AllowUserToAddRows = false;
             this.dataGridView1.AllowUserToDeleteRows = false;
+            this.dataGridView1.AllowUserToResizeRows = false;
             this.dataGridView1.BackgroundColor = System.Drawing.SystemColors.Window;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.consignment_icon,
-            this.consignment_code,
-            this.customer_code,
-            this.vendor_first_name,
-            this.vendor_last_name,
-            this.customer_phone,
-            this.date_received,
-            this.row_total_share,
-            this.row_total_items,
-            this.consignment_status});
+            this.cg_icon,
+            this.cg_upc,
+            this.cg_consignment_code,
+            this.cg_description,
+            this.cg_vendor_code,
+            this.cg_price_minimum,
+            this.cg_price_suggested,
+            this.cg_price_sale,
+            this.cg_date_received,
+            this.cg_date_expiry,
+            this.cg_date_sold,
+            this.cg_date_paid,
+            this.cg_vendor_first_name,
+            this.cg_vendor_last_name,
+            this.cg_phone,
+            this.cg_first_date_expiry,
+            this.cg_last_date_received,
+            this.cg_total_share,
+            this.cg_total_items,
+            this.cg_status,
+            this.fillercolumn});
             this.dataGridView1.Location = new System.Drawing.Point(12, 53);
             this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.ReadOnly = true;
             this.dataGridView1.RowHeadersVisible = false;
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(595, 230);
+            this.dataGridView1.Size = new System.Drawing.Size(855, 230);
             this.dataGridView1.TabIndex = 2;
+            this.dataGridView1.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellDoubleClick);
             // 
-            // consignment_icon
+            // cg_icon
             // 
-            this.consignment_icon.HeaderText = "";
-            this.consignment_icon.Name = "consignment_icon";
-            this.consignment_icon.Width = 20;
+            this.cg_icon.HeaderText = "";
+            this.cg_icon.Name = "cg_icon";
+            this.cg_icon.ReadOnly = true;
+            this.cg_icon.Width = 20;
             // 
-            // consignment_code
+            // cg_upc
             // 
-            this.consignment_code.HeaderText = "Consignment #";
-            this.consignment_code.Name = "consignment_code";
-            this.consignment_code.Width = 110;
+            this.cg_upc.HeaderText = "UPC";
+            this.cg_upc.Name = "cg_upc";
+            this.cg_upc.ReadOnly = true;
+            this.cg_upc.Visible = false;
             // 
-            // customer_code
+            // cg_consignment_code
             // 
-            this.customer_code.HeaderText = "Vendor Code";
-            this.customer_code.Name = "customer_code";
-            this.customer_code.Width = 110;
+            this.cg_consignment_code.HeaderText = "Consignment #";
+            this.cg_consignment_code.Name = "cg_consignment_code";
+            this.cg_consignment_code.ReadOnly = true;
+            this.cg_consignment_code.Width = 110;
             // 
-            // vendor_first_name
+            // cg_description
             // 
-            this.vendor_first_name.HeaderText = "First Name";
-            this.vendor_first_name.Name = "vendor_first_name";
+            this.cg_description.HeaderText = "Description";
+            this.cg_description.Name = "cg_description";
+            this.cg_description.ReadOnly = true;
+            this.cg_description.Visible = false;
+            this.cg_description.Width = 150;
             // 
-            // vendor_last_name
+            // cg_vendor_code
             // 
-            this.vendor_last_name.HeaderText = "Last Name";
-            this.vendor_last_name.Name = "vendor_last_name";
+            this.cg_vendor_code.HeaderText = "Vendor Code";
+            this.cg_vendor_code.Name = "cg_vendor_code";
+            this.cg_vendor_code.ReadOnly = true;
+            this.cg_vendor_code.Width = 110;
             // 
-            // customer_phone
+            // cg_price_minimum
             // 
-            this.customer_phone.HeaderText = "Telephone #";
-            this.customer_phone.Name = "customer_phone";
+            this.cg_price_minimum.HeaderText = "Minimum Price";
+            this.cg_price_minimum.Name = "cg_price_minimum";
+            this.cg_price_minimum.ReadOnly = true;
+            this.cg_price_minimum.Visible = false;
             // 
-            // date_received
+            // cg_price_suggested
             // 
-            this.date_received.HeaderText = "Received Date";
-            this.date_received.Name = "date_received";
-            this.date_received.Width = 90;
+            this.cg_price_suggested.HeaderText = "Suggested Price";
+            this.cg_price_suggested.Name = "cg_price_suggested";
+            this.cg_price_suggested.ReadOnly = true;
+            this.cg_price_suggested.Visible = false;
             // 
-            // row_total_share
+            // cg_price_sale
+            // 
+            this.cg_price_sale.HeaderText = "Sale Price";
+            this.cg_price_sale.Name = "cg_price_sale";
+            this.cg_price_sale.ReadOnly = true;
+            this.cg_price_sale.Visible = false;
+            // 
+            // cg_date_received
+            // 
+            this.cg_date_received.HeaderText = "Date Received";
+            this.cg_date_received.Name = "cg_date_received";
+            this.cg_date_received.ReadOnly = true;
+            this.cg_date_received.Visible = false;
+            // 
+            // cg_date_expiry
+            // 
+            this.cg_date_expiry.HeaderText = "Expiry Date";
+            this.cg_date_expiry.Name = "cg_date_expiry";
+            this.cg_date_expiry.ReadOnly = true;
+            this.cg_date_expiry.Visible = false;
+            // 
+            // cg_date_sold
+            // 
+            this.cg_date_sold.HeaderText = "Date Sold";
+            this.cg_date_sold.Name = "cg_date_sold";
+            this.cg_date_sold.ReadOnly = true;
+            this.cg_date_sold.Visible = false;
+            // 
+            // cg_date_paid
+            // 
+            this.cg_date_paid.HeaderText = "Date Paid";
+            this.cg_date_paid.Name = "cg_date_paid";
+            this.cg_date_paid.ReadOnly = true;
+            this.cg_date_paid.Visible = false;
+            // 
+            // cg_vendor_first_name
+            // 
+            this.cg_vendor_first_name.HeaderText = "First Name";
+            this.cg_vendor_first_name.Name = "cg_vendor_first_name";
+            this.cg_vendor_first_name.ReadOnly = true;
+            // 
+            // cg_vendor_last_name
+            // 
+            this.cg_vendor_last_name.HeaderText = "Last Name";
+            this.cg_vendor_last_name.Name = "cg_vendor_last_name";
+            this.cg_vendor_last_name.ReadOnly = true;
+            // 
+            // cg_phone
+            // 
+            this.cg_phone.HeaderText = "Telephone #";
+            this.cg_phone.Name = "cg_phone";
+            this.cg_phone.ReadOnly = true;
+            // 
+            // cg_first_date_expiry
+            // 
+            this.cg_first_date_expiry.HeaderText = "First Expiry Date";
+            this.cg_first_date_expiry.Name = "cg_first_date_expiry";
+            this.cg_first_date_expiry.ReadOnly = true;
+            this.cg_first_date_expiry.Width = 120;
+            // 
+            // cg_last_date_received
+            // 
+            this.cg_last_date_received.HeaderText = "Last Rcvd Date";
+            this.cg_last_date_received.Name = "cg_last_date_received";
+            this.cg_last_date_received.ReadOnly = true;
+            this.cg_last_date_received.Width = 120;
+            // 
+            // cg_total_share
             // 
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopRight;
             dataGridViewCellStyle1.Format = "C2";
             dataGridViewCellStyle1.NullValue = null;
-            this.row_total_share.DefaultCellStyle = dataGridViewCellStyle1;
-            this.row_total_share.HeaderText = "Total Share";
-            this.row_total_share.Name = "row_total_share";
+            this.cg_total_share.DefaultCellStyle = dataGridViewCellStyle1;
+            this.cg_total_share.HeaderText = "Total Share";
+            this.cg_total_share.Name = "cg_total_share";
+            this.cg_total_share.ReadOnly = true;
+            this.cg_total_share.Visible = false;
+            this.cg_total_share.Width = 90;
             // 
-            // row_total_items
+            // cg_total_items
             // 
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopRight;
-            this.row_total_items.DefaultCellStyle = dataGridViewCellStyle2;
-            this.row_total_items.HeaderText = "Items";
-            this.row_total_items.Name = "row_total_items";
+            this.cg_total_items.DefaultCellStyle = dataGridViewCellStyle2;
+            this.cg_total_items.HeaderText = "Items";
+            this.cg_total_items.Name = "cg_total_items";
+            this.cg_total_items.ReadOnly = true;
+            this.cg_total_items.Width = 50;
             // 
-            // consignment_status
+            // cg_status
             // 
-            this.consignment_status.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.consignment_status.HeaderText = "";
-            this.consignment_status.Name = "consignment_status";
+            this.cg_status.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.cg_status.HeaderText = "";
+            this.cg_status.MinimumWidth = 20;
+            this.cg_status.Name = "cg_status";
+            this.cg_status.ReadOnly = true;
+            this.cg_status.Width = 20;
+            // 
+            // fillercolumn
+            // 
+            this.fillercolumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.fillercolumn.HeaderText = "";
+            this.fillercolumn.MinimumWidth = 2;
+            this.fillercolumn.Name = "fillercolumn";
+            this.fillercolumn.ReadOnly = true;
             // 
             // panel1
             // 
@@ -390,7 +544,6 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(594, 91);
             this.panel1.TabIndex = 3;
-            this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
             // 
             // groupBox2
             // 
@@ -413,6 +566,7 @@
             this.button4.Size = new System.Drawing.Size(45, 46);
             this.button4.TabIndex = 7;
             this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
             // button3
             // 
@@ -422,6 +576,8 @@
             this.button3.Size = new System.Drawing.Size(45, 46);
             this.button3.TabIndex = 6;
             this.button3.UseVisualStyleBackColor = true;
+            this.button3.Visible = false;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // button2
             // 
@@ -441,6 +597,7 @@
             this.button1.Size = new System.Drawing.Size(45, 46);
             this.button1.TabIndex = 4;
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // groupBox1
             // 
@@ -503,6 +660,7 @@
             this.checkBoxSold.Size = new System.Drawing.Size(15, 14);
             this.checkBoxSold.TabIndex = 1;
             this.checkBoxSold.UseVisualStyleBackColor = true;
+            this.checkBoxSold.CheckedChanged += new System.EventHandler(this.SoldUnsoldCheckedChanged);
             // 
             // checkBoxUnsold
             // 
@@ -514,6 +672,7 @@
             this.checkBoxUnsold.Size = new System.Drawing.Size(15, 14);
             this.checkBoxUnsold.TabIndex = 0;
             this.checkBoxUnsold.UseVisualStyleBackColor = true;
+            this.checkBoxUnsold.CheckedChanged += new System.EventHandler(this.SoldUnsoldCheckedChanged);
             // 
             // imageList1
             // 
@@ -521,12 +680,34 @@
             this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
             this.imageList1.Images.SetKeyName(0, "unsold_icon");
             this.imageList1.Images.SetKeyName(1, "sold_icon");
+            this.imageList1.Images.SetKeyName(2, "partial_icon");
+            // 
+            // imageList2
+            // 
+            this.imageList2.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList2.ImageStream")));
+            this.imageList2.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList2.Images.SetKeyName(0, "Open");
+            this.imageList2.Images.SetKeyName(1, "In Progress");
+            this.imageList2.Images.SetKeyName(2, "Work Completed");
+            this.imageList2.Images.SetKeyName(3, "Pending");
+            this.imageList2.Images.SetKeyName(4, "Cancelled");
+            this.imageList2.Images.SetKeyName(5, "Invoiced");
+            // 
+            // toolStripButton16
+            // 
+            this.toolStripButton16.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton16.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton16.Image")));
+            this.toolStripButton16.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton16.Name = "toolStripButton16";
+            this.toolStripButton16.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton16.Text = "toolStripButton16";
+            this.toolStripButton16.Click += new System.EventHandler(this.toolStripButton16_Click);
             // 
             // consignment_purchase_desktop
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(619, 390);
+            this.ClientSize = new System.Drawing.Size(882, 390);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.toolStrip2);
@@ -574,9 +755,8 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripButton toolStripButton13;
         private System.Windows.Forms.ToolStrip toolStrip2;
-        private System.Windows.Forms.ToolStripLabel toolStripLabel1;
+        private System.Windows.Forms.ToolStripLabel label_searchkey;
         private System.Windows.Forms.ToolStripTextBox toolStripTextBox1;
-        private System.Windows.Forms.ToolStripButton toolStripButton14;
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.ToolStripButton toolStripButton15;
         private System.Windows.Forms.Panel panel1;
@@ -593,15 +773,32 @@
         private System.Windows.Forms.CheckBox checkBoxSold;
         private System.Windows.Forms.CheckBox checkBoxUnsold;
         private System.Windows.Forms.ImageList imageList1;
-        private System.Windows.Forms.DataGridViewImageColumn consignment_icon;
-        private System.Windows.Forms.DataGridViewTextBoxColumn consignment_code;
-        private System.Windows.Forms.DataGridViewTextBoxColumn customer_code;
-        private System.Windows.Forms.DataGridViewTextBoxColumn vendor_first_name;
-        private System.Windows.Forms.DataGridViewTextBoxColumn vendor_last_name;
-        private System.Windows.Forms.DataGridViewTextBoxColumn customer_phone;
-        private System.Windows.Forms.DataGridViewTextBoxColumn date_received;
-        private System.Windows.Forms.DataGridViewTextBoxColumn row_total_share;
-        private System.Windows.Forms.DataGridViewTextBoxColumn row_total_items;
-        private System.Windows.Forms.DataGridViewImageColumn consignment_status;
+        private System.Windows.Forms.DataGridViewTextBoxColumn pg_first_expiry_date;
+        private System.Windows.Forms.DataGridViewTextBoxColumn pg_first_date_expiry;
+        private System.Windows.Forms.ImageList imageList2;
+        private System.Windows.Forms.ToolStripButton toolStripButton14;
+        private System.Windows.Forms.DataGridViewImageColumn cg_icon;
+        private System.Windows.Forms.DataGridViewTextBoxColumn cg_upc;
+        private System.Windows.Forms.DataGridViewTextBoxColumn cg_consignment_code;
+        private System.Windows.Forms.DataGridViewTextBoxColumn cg_description;
+        private System.Windows.Forms.DataGridViewTextBoxColumn cg_vendor_code;
+        private System.Windows.Forms.DataGridViewTextBoxColumn cg_price_minimum;
+        private System.Windows.Forms.DataGridViewTextBoxColumn cg_price_suggested;
+        private System.Windows.Forms.DataGridViewTextBoxColumn cg_price_sale;
+        private System.Windows.Forms.DataGridViewTextBoxColumn cg_date_received;
+        private System.Windows.Forms.DataGridViewTextBoxColumn cg_date_expiry;
+        private System.Windows.Forms.DataGridViewTextBoxColumn cg_date_sold;
+        private System.Windows.Forms.DataGridViewTextBoxColumn cg_date_paid;
+        private System.Windows.Forms.DataGridViewTextBoxColumn cg_vendor_first_name;
+        private System.Windows.Forms.DataGridViewTextBoxColumn cg_vendor_last_name;
+        private System.Windows.Forms.DataGridViewTextBoxColumn cg_phone;
+        private System.Windows.Forms.DataGridViewTextBoxColumn cg_first_date_expiry;
+        private System.Windows.Forms.DataGridViewTextBoxColumn cg_last_date_received;
+        private System.Windows.Forms.DataGridViewTextBoxColumn cg_total_share;
+        private System.Windows.Forms.DataGridViewTextBoxColumn cg_total_items;
+        private System.Windows.Forms.DataGridViewImageColumn cg_status;
+        private System.Windows.Forms.DataGridViewTextBoxColumn fillercolumn;
+        private System.Windows.Forms.ToolStripButton modeDisplay;
+        private System.Windows.Forms.ToolStripButton toolStripButton16;
     }
 }

@@ -194,6 +194,9 @@ namespace Multi_Express_Consignment
                     }
                 }
 
+                // If Result Blank, Set to 0.
+                if (string_input == "") string_input = "0";
+
                 // General Conversion
                 decimal_input = Convert.ToDecimal(string_input);
             }
@@ -247,6 +250,7 @@ namespace Multi_Express_Consignment
                 for (int j = 0; j < Math.Min(search_term.Length, cell_value.Length); j++)
                 {
                     if (search_term[j] == cell_value[j]) sum++; // Check each Letter to produce a Score.
+                    if (search_term[j] != cell_value[j]) break; // Stop searching when incompatible char is reached.
                 }
                 match_score[i] = sum; // Store score.
 

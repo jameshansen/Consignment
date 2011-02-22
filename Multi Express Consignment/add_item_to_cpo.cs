@@ -272,5 +272,21 @@ namespace Multi_Express_Consignment
             }
         }
 
+        private void stringToCurrencyEvt(object sender, EventArgs e)
+        {
+            (sender as MaskedTextBox).Text = stringToCurrency(cg.price((sender as MaskedTextBox).Text));
+
+            //Inputshare only
+            if ((sender as MaskedTextBox).Name == "input_share" && input_share_type.Text == "%")
+            {
+                decimal percentage = Convert.ToDecimal((sender as MaskedTextBox).Text);
+                if (percentage > 100)
+                {
+                    MessageBox.Show("Percentage cannot be greater than 100%", "Alert");
+                    (sender as MaskedTextBox).Text = stringToCurrency("100.00");
+                }
+            }
+        }
+
 }
 }

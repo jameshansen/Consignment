@@ -21,6 +21,8 @@ namespace Multi_Express_Consignment
     {
 
         public string m_mode = "";
+        public int searchCellIndex = 0;
+
 
         public select_vendor_or_customer(string mode)
         {
@@ -31,25 +33,22 @@ namespace Multi_Express_Consignment
         public void gotoList(string search_term)
         {
             // Highlist Record
-            int best_match = searchglobal.findRow(search_term, dataGridView1, 0);
-            dataGridView1.CurrentCell = this.dataGridView1[0, best_match];
+            int best_match = searchglobal.findRow(search_term, dataGridView1, searchCellIndex);
+            dataGridView1.CurrentCell = this.dataGridView1[searchCellIndex, best_match];
 
         }
 
         public void loadList()
         {
+            // Position Search Box
+            textBox1.Left = label1.Left + label1.Width + 10; 
+
             string dbf = "";
             if (m_mode == "vendor") dbf = "PSVEMAST";
             if (m_mode == "customer") dbf = "SFCUMAST";
 
             string query = "SELECT * FROM " + dbf + " ORDER BY CMCUCODE ASC";
-            OleDbCommand accesscommand = new OleDbCommand(query, dbfglobal.dbfCon); // Query -> Result
-            OleDbDataAdapter vendorAdaptor = new OleDbDataAdapter(accesscommand); // Result -> Adaptor
-
-            dbfglobal.dbfCon.Open();
-            DataSet vendor_data = new DataSet();
-            vendorAdaptor.Fill(vendor_data, dbf); // Adaptor -> vendor_data
-            dbfglobal.dbfCon.Close();
+            DataSet vendor_data = mysqlglobal.executeDataSetQuery(query, dbf, this);
 
             dataGridView1.Rows.Clear(); // Empty Data Grid
 
@@ -67,6 +66,10 @@ namespace Multi_Express_Consignment
                 dataGridView1.Rows.Add(outputRow);
 
             }
+
+            // Sort by search key (new)
+            dataGridView1.Sort(dataGridView1.Columns[searchCellIndex], ListSortDirection.Ascending);
+
         }
 
         private void select_vendor_Shown(object sender, EventArgs e)
@@ -108,12 +111,38 @@ namespace Multi_Express_Consignment
         private void button2_Click(object sender, EventArgs e)
         {
             add_vendor av = new add_vendor(this, m_mode);
-            av.ShowDialog(this);
-            if (av.new_entry != "cancelled")
+
+            if (m_mode == "vendor")
             {
-                gotoList(av.new_entry);
-                button1_Click(null, null);
+                //MessageBox.Show(selectedVendor);
+                consignment_purchase_order cpo = null;
+                av.ShowDialog(cpo);
+                if (av.new_entry != "cancelled")
+                {
+                    cpo = new consignment_purchase_order(null, av.new_entry, null);
+                    cpo.Show();
+                    this.Close();
+                    cpo.Focus();
+                }
             }
+
+            if (m_mode == "customer")
+            {
+                //MessageBox.Show(selectedVendor);
+                consignment_sale_order cpo = null;
+                av.ShowDialog(cpo);
+                if (av.new_entry != "cancelled")
+                {
+                    cpo = new consignment_sale_order(null, av.new_entry, null);
+                    cpo.Show();
+                    this.Close();
+                    cpo.Focus();
+                }
+            }
+
+            
+           
+
             
         }
 
@@ -150,14 +179,53 @@ namespace Multi_Express_Consignment
             MessageBox.Show("Selected Row #" + Convert.ToString(dataGridView1.SelectedRows[0].Index) + " out of " + Convert.ToString(dataGridView1.RowCount));
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
 
         private void dataGridView1_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             button1_Click(null, null); // Trigger Select Button Routine
         }
+
+        private void toolStripLabel1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            // Code
+            if (m_mode == "customer")
+            {
+                label1.Text = "Search for Customer Code";
+            }
+            else
+            {
+                label1.Text = "Search for Vendor Code";
+            }
+            searchCellIndex = 0;
+            loadList();
+        }
+
+        private void toolStripButton2_Click(object sender, EventArgs e)
+        {
+            label1.Text = "Search for Phone Number";
+            searchCellIndex = 2;
+            loadList();
+        }
+
+
+        private void toolStripButton4_Click(object sender, EventArgs e)
+        {
+            label1.Text = "Search for Last Name";
+            searchCellIndex = 3;
+            loadList();
+        }
+
+        private void toolStripButton3_Click(object sender, EventArgs e)
+        {
+            label1.Text = "Search for First Name";
+            searchCellIndex = 4;
+            loadList();
+        }
+
     }
 }

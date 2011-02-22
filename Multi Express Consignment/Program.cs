@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using System.Threading;
 
 namespace Multi_Express_Consignment
 {
@@ -15,7 +16,9 @@ namespace Multi_Express_Consignment
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            Form1 form1 = new Form1();
+            Application.ThreadException += new ThreadExceptionEventHandler(form1.UnhandledThreadExceptionHandler);
+            Application.Run(form1);            
         }
     }
 }
