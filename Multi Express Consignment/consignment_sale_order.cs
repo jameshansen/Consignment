@@ -205,13 +205,9 @@ namespace Multi_Express_Consignment
 
             // LOAD UP CUSTOMER FILE
             string query = "SELECT * FROM SFCUMAST WHERE CMCUCODE = \"" + customer_code + "\"";
-            OleDbCommand accesscommand = new OleDbCommand(query, dbfglobal.dbfCon); // Query -> Result
-            OleDbDataAdapter customerAdaptor = new OleDbDataAdapter(accesscommand); // Result -> Adaptor
 
-            dbfglobal.dbfCon.Open();
-            DataSet customer_data = new DataSet();
-            customerAdaptor.Fill(customer_data, "SFCUMAST"); // Adaptor -> customer_data
-            dbfglobal.dbfCon.Close();
+            DataSet customer_data = mysqlglobal.executeDataSetQuery(query, "SFCUMAST", this);
+
             DataRow customer_row = customer_data.Tables["SFCUMAST"].Rows[0]; // customer_data -> customer_row
 
             input_CMADD1.Text = customer_row["CMADD1"].ToString();
@@ -396,17 +392,17 @@ namespace Multi_Express_Consignment
             }
             // If Vendor has been Modified
             if (customerModified == true)
-            {               
-                string CMADD1 = dbfglobal.escapeString(input_CMADD1.Text);
-                string CMADD2 = dbfglobal.escapeString(input_CMADD2.Text);
-                string CMCITY = dbfglobal.escapeString(input_CMCITY.Text);
-                string CMCOUNTRY = dbfglobal.escapeString(input_CMCOUNTRY.Text);
-                string CMCUNAME = dbfglobal.escapeString(input_CMCUNAME.Text);
-                string CMFAX1 = dbfglobal.escapeString(input_CMFAX1.Text);
-                string CMNAME1ST = dbfglobal.escapeString(input_CMNAME1ST.Text);
-                string CMNAMESUR = dbfglobal.escapeString(input_CMNAMESUR.Text);
-                string CMPHONE = dbfglobal.escapeString(input_CMPHONE.Text);
-                string CMSTATE = dbfglobal.escapeString(input_CMSTATE.Text);
+            {
+                string CMADD1 = mysqlglobal.escapeString(input_CMADD1.Text);
+                string CMADD2 = mysqlglobal.escapeString(input_CMADD2.Text);
+                string CMCITY = mysqlglobal.escapeString(input_CMCITY.Text);
+                string CMCOUNTRY = mysqlglobal.escapeString(input_CMCOUNTRY.Text);
+                string CMCUNAME = mysqlglobal.escapeString(input_CMCUNAME.Text);
+                string CMFAX1 = mysqlglobal.escapeString(input_CMFAX1.Text);
+                string CMNAME1ST = mysqlglobal.escapeString(input_CMNAME1ST.Text);
+                string CMNAMESUR = mysqlglobal.escapeString(input_CMNAMESUR.Text);
+                string CMPHONE = mysqlglobal.escapeString(input_CMPHONE.Text);
+                string CMSTATE = mysqlglobal.escapeString(input_CMSTATE.Text);
 
                 string query = 
                 @"UPDATE SFCUMAST SET
@@ -422,12 +418,7 @@ namespace Multi_Express_Consignment
                 `CMSTATE` = """ + CMSTATE + @"""
                 WHERE CMCUCODE = """ + customer_code + @"""";
 
-                //MessageBox.Show(query);
-
-                OleDbCommand accesscommand = new OleDbCommand(query, dbfglobal.dbfCon); // Query
-                dbfglobal.dbfCon.Open();
-                accesscommand.ExecuteNonQuery();
-                dbfglobal.dbfCon.Close();
+                mysqlglobal.executeNonQuery(query, this);
             }
 
 
@@ -625,7 +616,16 @@ namespace Multi_Express_Consignment
 
         private void button7_Click(object sender, EventArgs e)
         {
-            if (Convert.ToDecimal(output_totaloutstanding.Text) <= 0 && Convert.ToDecimal(output_totalowed.Text) > 0 && button1.Text.ToLower() != "invoice")
+            if (Convert.ToDecimal(output_totaloutstanding.Text) > 0)
+            {
+                if (MessageBox.Show("There is $" + output_totaloutstanding.Text + " outstanding for this order. Do you wish to return to the order to complete Payment?","Payment Incomplete",MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1) == DialogResult.Yes) {
+                    return;
+                }
+
+            }
+            
+
+            if (Convert.ToDecimal(output_totaloutstanding.Text) <= 0 && Convert.ToDecimal(output_totalowed.Text) > 0 && statusButton.Text.ToLower() != "invoiced")
             {
                 if (MessageBox.Show("Payment has been received, mark this order as invoice?", "Mark as Invoice", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
@@ -644,11 +644,11 @@ namespace Multi_Express_Consignment
                 if (order_status == "Invoiced")
                 {
 
-                    prt = new print_report(null, order_number, "Sales Receipt");
+                    prt = new print_report(null, order_number, null, "Sales Receipt");
                 }
                 else
                 {
-                    prt = new print_report(null, order_number, "Sales Order");
+                    prt = new print_report(null, order_number, null, "Sales Order");
                 }
                 prt.ShowDialog(this);
             }

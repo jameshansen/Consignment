@@ -115,6 +115,7 @@ namespace Multi_Express_Consignment
             {
                 consignment_code_textbox.Text = "NEW";
                 vendor_code_textbox.Text = vendor_code;
+                setConsignmentStatus("Open");
                 // AUTO-NONREADONLY TEXT BOXES
             }
             // EDIT MODE
@@ -204,13 +205,8 @@ namespace Multi_Express_Consignment
 
             // LOAD UP VENDOR FILE
             string query = "SELECT * FROM PSVEMAST WHERE CMCUCODE = \"" + vendor_code + "\"";
-            OleDbCommand accesscommand = new OleDbCommand(query, dbfglobal.dbfCon); // Query -> Result
-            OleDbDataAdapter vendorAdaptor = new OleDbDataAdapter(accesscommand); // Result -> Adaptor
 
-            dbfglobal.dbfCon.Open();
-            DataSet vendor_data = new DataSet();
-            vendorAdaptor.Fill(vendor_data, "PSVEMAST"); // Adaptor -> vendor_data
-            dbfglobal.dbfCon.Close();
+            DataSet vendor_data = mysqlglobal.executeDataSetQuery(query, "PSVEMAST", this);
             DataRow vendor_row = vendor_data.Tables["PSVEMAST"].Rows[0]; // vendor_data -> vendor_row
 
             input_CMADD1.Text = vendor_row["CMADD1"].ToString();
@@ -270,16 +266,16 @@ namespace Multi_Express_Consignment
             // If Vendor has been Modified
             if (vendorModified == true)
             {               
-                string CMADD1 = dbfglobal.escapeString(input_CMADD1.Text);
-                string CMADD2 = dbfglobal.escapeString(input_CMADD2.Text);
-                string CMCITY = dbfglobal.escapeString(input_CMCITY.Text);
-                string CMCOUNTRY = dbfglobal.escapeString(input_CMCOUNTRY.Text);
-                string CMCUNAME = dbfglobal.escapeString(input_CMCUNAME.Text);
-                string CMFAX1 = dbfglobal.escapeString(input_CMFAX1.Text);
-                string CMNAME1ST = dbfglobal.escapeString(input_CMNAME1ST.Text);
-                string CMNAMESUR = dbfglobal.escapeString(input_CMNAMESUR.Text);
-                string CMPHONE = dbfglobal.escapeString(input_CMPHONE.Text);
-                string CMSTATE = dbfglobal.escapeString(input_CMSTATE.Text);
+                string CMADD1 = mysqlglobal.escapeString(input_CMADD1.Text);
+                string CMADD2 = mysqlglobal.escapeString(input_CMADD2.Text);
+                string CMCITY = mysqlglobal.escapeString(input_CMCITY.Text);
+                string CMCOUNTRY = mysqlglobal.escapeString(input_CMCOUNTRY.Text);
+                string CMCUNAME = mysqlglobal.escapeString(input_CMCUNAME.Text);
+                string CMFAX1 = mysqlglobal.escapeString(input_CMFAX1.Text);
+                string CMNAME1ST = mysqlglobal.escapeString(input_CMNAME1ST.Text);
+                string CMNAMESUR = mysqlglobal.escapeString(input_CMNAMESUR.Text);
+                string CMPHONE = mysqlglobal.escapeString(input_CMPHONE.Text);
+                string CMSTATE = mysqlglobal.escapeString(input_CMSTATE.Text);
 
                 string query = 
                 @"UPDATE PSVEMAST SET
@@ -295,12 +291,9 @@ namespace Multi_Express_Consignment
                 `CMSTATE` = """ + CMSTATE + @"""
                 WHERE CMCUCODE = """ + vendor_code + @"""";
 
-                //MessageBox.Show(query);
 
-                OleDbCommand accesscommand = new OleDbCommand(query, dbfglobal.dbfCon); // Query
-                dbfglobal.dbfCon.Open();
-                accesscommand.ExecuteNonQuery();
-                dbfglobal.dbfCon.Close();
+                mysqlglobal.executeNonQuery(query, this);
+
             }
 
 
@@ -407,7 +400,6 @@ namespace Multi_Express_Consignment
                     `consignment_status` = '" + consignment_status + @"',
                     `date_received` = '" + date_received + @"',
                     `date_expiry` = '" + date_expiry + @"',
-                    `date_sold` = '" + date_sold + @"',
                     `date_paid` = '" + date_paid + @"',
                     `desc_brand` = '" + desc_brand + @"',
                     `desc_gender` = '" + desc_gender + @"',
@@ -700,21 +692,54 @@ namespace Multi_Express_Consignment
 
         private void button7_Click(object sender, EventArgs e)
         {
-            saveItems();
-            if (MessageBox.Show("Do you wish to Print a Consignment Agreement Now?", "Print Consignment Agreement", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (Convert.ToDecimal(output_totaloutstanding.Text) > 0)
             {
-                //printRptConsignment();
-                print_report prt = new print_report(consignment_code, null, "Consignment Agreement");
-                prt.ShowDialog(this);
+                if (MessageBox.Show("There is $" + output_totaloutstanding.Text + " outstanding for this order. Do you wish to return to the order to complete Payment?", "Payment Incomplete", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1) == DialogResult.Yes)
+                {
+                    return;
+                }
+
             }
 
-            timer1.Enabled = true; // Z-Order Fix
-
-            if (MessageBox.Show("Do you wish to Print Item Labels Now?", "Print Consignment Agreement", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (Convert.ToDecimal(output_totaloutstanding.Text) <= 0 && Convert.ToDecimal(output_totalowed.Text) > 0 && statusButton.Text.ToLower() != "invoiced")
             {
-                //printRptConsignment();
-                print_report prt = new print_report(consignment_code, null, "Consignment Barcode Item Labels");
-                prt.ShowDialog(this);
+                if (MessageBox.Show("Payment has been made, mark this consignment as invoiced?", "Mark as Invoiced", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    setConsignmentStatus("Invoiced");
+                }
+            }
+            
+            saveItems();
+
+            if (consignment_status == "Invoiced")
+            {
+                if (MessageBox.Show("Do you wish to Print a Consignment Invoice Now?", "Print Consignment Invoice", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    //printRptConsignment();
+                    print_report prt = new print_report(consignment_code, null, null, "Consignment Invoice");
+                    prt.ShowDialog(this);
+                    timer1.Enabled = true; // Z-Order Fix
+                }
+            }
+            else
+            {
+
+                if (MessageBox.Show("Do you wish to Print a Consignment Agreement Now?", "Print Consignment Agreement", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    //printRptConsignment();
+                    print_report prt = new print_report(consignment_code, null, null, "Consignment Agreement");
+                    prt.ShowDialog(this);
+                    timer1.Enabled = true; // Z-Order Fix
+                }
+
+
+
+                if (MessageBox.Show("Do you wish to Print Item Labels Now?", "Print Consignment Agreement", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    //printRptConsignment();
+                    print_report prt = new print_report(consignment_code, null, null, "Consignment Barcode Item Labels");
+                    prt.ShowDialog(this);
+                }
             }
 
             // Update Purchase Desktop

@@ -44,9 +44,9 @@ namespace Multi_Express_Consignment
             /* Load up Data */
             item_upc.Text = m_upc;
             item_description.Text = m_description;
-            input_price.Text = stringToCurrency(m_price_suggested);
-            item_price_suggested.Text = m_price_suggested;
-            item_price_minimum.Text = m_price_minimum;
+            input_price.Text = stringToCurrency(cg.price(m_price_suggested));
+            item_price_suggested.Text = cg.price(m_price_suggested);
+            item_price_minimum.Text = cg.price(m_price_minimum);
             item_date_expiry.Text = m_date_expiry;
             item_consignment.Text = m_consignment;
 
@@ -130,6 +130,17 @@ namespace Multi_Express_Consignment
             input_price.Text = stringToCurrency(item_price_minimum.Text);
             input_price.Focus();
             input_price.SelectAll();
+        }
+
+        private void stringToCurrencyEvt(object sender, EventArgs e)
+        {
+            (sender as MaskedTextBox).Text = stringToCurrency(cg.price((sender as MaskedTextBox).Text));
+
+        }
+
+        private void input_price_MaskInputRejected(object sender, MaskInputRejectedEventArgs e)
+        {
+
         }
 
 

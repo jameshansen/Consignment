@@ -30,6 +30,7 @@ namespace Multi_Express_Consignment
 
         public string consignment_code = null;
         public string order_number = null;
+        public string item_number = null;
         public string report_code = null;
         public string vendor_code = null;
         public string customer_code = null;
@@ -44,11 +45,12 @@ namespace Multi_Express_Consignment
         public static ReportDocument cryRpt = new ReportDocument();
 
 
-        public print_report(string thisConsignment, string thisOrder, string reportCode)
+        public print_report(string thisConsignment, string thisOrder, string thisItem, string reportCode)
         {
             InitializeComponent();
             consignment_code = thisConsignment;
             order_number = thisOrder;
+            item_number = thisItem;
             report_code = reportCode;
         }
 
@@ -73,13 +75,7 @@ namespace Multi_Express_Consignment
                     return;
                 }
                 string query = "SELECT * FROM PSVEMAST WHERE CMCUCODE = \"" + vendor_code + "\"";
-                OleDbCommand accesscommand = new OleDbCommand(query, dbfglobal.dbfCon); // Query -> Result
-                OleDbDataAdapter vendorAdaptor = new OleDbDataAdapter(accesscommand); // Result -> Adaptor
-
-                dbfglobal.dbfCon.Open();
-                DataSet vendor_data = new DataSet();
-                vendorAdaptor.Fill(vendor_data, "PSVEMAST"); // Adaptor -> vendor_data
-                dbfglobal.dbfCon.Close();
+                DataSet vendor_data = mysqlglobal.executeDataSetQuery(query, "PSVEMAST", this);
                 
                 /* Put Vendor Data into Global DataRow */
                 vendor_detail_row = vendor_data.Tables["PSVEMAST"].Rows[0]; // vendor_data -> vendor_row
@@ -110,17 +106,23 @@ namespace Multi_Express_Consignment
 
 
                 string query = "SELECT * FROM SFCUMAST WHERE CMCUCODE = \"" + customer_code + "\"";
-                OleDbCommand accesscommand = new OleDbCommand(query, dbfglobal.dbfCon); // Query -> Result
-                OleDbDataAdapter customerAdaptor = new OleDbDataAdapter(accesscommand); // Result -> Adaptor
 
-                dbfglobal.dbfCon.Open();
-                DataSet customer_data = new DataSet();
-                customerAdaptor.Fill(customer_data, "SFCUMAST"); // Adaptor -> vendor_data
-                dbfglobal.dbfCon.Close();
+                DataSet customer_data = mysqlglobal.executeDataSetQuery(query, "SFCUMAST", this);
 
                 /* Put Customer Data into Global DataRow */
                 customer_detail_row = customer_data.Tables["SFCUMAST"].Rows[0]; // vendor_data -> vendor_row
-            }            
+            }         
+   
+            /* Item Data for Selected Items */
+            if (item_number != null)
+            {
+                string itemQ = item_number.Replace(",", "\" OR `upc` = \""); // Multi Select
+
+                /* Load Item Data based on Consignment */
+                string strSQL = "SELECT * FROM `CSTITEM` WHERE `upc` = \"" + itemQ + "\"";
+
+                consignment_db = mysqlglobal.executeDataSetQuery(strSQL, "CSTITEM", this); // Fill Consignment_DB CSTITEM File
+            }
 
             /* Default Printer */
             //default_printer.Text = rptwin.viewer.Prin
@@ -134,20 +136,13 @@ namespace Multi_Express_Consignment
             {
                 if (consignment_code != null)
                 {
-                    // Remove All that Start with S-
+                    // Remove All that Don't start with C-
                     try
                     {
-                        if (Convert.ToString(form_list.Items[i]).Substring(0, 2) == "S-")
+                        if (Convert.ToString(form_list.Items[i]).Substring(0, 2) != "C-")
                         {
                             form_list.Items.RemoveAt(i);
                             i = -1; // Start scan again.
-                        }
-                        else
-                        {
-                            if (Convert.ToString(form_list.Items[i]).Substring(0, 2) == "C-")
-                            {
-                                form_list.Items[i] = form_list.Items[i].ToString().Substring(2);
-                            }
                         }
                     }
                     catch
@@ -158,20 +153,13 @@ namespace Multi_Express_Consignment
 
                 if (order_number != null)
                 {
-                    // Remove All that Start with C-
+                    // Remove All that Don't Start with S-
                     try
                     {
-                        if (Convert.ToString(form_list.Items[i]).Substring(0, 2) == "C-")
+                        if (Convert.ToString(form_list.Items[i]).Substring(0, 2) != "S-")
                         {
                             form_list.Items.RemoveAt(i);
                             i = -1; // Start scan again.
-                        }
-                        else
-                        {
-                            if (Convert.ToString(form_list.Items[i]).Substring(0, 2) == "S-")
-                            {
-                                form_list.Items[i] = form_list.Items[i].ToString().Substring(2);
-                            }
                         }
                     }
                     catch
@@ -179,7 +167,38 @@ namespace Multi_Express_Consignment
                         // Skip
                     }
                 }
+                
+                if (item_number != null)
+                {
+                    // Remove All that Don't Start with S-
+                    try
+                    {
+                        if (Convert.ToString(form_list.Items[i]).Substring(0, 2) != "I-")
+                        {
+                            form_list.Items.RemoveAt(i);
+                            i = -1; // Start scan again.
+                        }
+                    }
+                    catch
+                    {
+                        // Skip
+                    }
+                }
+                
 
+            }
+      
+            /* Remove Prefixes */
+            for (int i = 0; i < form_list.Items.Count; i++)
+            {
+                try
+                {
+                    form_list.Items[i] = form_list.Items[i].ToString().Substring(2);
+                }
+                catch
+                {
+                    // Do Nothing
+                }
             }
 
             /* Select Report in List From Report Code */
@@ -196,7 +215,6 @@ namespace Multi_Express_Consignment
             }
 
         }
-
 
         private void standard_headers()
         {
@@ -357,10 +375,31 @@ namespace Multi_Express_Consignment
                 rptwin.viewer.Refresh();
             }
 
+            // 6 - Single Barcode Label
+            if (report_code == "Print Barcode Item Label(s) for Selected Item(s)")
+            {
+                cryRpt.Load("report_barcode_item_labels.rpt");
+
+                /* Specify Form Size */
+                /* 3.5 x 1.0 */
+                //System.Drawing.Printing.PaperSize paperLabel = new System.Drawing.Printing.PaperSize("3.5 x 1.0", 350, 100);
+                /* Connect Report to DataSet */
+                cryRpt.SetDataSource(consignment_db);
+                rptwin.viewer.ReportSource = cryRpt;
+                rptwin.viewer.Refresh();
+
+                labels = true;
+            }
+
 
             /* Final Step */           
             if (((Control)sender).Name == "b_screen")
             {
+                if (labels == true)
+                {
+                    MessageBox.Show("If you decide to print labels from the Report Viewer, please be advised that the paper size may be incorrect and will require correction before printing.", "Message", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+
                 rptwin.Show();
 
                 rptwin.TopMost = true; // Always on top.
@@ -409,6 +448,7 @@ namespace Multi_Express_Consignment
                         }
                         else
                         {
+                            cryRpt.PrintOptions.PrinterName = PrinterName;
                             cryRpt.PrintOptions.DissociatePageSizeAndPrinterPaperSize = true;                            
                             cryRpt.PrintOptions.PaperSize = PaperSize.DefaultPaperSize;
                         }

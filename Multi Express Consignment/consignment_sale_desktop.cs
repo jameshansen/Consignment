@@ -115,13 +115,7 @@ namespace Multi_Express_Consignment
 
                     // Fetch Data on Customer
                     query = "SELECT * FROM SFCUMAST WHERE CMCUCODE = \"" + row["customer_code"] + "\"";
-                    accesscommand = new OleDbCommand(query, dbfglobal.dbfCon); // Query -> Result
-                    customerAdaptor = new OleDbDataAdapter(accesscommand); // Result -> Adaptor
-
-                    dbfglobal.dbfCon.Open();
-                    DataSet customer_data = new DataSet();
-                    customerAdaptor.Fill(customer_data, "SFCUMAST"); // Adaptor -> customer_data
-                    dbfglobal.dbfCon.Close();
+                    DataSet customer_data = mysqlglobal.executeDataSetQuery(query, "SFCUMAST", this);
                     DataRow customer_row = customer_data.Tables["SFCUMAST"].Rows[0]; // customer_data -> customer_row
 
                     // End customer Data Fetch
@@ -158,6 +152,9 @@ namespace Multi_Express_Consignment
                    
                 }
             }
+
+            // Move Cursor to Bottom           
+            if(dataGridView1.Rows.Count > 0) dataGridView1.CurrentCell = dataGridView1[0, dataGridView1.Rows.Count - 1];
 
             /*
             if (listMode == "items")
@@ -248,7 +245,9 @@ namespace Multi_Express_Consignment
 
         private void consignment_sale_desktop_Load(object sender, EventArgs e)
         {
-           
+           // Position in top left.
+            this.Top = 10;
+            this.Left = 10;
         }
 
         private void toolStripButton12_Click(object sender, EventArgs e)
@@ -264,7 +263,7 @@ namespace Multi_Express_Consignment
         {
             // Print Reports
             string selectedOrder = Convert.ToString(dataGridView1.SelectedRows[0].Cells[og_order_number.Index].Value);
-            print_report prt = new print_report(null, selectedOrder, "Order Receipt");
+            print_report prt = new print_report(null, selectedOrder, null, "Order Receipt");
             prt.ShowDialog(this);
            
         }
@@ -398,6 +397,18 @@ namespace Multi_Express_Consignment
             search_key = "order_number";
             label_searchkey.Text = "Search Key: By Order Number";
             loadOrders();
+        }
+
+        private void toolStripButton18_Click(object sender, EventArgs e)
+        {
+            // Weirdly hacked Item Search Form
+
+            if ((this.MdiParent as Form1).item_search_form == null || (this.MdiParent as Form1).item_search_form.IsDisposed == true)
+            {
+                (this.MdiParent as Form1).item_search_form = new item_search(null, null, null, null, null);
+            }
+            (this.MdiParent as Form1).item_search_form.MdiParent = this.MdiParent;
+            (this.MdiParent as Form1).item_search_form.Show();
         }
 
     }

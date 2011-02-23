@@ -30,7 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(consignment_sale_desktop));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -47,6 +47,8 @@
             this.toolStripButton11 = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButton12 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripButton18 = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButton13 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton16 = new System.Windows.Forms.ToolStripButton();
@@ -122,6 +124,8 @@
             this.toolStripButton11,
             this.toolStripSeparator3,
             this.toolStripButton12,
+            this.toolStripSeparator5,
+            this.toolStripButton18,
             this.toolStripSeparator4,
             this.toolStripButton13,
             this.toolStripButton16,
@@ -270,6 +274,22 @@
             this.toolStripButton12.Text = "Refresh";
             this.toolStripButton12.Click += new System.EventHandler(this.toolStripButton12_Click);
             // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripButton18
+            // 
+            this.toolStripButton18.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton18.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton18.Image")));
+            this.toolStripButton18.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton18.Name = "toolStripButton18";
+            this.toolStripButton18.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton18.Text = "toolStripButton10";
+            this.toolStripButton18.ToolTipText = "Open Item Search";
+            this.toolStripButton18.Click += new System.EventHandler(this.toolStripButton18_Click);
+            // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
@@ -382,6 +402,7 @@
             this.og_status,
             this.fillercolumn});
             this.dataGridView1.Location = new System.Drawing.Point(12, 53);
+            this.dataGridView1.MultiSelect = false;
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.RowHeadersVisible = false;
@@ -518,8 +539,8 @@
             // 
             // og_total_items
             // 
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopRight;
-            this.og_total_items.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopRight;
+            this.og_total_items.DefaultCellStyle = dataGridViewCellStyle1;
             this.og_total_items.HeaderText = "Items";
             this.og_total_items.Name = "og_total_items";
             this.og_total_items.ReadOnly = true;
@@ -807,5 +828,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn og_total_amount;
         private System.Windows.Forms.DataGridViewImageColumn og_status;
         private System.Windows.Forms.DataGridViewTextBoxColumn fillercolumn;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+        private System.Windows.Forms.ToolStripButton toolStripButton18;
     }
 }

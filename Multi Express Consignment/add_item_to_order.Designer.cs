@@ -203,7 +203,9 @@
             this.input_price.PromptChar = ' ';
             this.input_price.Size = new System.Drawing.Size(178, 20);
             this.input_price.TabIndex = 8;
+            this.input_price.MaskInputRejected += new System.Windows.Forms.MaskInputRejectedEventHandler(this.input_price_MaskInputRejected);
             this.input_price.KeyDown += new System.Windows.Forms.KeyEventHandler(this.currency_check_KeyDown);
+            this.input_price.Leave += new System.EventHandler(this.stringToCurrencyEvt);
             // 
             // button_price3
             // 

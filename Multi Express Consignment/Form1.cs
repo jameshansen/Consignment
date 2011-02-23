@@ -12,6 +12,7 @@ using System.IO;
 
 using System.Data.OleDb;
 using System.Xml.Serialization;
+using System.Threading;
 
 namespace Multi_Express_Consignment
 {
@@ -28,6 +29,16 @@ namespace Multi_Express_Consignment
         public Form1()
         {
             InitializeComponent();
+        }
+
+
+        public void UnhandledThreadExceptionHandler(object sender, ThreadExceptionEventArgs e) {
+            this.HandleUnhandledException(e.Exception);
+        }
+
+        public void HandleUnhandledException(Exception e) {
+            error_dialog ed = new error_dialog(e);
+            ed.ShowDialog(this);
         }
 
         private void toolStripButton1_Click(object sender, EventArgs e)
@@ -51,6 +62,7 @@ namespace Multi_Express_Consignment
             }
             consignment_purchase_desktop_form.MdiParent = this;
             consignment_purchase_desktop_form.Show();
+            consignment_purchase_desktop_form.Focus();
         }
 
         private void Form1_Shown(object sender, EventArgs e)
@@ -146,6 +158,7 @@ namespace Multi_Express_Consignment
             }
             consignment_sale_desktop_form.MdiParent = this;
             consignment_sale_desktop_form.Show();
+            consignment_sale_desktop_form.Focus();
         }
 
 

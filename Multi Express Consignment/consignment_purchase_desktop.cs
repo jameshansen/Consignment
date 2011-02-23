@@ -131,13 +131,7 @@ namespace Multi_Express_Consignment
 
                     // Fetch Data on Vendor
                     query = "SELECT * FROM PSVEMAST WHERE CMCUCODE = \"" + row["vendor_code"] + "\"";
-                    accesscommand = new OleDbCommand(query, dbfglobal.dbfCon); // Query -> Result
-                    vendorAdaptor = new OleDbDataAdapter(accesscommand); // Result -> Adaptor
-
-                    dbfglobal.dbfCon.Open();
-                    DataSet vendor_data = new DataSet();
-                    vendorAdaptor.Fill(vendor_data, "PSVEMAST"); // Adaptor -> vendor_data
-                    dbfglobal.dbfCon.Close();
+                    DataSet vendor_data = mysqlglobal.executeDataSetQuery(query, "PSVEMAST", this); // Adaptor -> vendor_data
                     DataRow vendor_row = vendor_data.Tables["PSVEMAST"].Rows[0]; // vendor_data -> vendor_row
 
                     // End Vendor Data Fetch
@@ -244,6 +238,9 @@ namespace Multi_Express_Consignment
                 }
             }
 
+            // Move Cursor to Bottom
+            if (dataGridView1.Rows.Count > 0) dataGridView1.CurrentCell = dataGridView1[0, Math.Max(dataGridView1.Rows.Count - 1, 0)];
+
         }
 
         private void consignment_purchase_desktop_Shown(object sender, EventArgs e)
@@ -280,7 +277,9 @@ namespace Multi_Express_Consignment
 
         private void consignment_purchase_desktop_Load(object sender, EventArgs e)
         {
-           
+            // Position in top left.
+            this.Top = 10;
+            this.Left = 10;
         }
 
         private void toolStripButton12_Click(object sender, EventArgs e)
@@ -300,6 +299,7 @@ namespace Multi_Express_Consignment
             modeDisplay.Text = "Item Mode";
             modeDisplay.BackColor = Color.Aqua;
 
+            dataGridView1.MultiSelect = true;
             loadConsignments();
         }
 
@@ -311,16 +311,34 @@ namespace Multi_Express_Consignment
 
             modeDisplay.Text = "Consignment Mode";
             modeDisplay.BackColor = Color.FromArgb(255, 138, 0);
-            
+
+            dataGridView1.MultiSelect = false;
             loadConsignments();
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
             // Print Reports
-            string selectedConsignment = Convert.ToString(dataGridView1.SelectedRows[0].Cells[cg_consignment_code.Index].Value);
-            print_report prt = new print_report(selectedConsignment, null, "Consignment Agreement");
-            prt.ShowDialog(this);
+            if (listMode == "consignment")
+            {
+                string selectedConsignment = Convert.ToString(dataGridView1.SelectedRows[0].Cells[cg_consignment_code.Index].Value);
+                print_report prt = new print_report(selectedConsignment, null, null, "Consignment Agreement");
+                prt.ShowDialog(this);
+            }
+            else
+            {
+                //Enumerate Selected Rows
+                string selectedItems = "";
+                for (int i = 0; i < dataGridView1.SelectedRows.Count; i++)
+                {
+                    selectedItems += "," + Convert.ToString(dataGridView1.SelectedRows[i].Cells[cg_upc.Index].Value);
+                }
+                selectedItems = selectedItems.Substring(1); // Trim First ,
+                print_report prt = new print_report(null, null, selectedItems, "Print Barcode Item Label(s) for Selected Item(s)");
+                prt.ShowDialog(this);
+            }
+
+            
 
            
         }
@@ -452,6 +470,21 @@ namespace Multi_Express_Consignment
             purge_consignments purgeForm = new purge_consignments();
             //purgeForm.MdiParent = this.MdiParent;
             purgeForm.ShowDialog(this);
+        }
+
+        private void toolStripButton17_Click(object sender, EventArgs e)
+        {
+
+            // Weirdly hacked Item Search Form
+
+            if ((this.MdiParent as Form1).item_search_form == null || (this.MdiParent as Form1).item_search_form.IsDisposed == true)
+            {
+                (this.MdiParent as Form1).item_search_form = new item_search(null, null, null, null, null);
+            }
+            (this.MdiParent as Form1).item_search_form.MdiParent = this.MdiParent;
+            (this.MdiParent as Form1).item_search_form.Show();
+            
+            
         }
 
 

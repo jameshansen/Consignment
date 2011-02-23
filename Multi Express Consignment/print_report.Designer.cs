@@ -61,7 +61,8 @@
             "C-Consignment Barcode Item Labels",
             "C-Consignment Invoice",
             "S-Sales Order",
-            "S-Sales Receipt"});
+            "S-Sales Receipt",
+            "I-Print Barcode Item Label(s) for Selected Item(s)"});
             this.form_list.Location = new System.Drawing.Point(6, 19);
             this.form_list.Name = "form_list";
             this.form_list.Size = new System.Drawing.Size(381, 109);
