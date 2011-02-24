@@ -97,7 +97,14 @@ namespace Multi_Express_Consignment
         {
             if (button2.Text == "Select")
             {
-                button2.Text = "Add Payment";
+                if (pe_code.Text == "CASH")
+                {
+                    button2.Text = "Calculate Change and Add Payment";
+                }
+                else
+                {
+                    button2.Text = "Add Payment";
+                }
                 pe_code.Text = Convert.ToString(dataGridView1.SelectedRows[0].Cells[0].Value);
                 pe_description.Text = Convert.ToString(dataGridView1.SelectedRows[0].Cells[1].Value);
 
@@ -108,17 +115,47 @@ namespace Multi_Express_Consignment
                 if (pe_code.Text == "VISA" || pe_code.Text == "MASTERCARD" || pe_code.Text == "AMEX")
                 {
                     pe_expiry.Visible = true;
+                    labelexpiry.Visible = true;
                 }
                 else
                 {
                     pe_expiry.Visible = false;
+                    labelexpiry.Visible = false;
                 }
 
                 pe_code.ReadOnly = true;
                 dataGridView1.Visible = false;
                 panel_step2.Left = dataGridView1.Left;
+
             }
-            else
+
+            /* Cash Only */
+            if (button2.Text == "Calculate Change and Add Payment")
+            {
+                lval_totalcost.Text = cg.price(total_cost);
+                lval_amountpaid.Text = cg.price(pe_payment_total.Text);
+
+                decimal difference = Convert.ToDecimal(lval_amountpaid.Text) - Convert.ToDecimal(ltex_totalcost);
+
+                if (difference > 0)
+                {
+                    // Change
+                    ltex_outstanding.Text = "Change:";
+                    lval_outstanding.Text = cg.price(difference);
+                }
+                else
+                {
+                    // Amount Outstanding
+                    ltex_outstanding.Text = "Amount Outstanding:";
+                    lval_outstanding.Text = cg.price(difference * -1);
+                }
+
+
+
+            }
+            /* End of Cash Only Clause */
+
+            if (button2.Text == "Add Payment")
             {
                 if (m_parent.Name == "consignment_purchase_order")
                 {
@@ -168,5 +205,11 @@ namespace Multi_Express_Consignment
             pe_payment_total.SelectAll();
             selectalldelay.Enabled = false;
         }
+
+        private void stringToCurrencyEvt(object sender, EventArgs e)
+        {
+            (sender as MaskedTextBox).Text = stringToCurrency(cg.price((sender as MaskedTextBox).Text));
+        }
+
     }
 }
