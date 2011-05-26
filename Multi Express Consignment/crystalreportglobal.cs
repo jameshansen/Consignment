@@ -33,7 +33,17 @@ namespace Multi_Express_Consignment
             fieldValue = fieldValue.Replace(Environment.NewLine, "\" + chr(13) + \""); 
 
             /* Set Formula Field */
-            report.DataDefinition.FormulaFields[fieldName].Text = "\"" + fieldValue + "\"";
+            try
+            {
+                report.DataDefinition.FormulaFields[fieldName].Text = "\"" + fieldValue + "\"";
+            }
+            catch (Exception e)
+            {
+                if (e.Message.Substring(0, 14) == "Invalid index.")
+                {
+                    MessageBox.Show(null, "Formula field \"" + fieldName + "\" not found.", "Field not Found", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
+            }
         }
 
         private void crystalreportglobal_Shown(object sender, EventArgs e)
