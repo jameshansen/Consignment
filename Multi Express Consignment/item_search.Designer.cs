@@ -52,24 +52,28 @@
             this.field_1 = new System.Windows.Forms.ComboBox();
             this.button1 = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.openConsignment = new System.Windows.Forms.Button();
+            this.openSale = new System.Windows.Forms.Button();
             this.sg_upc = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.sg_description = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.sg_vendor_code = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.sg_CMNAME1ST = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.sg_CMNAMESUR = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.sg_desc_brand = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.sg_desc_colour = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.sg_desc_size = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.sg_desc_gender = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.sg_desc_garment = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.sg_desc_material = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.sg_desc_colour = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.sg_desc_size = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.sg_consignment_code = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.sg_order_number = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.openConsignment = new System.Windows.Forms.Button();
-            this.openSale = new System.Windows.Forms.Button();
             this.searchpanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
             // searchpanel
             // 
+            this.searchpanel.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.searchpanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.searchpanel.Controls.Add(this.clear_5);
             this.searchpanel.Controls.Add(this.clear_4);
@@ -92,7 +96,7 @@
             this.searchpanel.Controls.Add(this.value_1);
             this.searchpanel.Controls.Add(this.field_1);
             this.searchpanel.Controls.Add(this.button1);
-            this.searchpanel.Location = new System.Drawing.Point(12, 12);
+            this.searchpanel.Location = new System.Drawing.Point(173, 12);
             this.searchpanel.Name = "searchpanel";
             this.searchpanel.Size = new System.Drawing.Size(489, 181);
             this.searchpanel.TabIndex = 0;
@@ -297,16 +301,22 @@
             this.dataGridView1.AllowUserToAddRows = false;
             this.dataGridView1.AllowUserToDeleteRows = false;
             this.dataGridView1.AllowUserToResizeRows = false;
+            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.sg_upc,
             this.sg_description,
+            this.sg_vendor_code,
+            this.sg_CMNAME1ST,
+            this.sg_CMNAMESUR,
             this.sg_desc_brand,
+            this.sg_desc_colour,
+            this.sg_desc_size,
             this.sg_desc_gender,
             this.sg_desc_garment,
             this.sg_desc_material,
-            this.sg_desc_colour,
-            this.sg_desc_size,
             this.sg_consignment_code,
             this.sg_order_number});
             this.dataGridView1.Location = new System.Drawing.Point(12, 210);
@@ -315,11 +325,39 @@
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.RowHeadersVisible = false;
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(489, 186);
+            this.dataGridView1.Size = new System.Drawing.Size(811, 359);
             this.dataGridView1.TabIndex = 1;
             this.dataGridView1.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellClick);
             this.dataGridView1.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellDoubleClick);
             this.dataGridView1.CurrentCellChanged += new System.EventHandler(this.dataGridView1_CurrentCellChanged);
+            // 
+            // openConsignment
+            // 
+            this.openConsignment.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.openConsignment.Enabled = false;
+            this.openConsignment.Image = ((System.Drawing.Image)(resources.GetObject("openConsignment.Image")));
+            this.openConsignment.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.openConsignment.Location = new System.Drawing.Point(173, 575);
+            this.openConsignment.Name = "openConsignment";
+            this.openConsignment.Size = new System.Drawing.Size(235, 23);
+            this.openConsignment.TabIndex = 2;
+            this.openConsignment.Text = "Open Consignment with this Item";
+            this.openConsignment.UseVisualStyleBackColor = true;
+            this.openConsignment.Click += new System.EventHandler(this.openConsignment_Click);
+            // 
+            // openSale
+            // 
+            this.openSale.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.openSale.Enabled = false;
+            this.openSale.Image = ((System.Drawing.Image)(resources.GetObject("openSale.Image")));
+            this.openSale.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.openSale.Location = new System.Drawing.Point(427, 575);
+            this.openSale.Name = "openSale";
+            this.openSale.Size = new System.Drawing.Size(235, 23);
+            this.openSale.TabIndex = 3;
+            this.openSale.Text = "Open Sale with this Item";
+            this.openSale.UseVisualStyleBackColor = true;
+            this.openSale.Click += new System.EventHandler(this.openSale_Click);
             // 
             // sg_upc
             // 
@@ -333,11 +371,41 @@
             this.sg_description.Name = "sg_description";
             this.sg_description.ReadOnly = true;
             // 
+            // sg_vendor_code
+            // 
+            this.sg_vendor_code.HeaderText = "Vendor Code";
+            this.sg_vendor_code.Name = "sg_vendor_code";
+            this.sg_vendor_code.ReadOnly = true;
+            // 
+            // sg_CMNAME1ST
+            // 
+            this.sg_CMNAME1ST.HeaderText = "C. First Name";
+            this.sg_CMNAME1ST.Name = "sg_CMNAME1ST";
+            this.sg_CMNAME1ST.ReadOnly = true;
+            // 
+            // sg_CMNAMESUR
+            // 
+            this.sg_CMNAMESUR.HeaderText = "C. Last Name";
+            this.sg_CMNAMESUR.Name = "sg_CMNAMESUR";
+            this.sg_CMNAMESUR.ReadOnly = true;
+            // 
             // sg_desc_brand
             // 
             this.sg_desc_brand.HeaderText = "Brand";
             this.sg_desc_brand.Name = "sg_desc_brand";
             this.sg_desc_brand.ReadOnly = true;
+            // 
+            // sg_desc_colour
+            // 
+            this.sg_desc_colour.HeaderText = "Colour";
+            this.sg_desc_colour.Name = "sg_desc_colour";
+            this.sg_desc_colour.ReadOnly = true;
+            // 
+            // sg_desc_size
+            // 
+            this.sg_desc_size.HeaderText = "Size";
+            this.sg_desc_size.Name = "sg_desc_size";
+            this.sg_desc_size.ReadOnly = true;
             // 
             // sg_desc_gender
             // 
@@ -357,18 +425,6 @@
             this.sg_desc_material.Name = "sg_desc_material";
             this.sg_desc_material.ReadOnly = true;
             // 
-            // sg_desc_colour
-            // 
-            this.sg_desc_colour.HeaderText = "Colour";
-            this.sg_desc_colour.Name = "sg_desc_colour";
-            this.sg_desc_colour.ReadOnly = true;
-            // 
-            // sg_desc_size
-            // 
-            this.sg_desc_size.HeaderText = "Size";
-            this.sg_desc_size.Name = "sg_desc_size";
-            this.sg_desc_size.ReadOnly = true;
-            // 
             // sg_consignment_code
             // 
             this.sg_consignment_code.HeaderText = "(I) Consignment Code";
@@ -383,37 +439,11 @@
             this.sg_order_number.ReadOnly = true;
             this.sg_order_number.Visible = false;
             // 
-            // openConsignment
-            // 
-            this.openConsignment.Enabled = false;
-            this.openConsignment.Image = ((System.Drawing.Image)(resources.GetObject("openConsignment.Image")));
-            this.openConsignment.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.openConsignment.Location = new System.Drawing.Point(12, 402);
-            this.openConsignment.Name = "openConsignment";
-            this.openConsignment.Size = new System.Drawing.Size(235, 23);
-            this.openConsignment.TabIndex = 2;
-            this.openConsignment.Text = "Open Consignment with this Item";
-            this.openConsignment.UseVisualStyleBackColor = true;
-            this.openConsignment.Click += new System.EventHandler(this.openConsignment_Click);
-            // 
-            // openSale
-            // 
-            this.openSale.Enabled = false;
-            this.openSale.Image = ((System.Drawing.Image)(resources.GetObject("openSale.Image")));
-            this.openSale.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.openSale.Location = new System.Drawing.Point(266, 402);
-            this.openSale.Name = "openSale";
-            this.openSale.Size = new System.Drawing.Size(235, 23);
-            this.openSale.TabIndex = 3;
-            this.openSale.Text = "Open Sale with this Item";
-            this.openSale.UseVisualStyleBackColor = true;
-            this.openSale.Click += new System.EventHandler(this.openSale_Click);
-            // 
             // item_search
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(513, 443);
+            this.ClientSize = new System.Drawing.Size(835, 616);
             this.Controls.Add(this.openSale);
             this.Controls.Add(this.openConsignment);
             this.Controls.Add(this.dataGridView1);
@@ -452,20 +482,23 @@
         private System.Windows.Forms.ComboBox field_2;
         private System.Windows.Forms.Button openConsignment;
         private System.Windows.Forms.Button openSale;
-        private System.Windows.Forms.DataGridViewTextBoxColumn sg_upc;
-        private System.Windows.Forms.DataGridViewTextBoxColumn sg_description;
-        private System.Windows.Forms.DataGridViewTextBoxColumn sg_desc_brand;
-        private System.Windows.Forms.DataGridViewTextBoxColumn sg_desc_gender;
-        private System.Windows.Forms.DataGridViewTextBoxColumn sg_desc_garment;
-        private System.Windows.Forms.DataGridViewTextBoxColumn sg_desc_material;
-        private System.Windows.Forms.DataGridViewTextBoxColumn sg_desc_colour;
-        private System.Windows.Forms.DataGridViewTextBoxColumn sg_desc_size;
-        private System.Windows.Forms.DataGridViewTextBoxColumn sg_consignment_code;
-        private System.Windows.Forms.DataGridViewTextBoxColumn sg_order_number;
         private System.Windows.Forms.Button clear_5;
         private System.Windows.Forms.Button clear_4;
         private System.Windows.Forms.Button clear_3;
         private System.Windows.Forms.Button clear_2;
         private System.Windows.Forms.Button clear_1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn sg_upc;
+        private System.Windows.Forms.DataGridViewTextBoxColumn sg_description;
+        private System.Windows.Forms.DataGridViewTextBoxColumn sg_vendor_code;
+        private System.Windows.Forms.DataGridViewTextBoxColumn sg_CMNAME1ST;
+        private System.Windows.Forms.DataGridViewTextBoxColumn sg_CMNAMESUR;
+        private System.Windows.Forms.DataGridViewTextBoxColumn sg_desc_brand;
+        private System.Windows.Forms.DataGridViewTextBoxColumn sg_desc_colour;
+        private System.Windows.Forms.DataGridViewTextBoxColumn sg_desc_size;
+        private System.Windows.Forms.DataGridViewTextBoxColumn sg_desc_gender;
+        private System.Windows.Forms.DataGridViewTextBoxColumn sg_desc_garment;
+        private System.Windows.Forms.DataGridViewTextBoxColumn sg_desc_material;
+        private System.Windows.Forms.DataGridViewTextBoxColumn sg_consignment_code;
+        private System.Windows.Forms.DataGridViewTextBoxColumn sg_order_number;
     }
 }

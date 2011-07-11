@@ -66,7 +66,7 @@ namespace Multi_Express_Consignment
             dataGridView1.Rows.Clear();
 
             // Load MySQL data
-            MySqlCommand mysqlCmd = null;
+            //MySqlCommand mysqlCmd = null;
 
             // Check options
             bool displayInvoice = checkBoxInvoice.Checked;
@@ -84,7 +84,7 @@ namespace Multi_Express_Consignment
 
             if (displayInvoice && displayOrder) whereQuery = "WHERE `status` = \"invoice\" OR `status` = \"order\"";
 
-            string strSQL = "SELECT * FROM `CSTORDER` " + whereQuery + " ORDER BY `" + search_key + "` ASC";
+            string strSQL = "SELECT * FROM `CSTORDER` " + whereQuery + " ORDER BY `order_number` ASC";
             DataSet item_file = mysqlglobal.executeDataSetQuery(strSQL, "CSTORDER", null);
 
             // Hide all Columns
@@ -208,7 +208,7 @@ namespace Multi_Express_Consignment
                 }
             }
              * */
-
+            toolStripButton13_Click(null, null);
         }
 
         private void consignment_sale_desktop_Shown(object sender, EventArgs e)
@@ -376,15 +376,12 @@ namespace Multi_Express_Consignment
         private void toolStripTextBox1_KeyUp(object sender, KeyEventArgs e)
         {
             int cellIndex = 0;
-            if (search_key == "order_number")
-            {
-                cellIndex = og_order_number.Index;
-            }
-            if (search_key == "upc")
-            {
-                cellIndex = og_upc.Index;
-            } 
+            if (search_key == "order_number") cellIndex = og_order_number.Index;
             
+            if (search_key == "upc")   cellIndex = og_upc.Index;
+
+            if (search_key == "customer_last_name") cellIndex = og_customer_last_name.Index;
+            if (search_key == "customer_first_name") cellIndex = og_customer_first_name.Index;
 
             int best_match = searchglobal.findRow(toolStripTextBox1.Text, dataGridView1, cellIndex);
             dataGridView1.CurrentCell = this.dataGridView1[0, best_match];
@@ -396,7 +393,7 @@ namespace Multi_Express_Consignment
             listMode = "orders";
             search_key = "order_number";
             label_searchkey.Text = "Search Key: By Order Number";
-            loadOrders();
+            //loadOrders();
         }
 
         private void toolStripButton18_Click(object sender, EventArgs e)
@@ -409,6 +406,29 @@ namespace Multi_Express_Consignment
             }
             (this.MdiParent as Form1).item_search_form.MdiParent = this.MdiParent;
             (this.MdiParent as Form1).item_search_form.Show();
+        }
+
+
+        private void toolStripButton20_Click(object sender, EventArgs e)
+        {
+            search_key = "customer_last_name";
+            label_searchkey.Text = "Search Key: By Last Name";
+            dataGridView1.Sort(dataGridView1.Columns[og_customer_last_name.Index],ListSortDirection.Ascending);
+            
+            //loadOrders();
+        }
+
+        private void toolStripButton19_Click(object sender, EventArgs e)
+        {
+            search_key = "customer_first_name";
+            label_searchkey.Text = "Search Key: By First Name";
+            dataGridView1.Sort(dataGridView1.Columns[og_customer_first_name.Index], ListSortDirection.Ascending);
+            //loadOrders();
+        }
+
+        private void toolStripTextBox1_Click(object sender, EventArgs e)
+        {
+
         }
 
     }

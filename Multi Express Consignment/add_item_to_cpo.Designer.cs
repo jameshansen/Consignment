@@ -55,12 +55,13 @@
             this.input_desc_gender = new System.Windows.Forms.ComboBox();
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
+            this.Brandlabel = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.label13 = new System.Windows.Forms.Label();
             this.existing_upc = new System.Windows.Forms.TextBox();
+            this.loadAutocompletes = new System.ComponentModel.BackgroundWorker();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -220,7 +221,6 @@
             // input_description
             // 
             this.input_description.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
-            this.input_description.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
             this.input_description.Location = new System.Drawing.Point(74, 19);
             this.input_description.Name = "input_description";
             this.input_description.Size = new System.Drawing.Size(251, 20);
@@ -242,7 +242,7 @@
             this.groupBox1.Controls.Add(this.input_desc_gender);
             this.groupBox1.Controls.Add(this.label6);
             this.groupBox1.Controls.Add(this.label5);
-            this.groupBox1.Controls.Add(this.label8);
+            this.groupBox1.Controls.Add(this.Brandlabel);
             this.groupBox1.Location = new System.Drawing.Point(12, 203);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(336, 200);
@@ -263,7 +263,6 @@
             // input_desc_size
             // 
             this.input_desc_size.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
-            this.input_desc_size.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.input_desc_size.FormattingEnabled = true;
             this.input_desc_size.Location = new System.Drawing.Point(88, 154);
             this.input_desc_size.Name = "input_desc_size";
@@ -274,7 +273,6 @@
             // input_desc_colour
             // 
             this.input_desc_colour.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
-            this.input_desc_colour.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.input_desc_colour.FormattingEnabled = true;
             this.input_desc_colour.Location = new System.Drawing.Point(88, 127);
             this.input_desc_colour.Name = "input_desc_colour";
@@ -287,7 +285,6 @@
             // input_desc_material
             // 
             this.input_desc_material.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
-            this.input_desc_material.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.input_desc_material.FormattingEnabled = true;
             this.input_desc_material.Location = new System.Drawing.Point(88, 100);
             this.input_desc_material.Name = "input_desc_material";
@@ -300,7 +297,6 @@
             // input_desc_garment
             // 
             this.input_desc_garment.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
-            this.input_desc_garment.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.input_desc_garment.FormattingEnabled = true;
             this.input_desc_garment.Location = new System.Drawing.Point(88, 73);
             this.input_desc_garment.Name = "input_desc_garment";
@@ -313,7 +309,6 @@
             // input_desc_brand
             // 
             this.input_desc_brand.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
-            this.input_desc_brand.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.input_desc_brand.FormattingEnabled = true;
             this.input_desc_brand.Location = new System.Drawing.Point(88, 19);
             this.input_desc_brand.Name = "input_desc_brand";
@@ -379,15 +374,14 @@
             this.label5.Text = "Gender";
             this.label5.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
-            // label8
+            // Brandlabel
             // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(47, 22);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(35, 13);
-            this.label8.TabIndex = 1;
-            this.label8.Text = "Brand";
-            this.label8.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            this.Brandlabel.Location = new System.Drawing.Point(17, 22);
+            this.Brandlabel.Name = "Brandlabel";
+            this.Brandlabel.Size = new System.Drawing.Size(65, 13);
+            this.Brandlabel.TabIndex = 1;
+            this.Brandlabel.Text = "Brand";
+            this.Brandlabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // button1
             // 
@@ -437,11 +431,16 @@
             this.existing_upc.Size = new System.Drawing.Size(314, 20);
             this.existing_upc.TabIndex = 0;
             // 
+            // loadAutocompletes
+            // 
+            this.loadAutocompletes.DoWork += new System.ComponentModel.DoWorkEventHandler(this.loadAutocompletes_DoWork);
+            this.loadAutocompletes.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.loadAutocompletes_RunWorkerCompleted);
+            // 
             // add_item_to_cpo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(360, 517);
+            this.ClientSize = new System.Drawing.Size(360, 522);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
@@ -486,7 +485,7 @@
         private System.Windows.Forms.ComboBox input_desc_gender;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label Brandlabel;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.DateTimePicker input_date_received;
@@ -498,6 +497,7 @@
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.TextBox existing_upc;
+        private System.ComponentModel.BackgroundWorker loadAutocompletes;
 
     }
 }
