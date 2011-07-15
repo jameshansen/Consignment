@@ -21,13 +21,15 @@ namespace Multi_Express_Consignment
     {
 
         public string m_mode = "";
+        public bool m_return_selection = false;
         public int searchCellIndex = 0;
 
 
-        public select_vendor_or_customer(string mode)
+        public select_vendor_or_customer(string mode, bool return_selection = false)
         {
             InitializeComponent();
             m_mode = mode;
+            m_return_selection = return_selection;
         }
 
         public void gotoList(string search_term)
@@ -83,14 +85,27 @@ namespace Multi_Express_Consignment
                 label1.Text = "Search for Customer Code";
                 vendor_code.HeaderText = "Customer Code";
             }
+            else
+            {
+                /* Make Vendor First Name Default */
+                toolStripButton3_Click(null, null);
+            }
 
             loadList();
         }
+
+        public string return_var = "";
 
         private void button1_Click(object sender, EventArgs e)
         {
             string selectedID = Convert.ToString(dataGridView1.SelectedRows[0].Cells[0].Value);
             this.Close();
+
+            if (m_return_selection)
+            {
+                return_var = selectedID;
+                return;
+            }
 
             if (m_mode == "vendor")
             {
