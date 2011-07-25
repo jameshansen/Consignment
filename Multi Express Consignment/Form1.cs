@@ -57,6 +57,8 @@ namespace Multi_Express_Consignment
 
         private void toolStripButton3_Click(object sender, EventArgs e)
         {
+            if (exportCheck()) return;
+
             if(consignment_purchase_desktop_form == null || consignment_purchase_desktop_form.IsDisposed == true) {
                 consignment_purchase_desktop_form = new consignment_purchase_desktop();
             }
@@ -92,12 +94,14 @@ namespace Multi_Express_Consignment
         private void Form1_Load(object sender, EventArgs e)
         {
             // Test Scaling
-            float scaleX = ((float)Screen.PrimaryScreen.WorkingArea.Width / 1024); float scaleY = ((float)Screen.PrimaryScreen.WorkingArea.Height / 768); SizeF aSf = new SizeF(scaleX, scaleY); this.Scale(aSf);
+            //float scaleX = ((float)Screen.PrimaryScreen.WorkingArea.Width / 1024); float scaleY = ((float)Screen.PrimaryScreen.WorkingArea.Height / 768); SizeF aSf = new SizeF(scaleX, scaleY); this.Scale(aSf);
 
         }
 
         private void toolStripButton2_Click(object sender, EventArgs e)
         {
+            if (exportCheck()) return;
+
             if (select_vendor == null)
             {
                 select_vendor = new select_vendor_or_customer("vendor");
@@ -113,6 +117,7 @@ namespace Multi_Express_Consignment
 
         private void toolStripButton4_Click(object sender, EventArgs e)
         {
+            if (exportCheck()) return;
             if (select_vendor == null)
             {
                 select_vendor = new select_vendor_or_customer("customer");
@@ -152,6 +157,7 @@ namespace Multi_Express_Consignment
 
         private void toolStripButton5_Click(object sender, EventArgs e)
         {
+            if (exportCheck()) return;
             if (consignment_sale_desktop_form == null || consignment_sale_desktop_form.IsDisposed == true)
             {
                 consignment_sale_desktop_form = new consignment_sale_desktop();
@@ -164,12 +170,135 @@ namespace Multi_Express_Consignment
 
         private void toolStripButton10_Click(object sender, EventArgs e)
         {
+            if (exportCheck()) return;
             if (item_search_form == null || item_search_form.IsDisposed == true)
             {
                 item_search_form = new item_search(null,null,null,null,null);
             }
             item_search_form.MdiParent = this;
             item_search_form.Show();
+        }
+
+        private bool exportCheck()
+        {
+            // Check if exported flag is set
+            bool exported = File.Exists(Path.GetDirectoryName(Application.ExecutablePath) + @"\exported.flag");
+
+            if (exported)
+            {
+                string dateExport = Convert.ToString(File.GetCreationTime(Path.GetDirectoryName(Application.ExecutablePath) + @"\exported.flag"));
+                if (MessageBox.Show("Data was exported on " + dateExport + " and is awaiting re-import. Any modifications you make will be lost or overwritten when data is imported. Are you sure you want to continue?", "Data Export Lock", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.No)
+                {
+                    // Don't Continue
+                    return true;
+                }
+                else
+                {
+                    // Continue
+                    return false;
+                }
+            }
+
+            // Continue
+            return false;
+        }
+
+        private void exportButton_Click(object sender, EventArgs e)
+        {
+            // Check if exported flag is set
+            bool exported = File.Exists(Path.GetDirectoryName(Application.ExecutablePath) + @"\exported.flag");
+
+            if (exported)
+            {
+                string dateExport = Convert.ToString(File.GetCreationTime(Path.GetDirectoryName(Application.ExecutablePath) + @"\exported.flag"));
+                if (MessageBox.Show("Data was already exported on " + dateExport + " and is awaiting re-import. Continue with Export?\nClicking Yes will also clear the existing Lock, even if you decide not to export.", "Data Already Exported", MessageBoxButtons.YesNo) == DialogResult.No)
+                {
+                    // No...
+                    return;
+                }
+                else
+                {
+                    File.Delete(Path.GetDirectoryName(Application.ExecutablePath) + @"\exported.flag");
+                }
+            }
+            
+            // Close all other windows
+            for (int i = 0; i < Application.OpenForms.Count ; i++)
+            {
+                if (Application.OpenForms[i].Name != "Form1")
+                {
+                    Application.OpenForms[i].Close();
+                    i = 0; // Scan again since array has reindexed.
+                }
+            }
+
+            // Open Export Window          
+            string fileDate = DateTime.Now.ToString(iniglobal.ini.IniReadValue("company","dateFormat"));
+
+            string defaultExportLocation = "";
+            try
+            {
+                defaultExportLocation = iniglobal.ini.IniReadValue("mysql", "exportpath");
+            }
+            catch
+            {
+                // Do nothing
+            }
+
+            if (defaultExportLocation == "")
+            {
+                defaultExportLocation = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            }
+
+            defaultExportLocation += @"\Consignment_Export_" + fileDate + @".sql";
+            exportimport_form export_form = new exportimport_form("export:" + defaultExportLocation);
+            export_form.ShowDialog(this);
+
+
+        }
+
+        private void importButton_Click(object sender, EventArgs e)
+        {
+            // Check if exported flag is set
+            bool exported = File.Exists(Path.GetDirectoryName(Application.ExecutablePath) + @"\exported.flag");
+
+            if (exported)
+            {
+                string dateExport = Convert.ToString(File.GetCreationTime(Path.GetDirectoryName(Application.ExecutablePath) + @"\exported.flag"));
+                MessageBox.Show("Data was last exported on " + dateExport, "Last Exported Date", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+
+            // Close all other windows
+            for (int i = 0; i < Application.OpenForms.Count; i++)
+            {
+                if (Application.OpenForms[i].Name != "Form1")
+                {
+                    Application.OpenForms[i].Close();
+                    i = 0; // Scan again since array has reindexed.
+                }
+            }
+
+            // Open Import Window          
+            string defaultExportLocation = "";
+
+            try
+            {
+                defaultExportLocation = iniglobal.ini.IniReadValue("mysql", "exportpath");
+            }
+            catch
+            {
+                // Do nothing
+            }
+
+            if (defaultExportLocation == "")
+            {
+                defaultExportLocation = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            }
+            exportimport_form export_form = new exportimport_form("import:" + defaultExportLocation);
+            export_form.ShowDialog(this);
+
+
+
         }
 
 
