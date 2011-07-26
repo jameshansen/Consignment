@@ -14,13 +14,43 @@ namespace Multi_Express_Consignment
         public static Form m_parent = null;
         public static string currentStatus;
         public static string newStatus;
+        public bool allow_invoice = true;
 
-        public change_status_cpo(Form calledBy, string status)
+        public change_status_cpo(Form calledBy, string status, string totalowed = null, string totalpaid = null)
         {
             InitializeComponent();
             m_parent = calledBy;
             currentStatus = status;
             newStatus = status;
+
+            if (totalowed != null)
+            {
+                decimal owed = Convert.ToDecimal(totalowed);
+                decimal paid = Convert.ToDecimal(totalpaid);
+
+                if (owed == 0)
+                {
+                    // No money owed, can't invoice.
+                    allow_invoice = false;
+                }
+                else
+                {
+                    if (owed == paid)
+                    {
+                        // Total paid, allow the user to invoice this transaction
+                        allow_invoice = true;
+                    }
+                    else
+                    {
+                        // Total not paid, do not allow them to invoice
+                        allow_invoice = false;
+                    }
+                }
+
+                
+
+            }
+
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -83,6 +113,11 @@ namespace Multi_Express_Consignment
                         // Skip
                     }
                 }
+            }
+
+            if (allow_invoice == false)
+            {
+                radio_invoiced.Enabled = false;
             }
         }
 

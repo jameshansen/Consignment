@@ -16,6 +16,8 @@ namespace Multi_Express_Consignment
             InitializeComponent();
         }
 
+        public bool dontclose = false;
+
         private void textBox1_KeyPress(object sender, KeyPressEventArgs e)
         {
             // Only accept ints
@@ -34,22 +36,14 @@ namespace Multi_Express_Consignment
             DataRow result = results.Tables["CSTITEM"].Rows[0];
 
             input_dateFrom.Value = mysqlglobal.ConvertFromUnixTimestamp(Convert.ToDouble(result["date_received"]));
-            input_numFrom.Text = Convert.ToString(result["consignment_code"]);
         }
 
         private void radioButton1_CheckedChanged(object sender, EventArgs e)
         {
             // Show Date Group
             dateGroup.Left = 12;
-            numberGroup.Left = 277; // Hide off-form
         }
 
-        private void radioButton2_CheckedChanged(object sender, EventArgs e)
-        {
-            // Show Number Group
-            numberGroup.Left = 12;
-            dateGroup.Left = 277; // Hide off-form
-        }
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -67,64 +61,37 @@ namespace Multi_Express_Consignment
                 string dateFromUnixtime = Convert.ToString(mysqlglobal.ConvertToUnixTimestamp(input_dateFrom.Value));
                 string dateToUnixtime   = Convert.ToString(mysqlglobal.ConvertToUnixTimestamp(input_dateTo.Value));
 
-                query += " date_received >= " + dateFromUnixtime + " AND date_received <= " + dateToUnixtime + " ";
+                query += " date_expiry >= " + dateFromUnixtime + " AND date_expiry <= " + dateToUnixtime + " ";
             }
 
-            if (radioButton2.Checked == true)
+            string qpart = "";
+            if (checkBoxSold.Checked)
             {
-                // Number Based
-                string numberFrom = input_numFrom.Text;
-                string numberTo = input_numTo.Text;
-                query += " consignment_code >= " + numberFrom + " AND consignment_code <=" + numberTo + " ";
+                qpart = "status=\"sold\"";
+            }
+            if (checkBoxUnsold.Checked)
+            {
+                qpart = "status=\"unsold\"";
+            }
+            if (checkBoxSold.Checked && checkBoxUnsold.Checked)
+            {
+                qpart = "";
             }
 
-            
+            query += qpart;
 
-            query += "GROUP BY consignment_code ORDER BY `consignment_code` ASC";
+
+            query += " ORDER BY `upc` ASC";
 
             int consignment_count = 0;
 
             DataSet recordsToDelete = mysqlglobal.executeDataSetQuery(query, "CSTITEM", this);
-            consignment_count = recordsToDelete.Tables["CSTITEM"].Rows.Count;
-
-            // Check each consignment against Sold / Unsold Checkboxes. If the consignment is partial it won't be removed unless both are checked.
-            if (checkBoxSold.Checked == false || checkBoxUnsold.Checked == false)
-            {
-                for (int i = consignment_count - 1; i >= 0; i--)
-                {
-                    string consignment_code = Convert.ToString(recordsToDelete.Tables["CSTITEM"].Rows[i]["consignment_code"]);
-                    DataSet consignmentItems = mysqlglobal.executeDataSetQuery("SELECT * FROM `CSTITEM` WHERE consignment_code = " + consignment_code, "CSTITEM", this);
-                    bool deleteThisRow = false;
-
-                    // Scan Consignment
-                    foreach (DataRow itemRow in consignmentItems.Tables["CSTITEM"].Rows)
-                    {
-                        if (Convert.ToString(itemRow["status"]) == "sold" && checkBoxSold.Checked == false)
-                        {
-                            deleteThisRow = true;
-                        }
-
-                        if (Convert.ToString(itemRow["status"]) == "unsold" && checkBoxUnsold.Checked == false)
-                        {
-                            deleteThisRow = true;
-                        }
-                    }
-
-                    // If unmatching item is contained, remove Consignment from Purge list.
-                    if (deleteThisRow)
-                    {
-                        recordsToDelete.Tables["CSTITEM"].Rows.RemoveAt(i);
-                    }
-                }
-            }
-
-            // Recount Rows
-            consignment_count = recordsToDelete.Tables["CSTITEM"].Rows.Count;
+            consignment_count = recordsToDelete.Tables["CSTITEM"].Rows.Count;           
 
             // If Zero
             if (consignment_count == 0)
             {
-                MessageBox.Show("No Consignments Matching the Perameters were Found.", "Empty Set");
+                MessageBox.Show("No items matching given parameters were found.", "Empty Set");
                 return;
             }
 
@@ -132,15 +99,17 @@ namespace Multi_Express_Consignment
             string sOrNo = "s";
             if (consignment_count == 1) sOrNo = "";
 
-            if (MessageBox.Show("Are you sure you wish to purge the selected " + consignment_count.ToString() + " consignment" + sOrNo + "?", "Purge?", MessageBoxButtons.YesNo) == DialogResult.No)
+            if (MessageBox.Show("Are you sure you wish to purge the selected " + consignment_count.ToString() + " items" + sOrNo + "?", "Purge?", MessageBoxButtons.YesNo) == DialogResult.No)
             {
                 return; // Cancel               
             }
 
+            dontclose = true;
+            
+            Application.DoEvents();
             // Otherwise, begin purge
             groupBox1.Visible = false;
             dateGroup.Visible = false;
-            numberGroup.Visible = false;
 
             progressGroup.Left = 12;
             progressBar1.Maximum = consignment_count;
@@ -149,12 +118,26 @@ namespace Multi_Express_Consignment
 
             foreach (DataRow record in recordsToDelete.Tables["CSTITEM"].Rows)
             {
-                currentConsignment.Text = "Purging consignment " + Convert.ToString(record["consignment_code"]);
+                currentConsignment.Text = "Purging item " + Convert.ToString(record["upc"]);
 
-                mysqlglobal.executeNonQuery("DELETE FROM `CSTITEM` WHERE `consignment_code` = " + Convert.ToString(record["consignment_code"]), this);
+                mysqlglobal.executeNonQuery("DELETE FROM `CSTITEM` WHERE `upc` = " + Convert.ToString(record["upc"]), this);
+
+                if (deletePayments.Checked)
+                {
+                    // Check to see if any items remain in consignment
+                    int rCount = Convert.ToInt32(mysqlglobal.executeScalarQuery("SELECT COUNT(*) FROM `CSTITEM` WHERE `consignment_code` = \"" + record["consignment_code"].ToString() + "\"",this));
+                    if (rCount == 0)
+                    {
+                        // No records. Delete Payments for this Consignment.
+                        mysqlglobal.executeNonQuery("DELETE FROM `CSTPAYMENT` WHERE `consignment_code` = " + Convert.ToString(record["consignment_code"]), this);
+
+                    }
+                }
 
                 progressBar1.PerformStep();
+                Application.DoEvents();
             }
+            dontclose = false;
 
             this.Close();
 
@@ -174,6 +157,15 @@ namespace Multi_Express_Consignment
 
         private void label5_Click(object sender, EventArgs e)
         {
+
+        }
+
+        private void purge_consignments_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (dontclose == true)
+            {
+                e.Cancel = true;
+            }
 
         }
     }
