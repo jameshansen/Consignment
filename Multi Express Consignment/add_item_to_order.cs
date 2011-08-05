@@ -19,8 +19,9 @@ namespace Multi_Express_Consignment
         public string m_price_minimum;
         public string m_date_expiry;
         public string m_consignment;
+        public string m_current_price;
 
-        public add_item_to_order(consignment_sale_order calledBy, string upc, string description, string price_suggested, string price_minimum, string date_expiry, string consignment)
+        public add_item_to_order(consignment_sale_order calledBy, string upc, string description, string price_suggested, string price_minimum, string date_expiry, string consignment, string current_price = null)
         {
             InitializeComponent();
             m_parent = calledBy;
@@ -31,6 +32,7 @@ namespace Multi_Express_Consignment
             m_price_minimum = price_minimum;
             m_date_expiry = date_expiry;
             m_consignment = consignment;
+            m_current_price = current_price;
         }
 
         private void add_item_to_order_Load(object sender, EventArgs e)
@@ -44,7 +46,14 @@ namespace Multi_Express_Consignment
             /* Load up Data */
             item_upc.Text = m_upc;
             item_description.Text = m_description;
-            input_price.Text = stringToCurrency(cg.price(m_price_suggested));
+            if (m_current_price == null)
+            {
+                input_price.Text = stringToCurrency(cg.price(m_price_suggested));
+            }
+            else
+            {
+                input_price.Text = stringToCurrency(cg.price(m_current_price));
+            }
             item_price_suggested.Text = cg.price(m_price_suggested);
             item_price_minimum.Text = cg.price(m_price_minimum);
             item_date_expiry.Text = m_date_expiry;

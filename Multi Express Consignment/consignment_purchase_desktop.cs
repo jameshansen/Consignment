@@ -16,10 +16,14 @@ using MySql.Data.Types;
 using System.Data.OleDb;
 using System.Xml.Serialization;
 
+using System.Runtime.InteropServices;
+
 namespace Multi_Express_Consignment
 {
     public partial class consignment_purchase_desktop : Form
     {
+        public int searchCellIndex = 0;
+
         public consignment_purchase_desktop()
         {
             InitializeComponent();
@@ -41,8 +45,17 @@ namespace Multi_Express_Consignment
             panel1.Top = formHeight - 37 - panel1.Height;
         }
 
-        private void toolStripLabel1_Click(object sender, EventArgs e)
+        public void gotoList(string search_term)
         {
+            if (search_key == "consignment_code") searchCellIndex = 2;
+            if (search_key == "upc") searchCellIndex = 1;
+            if (search_key == "vendor_code") searchCellIndex = 4;
+            if (search_key == "CMPHONE") searchCellIndex = 14;
+            if (search_key == "CMNAME1ST") searchCellIndex = 12;
+            if (search_key == "CMNAMESUR") searchCellIndex = 13;
+             
+            int best_match = searchglobal.findRow(search_term, dataGridView1, searchCellIndex);
+            dataGridView1.CurrentCell = this.dataGridView1[searchCellIndex, best_match];
 
         }
 
@@ -59,8 +72,18 @@ namespace Multi_Express_Consignment
 
         public static string search_key = "consignment_code";
 
-        public void loadConsignments()
+        [DllImport("user32.dll")]
+        public static extern bool EnableWindow(IntPtr hwnd, bool bEnable);
+
+        public void loadConsignments(string jump_to_consignment = null)
         {
+
+            // Lock Window
+            EnableWindow(this.Handle, false);
+            loadingPanel.Left = dataGridView1.Left + (dataGridView1.Width / 2) - (loadingPanel.Width / 2);
+            loadingPanel.Visible = true;
+            
+
             // Clear DataGridView
             dataGridView1.Rows.Clear();
 
@@ -73,11 +96,19 @@ namespace Multi_Express_Consignment
 
             string whereQuery = "";
 
+            string strSQL = "";
             if (listMode == "consignment")
             {
 
-                if (displaySold) whereQuery =   "WHERE `consignment_code` IN (SELECT `consignment_code` FROM `CSTITEM` WHERE `status` = \"sold\")";
-                if (displayUnsold) whereQuery = "WHERE `consignment_code` IN (SELECT `consignment_code` FROM `CSTITEM` WHERE `status` = \"unsold\")";
+                //if (displaySold) whereQuery = " AND c.`status` = \"sold\" ";
+                //if (displayUnsold) whereQuery = " AND (GROUP_CONCAT(DISTINCT status) = \"unsold\" OR GROUP_CONCAT(DISTINCT status) = \"sold,unsold\" OR GROUP_CONCAT(DISTINCT status) = \"unsold,sold\") ";
+                //if (displaySold && displayUnsold)
+                whereQuery = "";
+                strSQL = "SELECT c.* , COUNT(*) AS items,GROUP_CONCAT(DISTINCT status) AS all_status, p.cmphone, p.CMNAME1ST, p.CMNAMESUR  FROM `CSTITEM` AS c, `PSVEMAST` AS p WHERE c.vendor_code=p.cmcucode " + whereQuery + " GROUP BY c.consignment_code";
+
+
+                //if (displaySold) whereQuery = "WHERE c.vendor_code=p.cmcucode AND `consignment_code` IN (SELECT `consignment_code` FROM `CSTITEM` WHERE `status` = \"sold\")";
+                //if (displayUnsold) whereQuery = "WHERE c.vendor_code=p.cmcucode AND `consignment_code` IN (SELECT `consignment_code` FROM `CSTITEM` WHERE `status` = \"unsold\")";
                 /* Explanation of the above subquery
                  * SELECT * FROM  `CSTITEM` 
                  * WHERE  `consignment_code` 
@@ -91,15 +122,21 @@ namespace Multi_Express_Consignment
                  * *ALL* the items, not just sold/unsold items, in partially sold consignments are returned.
                  * */
             }
+
             if (listMode == "items")
             {
-                if (displaySold) whereQuery = "WHERE `status` = \"sold\"";
-                if (displayUnsold) whereQuery = "WHERE `status` = \"unsold\"";
+                if (displaySold) whereQuery = "WHERE c.vendor_code=p.cmcucode AND `status` = \"sold\"";
+                if (displayUnsold) whereQuery = "WHERE c.vendor_code=p.cmcucode AND `status` = \"unsold\"";
+                if (displaySold && displayUnsold) whereQuery = "WHERE c.vendor_code=p.cmcucode AND (`status` = \"unsold\" OR `status` = \"sold\")";
+                strSQL = "SELECT c.*, p.cmphone, p.CMNAME1ST, p.CMNAMESUR FROM `CSTITEM` AS c, `PSVEMAST` AS p " + whereQuery + " ORDER BY `upc` ASC";
             }
 
-            if (displaySold && displayUnsold) whereQuery = "WHERE `status` = \"unsold\" OR `status` = \"sold\"";
+           
 
-            string strSQL = "SELECT * FROM `CSTITEM` " + whereQuery + " ORDER BY `" + search_key + "` ASC";
+            //string strSQL = "SELECT c.*, p.cmphone, p.CMNAME1ST, p.CMNAMESUR FROM `CSTITEM` AS c, `PSVEMAST` AS p " + whereQuery + " ORDER BY `" + search_key + "` ASC";
+
+            //strSQL = "SELECT c.*,c.COUNT(*) GROUP BY c.consignment_code";
+
             DataSet item_file = mysqlglobal.executeDataSetQuery(strSQL, "CSTITEM", null);
 
             // Hide all Columns
@@ -109,6 +146,8 @@ namespace Multi_Express_Consignment
             }
 
             fillercolumn.Visible = true;
+
+           
 
             // If in Consignment Mode
             if (listMode == "consignment")
@@ -128,7 +167,7 @@ namespace Multi_Express_Consignment
                 string shareprefix = "";
                 foreach (DataRow row in item_file.Tables["CSTITEM"].Rows)
                 {
-
+                    Application.DoEvents();
                     // Fetch Data on Vendor
                     query = "SELECT * FROM PSVEMAST WHERE CMCUCODE = \"" + row["vendor_code"] + "\"";
                     DataSet vendor_data = mysqlglobal.executeDataSetQuery(query, "PSVEMAST", this); // Adaptor -> vendor_data
@@ -143,19 +182,44 @@ namespace Multi_Express_Consignment
                         DataGridViewRow outputRow = new DataGridViewRow();
                         outputRow.CreateCells(dataGridView1);
 
-                        status = row["status"].ToString();
-                        
-                        if(status == "sold") outputRow.Cells[cg_icon.Index].Value = imageList1.Images[1];
-                        if(status == "unsold") outputRow.Cells[cg_icon.Index].Value = imageList1.Images[0];
+                        status = row["all_status"].ToString();
+
+                        int numeric_status = 0;
+                        if(status == "sold")  numeric_status = 1;
+                        if(status == "unsold")  numeric_status = 0;
+                        if (status == "sold,unsold") numeric_status = 2;
+                        if (status == "unsold,sold") numeric_status = 2;
+
+                        outputRow.Cells[cg_icon.Index].Value = imageList1.Images[numeric_status];
+
+                        if (!displayUnsold)
+                        {
+                            if (numeric_status == 0)
+                            {
+                                continue;
+                            }
+                        }
+
+                        if (!displaySold)
+                        {
+                            if (numeric_status == 1)
+                            {
+                                continue;
+                            }
+                        }
 
                         outputRow.Cells[cg_consignment_code.Index].Value = row["consignment_code"];
                         outputRow.Cells[cg_vendor_code.Index].Value = row["vendor_code"];
 
                         outputRow.Cells[cg_vendor_first_name.Index].Value = vendor_row["CMNAME1ST"]; // Vendor First Name
                         outputRow.Cells[cg_vendor_last_name.Index].Value = vendor_row["CMNAMESUR"]; // Vendor Last Name
-                        outputRow.Cells[cg_phone.Index].Value = vendor_row["CMPHONE"]; // Vendor Last Name
+                        outputRow.Cells[cg_phone.Index].Value = vendor_row["CMPHONE"]; // Vendor Phone
 
-                        outputRow.Cells[cg_total_items.Index].Value = 1;
+                        outputRow.Cells[cg_total_items.Index].Value = row["items"];
+
+                        string all_status = row["all_status"].ToString();
+
+
 
                         if (imageList2.Images.IndexOfKey(row["consignment_status"].ToString()) != -1)
                         {
@@ -166,27 +230,14 @@ namespace Multi_Express_Consignment
                             outputRow.Cells[cg_status.Index].Value = imageList2.Images[0];
                         }
 
-
                         dataGridView1.Rows.Add(outputRow);
-                    }
-                    else
-                    {
-                        var lastRow = dataGridView1.Rows.Count - 1;
-                        dataGridView1.Rows[lastRow].Cells[cg_total_items.Index].Value = Convert.ToString(Convert.ToInt32(dataGridView1.Rows[lastRow].Cells[cg_total_items.Index].Value) + 1);
-
-
-                        if (row["status"].ToString() != status && status != "partial")
-                        {
-                            //MessageBox.Show("First Status in Consignment " + row["consignment_code"] + ": '" + status + "' new status: '" + row["status"].ToString() + "'");
-                            status = "partial";
-                            dataGridView1.Rows[lastRow].Cells[cg_icon.Index].Value = imageList1.Images[2];
-                        }
                     }
 
 
                     prev_consignment_code = Convert.ToString(row["consignment_code"]);
                 }
             }
+            
             if (listMode == "items")
             {
                 // Enable Needed Columni
@@ -206,11 +257,16 @@ namespace Multi_Express_Consignment
                 cg_date_sold.Visible = true;
                 cg_date_paid.Visible = true;
 
+                cg_phone.Visible = true;
+                cg_vendor_first_name.Visible = true;
+                cg_vendor_last_name.Visible = true;
+
                 cg_status.Visible = false;
 
                 string status = "";
                 foreach (DataRow row in item_file.Tables["CSTITEM"].Rows)
                 {
+                    Application.DoEvents();
                     DataGridViewRow outputRow = new DataGridViewRow();
                     outputRow.CreateCells(dataGridView1);
 
@@ -233,13 +289,33 @@ namespace Multi_Express_Consignment
                     outputRow.Cells[cg_date_expiry.Index].Value = mysqlglobal.formatDate(mysqlglobal.ConvertFromUnixTimestamp(Convert.ToDouble(row["date_expiry"])));
                     outputRow.Cells[cg_date_sold.Index].Value = mysqlglobal.formatDate(mysqlglobal.ConvertFromUnixTimestamp(Convert.ToDouble(row["date_sold"])));
                     outputRow.Cells[cg_date_paid.Index].Value = mysqlglobal.formatDate(mysqlglobal.ConvertFromUnixTimestamp(Convert.ToDouble(row["date_paid"])));
-
+                    //// only set when search by phone #
+                    //if (search_key2 == "phone#") outputRow.Cells[cg_phone.Index].Value = mysqlglobal.executeScalarQuery("SELECT cmphone FROM PSVEMAST WHERE CMCUCODE = \"" + row["vendor_code"] + "\"", this);
+                    outputRow.Cells[cg_phone.Index].Value = row["CMPHONE"];
+                    outputRow.Cells[cg_vendor_first_name.Index].Value = row["CMNAME1ST"];
+                    outputRow.Cells[cg_vendor_last_name.Index].Value = row["CMNAMESUR"];
                     dataGridView1.Rows.Add(outputRow);
                 }
             }
 
             // Move Cursor to Bottom
-            if (dataGridView1.Rows.Count > 0) dataGridView1.CurrentCell = dataGridView1[0, Math.Max(dataGridView1.Rows.Count - 1, 0)];
+            if (jump_to_consignment == null || jump_to_consignment == "NEW")
+            {
+                if (dataGridView1.Rows.Count > 0) dataGridView1.CurrentCell = dataGridView1[0, Math.Max(dataGridView1.Rows.Count - 1, 0)];
+            }
+            else
+            {
+                // Move cursor to updated consignment
+                int best_match = searchglobal.findRow(jump_to_consignment, dataGridView1, 2);
+                //MessageBox.Show("Best Match: " + best_match + ". Searched for '" + jump_to_consignment + "'");
+                dataGridView1.CurrentCell = this.dataGridView1[2, best_match];
+            }
+            // Unlock Window
+            EnableWindow(this.Handle, true);
+            loadingPanel.Visible = false;
+            Application.DoEvents();
+            dataGridView1.Refresh();
+
 
         }
 
@@ -290,30 +366,52 @@ namespace Multi_Express_Consignment
 
         public static string listMode = "consignment";
 
+        public bool changeMode(string newMode) {
+            if(listMode == newMode) return false;
+
+            listMode = newMode;
+
+            if (listMode == "items")
+            {
+                modeDisplay.Text = "Display Item"; modeDisplay.BackColor = Color.Aqua;
+                dataGridView1.MultiSelect = true;
+            }
+            if (listMode == "consignment")
+            {
+                modeDisplay.Text = "Display Consignment";
+                modeDisplay.BackColor = Color.FromArgb(255, 138, 0);
+                dataGridView1.MultiSelect = false;
+            }
+
+            return true;
+
+        }
+
         private void toolStripButton15_Click(object sender, EventArgs e)
         {
-            listMode = "items";
+            changeMode("items");
             search_key = "upc";
             label_searchkey.Text = "Search Key: By UPC";
 
-            modeDisplay.Text = "Item Mode";
-            modeDisplay.BackColor = Color.Aqua;
-
             dataGridView1.MultiSelect = true;
             loadConsignments();
+            // clear search text
+            toolStripTextBox1.Text = "";
         }
 
         private void toolStripButton13_Click(object sender, EventArgs e)
         {
-            listMode = "consignment";
+            changeMode("consignment");
             search_key = "consignment_code";
             label_searchkey.Text = "Search Key: By Consignment Code";
 
-            modeDisplay.Text = "Consignment Mode";
+            modeDisplay.Text = "Display Consignment";
             modeDisplay.BackColor = Color.FromArgb(255, 138, 0);
 
             dataGridView1.MultiSelect = false;
             loadConsignments();
+            // clear search text
+            toolStripTextBox1.Text = "";
         }
 
         private void button4_Click(object sender, EventArgs e)
@@ -337,9 +435,6 @@ namespace Multi_Express_Consignment
                 print_report prt = new print_report(null, null, selectedItems, "Print Barcode Item Label(s) for Selected Item(s)");
                 prt.ShowDialog(this);
             }
-
-            
-
            
         }
 
@@ -435,6 +530,7 @@ namespace Multi_Express_Consignment
 
         private void SoldUnsoldCheckedChanged(object sender, EventArgs e)
         {
+            Application.DoEvents();
             loadConsignments();
         }
 
@@ -445,24 +541,14 @@ namespace Multi_Express_Consignment
 
         private void toolStripTextBox1_KeyDown(object sender, KeyEventArgs e)
         {
-
-        }
-
-        private void toolStripTextBox1_KeyUp(object sender, KeyEventArgs e)
-        {
-            int cellIndex = 0;
-            if (search_key == "consignment_code")
+            if (e.KeyCode == Keys.Enter)
             {
-                cellIndex = cg_consignment_code.Index;
+                if (toolStripTextBox1.Text != "")
+                {
+                    // start to search
+                    toolStripButton14_Click(null, null);
+                }
             }
-            if (search_key == "upc")
-            {
-                cellIndex = cg_upc.Index;
-            } 
-            
-
-            int best_match = searchglobal.findRow(toolStripTextBox1.Text, dataGridView1, cellIndex);
-            dataGridView1.CurrentCell = this.dataGridView1[0, best_match];
         }
 
         private void toolStripButton16_Click(object sender, EventArgs e)
@@ -485,6 +571,111 @@ namespace Multi_Express_Consignment
             (this.MdiParent as Form1).item_search_form.Show();
             
             
+        }
+
+        private void toolStripButton18_Click(object sender, EventArgs e)
+        {
+            if ((sender as ToolStripButton).Name != "toolStripButton18")
+            {
+                // Item Mode
+                if (changeMode("items")) loadConsignments();
+            }
+            else
+            {
+                if (changeMode("consignment")) loadConsignments();
+            }
+
+            search_key = "vendor_code";
+            label_searchkey.Text = "Search Key: By Vendor Code";
+
+
+            dataGridView1.MultiSelect = false; // JH: Should this be removed?
+    
+            
+
+            // Sort by search key (new)
+            dataGridView1.Sort(dataGridView1.Columns[cg_vendor_code.Index], ListSortDirection.Ascending);
+            if (dataGridView1.Rows.Count > 0) dataGridView1.CurrentCell = dataGridView1.SelectedCells[0];
+
+            // clear search text
+            toolStripTextBox1.Text = "";
+        }
+
+        private void toolStripButton14_Click(object sender, EventArgs e)
+        {
+            // start to search
+            gotoList(toolStripTextBox1.Text);
+        }
+
+        private void toolStripButton19_Click(object sender, EventArgs e)
+        {
+            if ((sender as ToolStripButton).Name != "toolStripButton19")
+            {
+                // Item Mode
+                if (changeMode("items")) loadConsignments();
+            }
+            else
+            {
+                if (changeMode("consignment")) loadConsignments();
+            }
+            
+            search_key = "CMPHONE";
+            label_searchkey.Text = "Search Key: By Phone #";
+            dataGridView1.MultiSelect = false; // JH: Should this be removed?
+
+
+            // Sort by search key (new)
+            dataGridView1.Sort(dataGridView1.Columns[cg_phone.Index], ListSortDirection.Ascending);
+            if (dataGridView1.Rows.Count > 0) dataGridView1.CurrentCell = dataGridView1.SelectedCells[0];
+
+            // clear search text
+            toolStripTextBox1.Text = "";
+        }
+
+        private void toolStripButton20_Click(object sender, EventArgs e)
+        {
+            if ((sender as ToolStripButton).Name != "toolStripButton20")
+            {
+                // Item Mode
+                if (changeMode("items")) loadConsignments();
+            }
+            else
+            {
+                if (changeMode("consignment")) loadConsignments();
+            }
+            search_key = "CMNAMESUR";
+            label_searchkey.Text = "Search Key: By Last/First Name";
+            dataGridView1.MultiSelect = false; // JH: Should this be removed?
+
+            // Sort by search key (new)
+            dataGridView1.Sort(dataGridView1.Columns[cg_vendor_last_name.Index], ListSortDirection.Ascending);
+            if (dataGridView1.Rows.Count > 0) dataGridView1.CurrentCell = dataGridView1.SelectedCells[0];
+
+            // clear search text
+            toolStripTextBox1.Text = "";
+        }
+
+        private void toolStripButton21_Click(object sender, EventArgs e)
+        {
+            if ((sender as ToolStripButton).Name != "toolStripButton21")
+            {
+                // Item Mode
+                if (changeMode("items")) loadConsignments();
+            }
+            else
+            {
+                if (changeMode("consignment")) loadConsignments();
+            }
+            search_key = "CMNAME1ST";
+            label_searchkey.Text = "Search Key: By First/Last Name";
+            dataGridView1.MultiSelect = false; // JH: Should this be removed?
+
+            // Sort by search key (new)
+            dataGridView1.Sort(dataGridView1.Columns[cg_vendor_first_name.Index], ListSortDirection.Ascending);
+            if(dataGridView1.Rows.Count > 0) dataGridView1.CurrentCell = dataGridView1.SelectedCells[0];
+
+            // clear search text
+            toolStripTextBox1.Text = "";
         }
 
 

@@ -158,7 +158,7 @@
             // input_CMPHONE_b
             // 
             this.input_CMPHONE_b.Location = new System.Drawing.Point(142, 58);
-            this.input_CMPHONE_b.Mask = "999999999999";
+            this.input_CMPHONE_b.Mask = "999-999999999";
             this.input_CMPHONE_b.Name = "input_CMPHONE_b";
             this.input_CMPHONE_b.PromptChar = ' ';
             this.input_CMPHONE_b.Size = new System.Drawing.Size(172, 20);
