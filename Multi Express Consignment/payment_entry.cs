@@ -15,6 +15,8 @@ namespace Multi_Express_Consignment
         public static string vendor_name;
         public static string total_cost;
 
+        public static decimal difference_store;
+
         public payment_entry(Form calledBy, string inVendor_code, string inVendor_name, string inTotal_cost)
         {
             InitializeComponent();
@@ -35,13 +37,11 @@ namespace Multi_Express_Consignment
 
             DataGridViewRow outputRow = null;
             // Create Payment Types
-            outputRow = new DataGridViewRow(); outputRow.CreateCells(dataGridView1);       
-            outputRow.Cells[0].Value = "A/R"; outputRow.Cells[1].Value = "Accounts Receivable"; dataGridView1.Rows.Add(outputRow);
-            pe_code.Text = "A/R";
+            //outputRow = new DataGridViewRow(); outputRow.CreateCells(dataGridView1);       
+            //outputRow.Cells[0].Value = "A/R"; outputRow.Cells[1].Value = "Accounts Receivable"; dataGridView1.Rows.Add(outputRow);
+            pe_code.Text = "CASH";
 
-            outputRow = new DataGridViewRow(); outputRow.CreateCells(dataGridView1);       
-            outputRow.Cells[0].Value = "AMEX"; outputRow.Cells[1].Value = "American Express"; dataGridView1.Rows.Add(outputRow);
-            outputRow = new DataGridViewRow(); outputRow.CreateCells(dataGridView1);  
+            outputRow = new DataGridViewRow(); outputRow.CreateCells(dataGridView1);
             outputRow.Cells[0].Value = "CASH"; outputRow.Cells[1].Value = "CASH"; dataGridView1.Rows.Add(outputRow);
             outputRow = new DataGridViewRow(); outputRow.CreateCells(dataGridView1);  
             outputRow.Cells[0].Value = "CHEQUE"; outputRow.Cells[1].Value = "Cheque"; dataGridView1.Rows.Add(outputRow);
@@ -49,7 +49,8 @@ namespace Multi_Express_Consignment
             outputRow.Cells[0].Value = "MASTERCARD"; outputRow.Cells[1].Value = "Master Card"; dataGridView1.Rows.Add(outputRow);
             outputRow = new DataGridViewRow(); outputRow.CreateCells(dataGridView1);  
             outputRow.Cells[0].Value = "VISA"; outputRow.Cells[1].Value = "VISA"; dataGridView1.Rows.Add(outputRow);
-
+            outputRow = new DataGridViewRow(); outputRow.CreateCells(dataGridView1);
+            outputRow.Cells[0].Value = "DEBIT"; outputRow.Cells[1].Value = "Debit"; dataGridView1.Rows.Add(outputRow);
 
         }
 
@@ -60,6 +61,28 @@ namespace Multi_Express_Consignment
 
         private void button1_Click(object sender, EventArgs e)
         {
+            if (button1.Text == "Close")
+            {
+                /* Complete Cash Payment */
+                if (m_parent.Name == "consignment_purchase_order")
+                {
+                    ((consignment_purchase_order)m_parent).addPayment(pe_code.Text, pe_description.Text, pe_reference.Text, pe_expiry.Text, pe_vendor_code.Text, pe_vendor_name.Text, cg.price(pe_payment_total.Text));
+                    if (difference_store > 0)
+                    {
+                        ((consignment_purchase_order)m_parent).addPayment("CHANGE", "Change from " + cg.price(pe_payment_total.Text), "", "", pe_vendor_code.Text, pe_vendor_name.Text, cg.price(difference_store * -1));
+                    }
+                }
+                if (m_parent.Name == "consignment_sale_order")
+                {
+                    ((consignment_sale_order)m_parent).addPayment(pe_code.Text, pe_description.Text, pe_reference.Text, pe_expiry.Text, pe_vendor_code.Text, pe_vendor_name.Text, cg.price(pe_payment_total.Text));
+                    if (difference_store > 0)
+                    {
+                        ((consignment_sale_order)m_parent).addPayment("CHANGE", "Change from " + cg.price(pe_payment_total.Text), "", "", pe_vendor_code.Text, pe_vendor_name.Text, cg.price(difference_store * -1));
+                    }
+                }
+            }
+
+
             this.Close();
         }
 
@@ -79,27 +102,88 @@ namespace Multi_Express_Consignment
                 input = input + ".00";
             }
 
-            int spaces = 5 - input.IndexOf(".");
+            // New coding to cope with negative numbers 2011-08-08
+            // Masked textbox had to be changed from 999999.9999 to ######.#### to allow the dash
+            int offset = 0;
+            if (output.StartsWith("-")) offset = 1;
+
+            int spaces = 5 - input.IndexOf(".") - offset;
             if (spaces < 1)
             {
                 output = input;
             }
             else
-            {
+            {                
                 for (int i = 0; i <= spaces; i++) output = output + " ";
                 output = output + input;
             }
+
+           
+            
+
+            //MessageBox.Show("Total Cost: " + output);
 
             return output;
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
+            /* Cash Only */
+            if (button2.Text == "Calculate Change and Add Payment")
+            {
+                lval_totalcost.Text = cg.price(total_cost);
+                lval_amountpaid.Text = cg.price(pe_payment_total.Text);
+
+                decimal difference = Convert.ToDecimal(lval_amountpaid.Text) - Convert.ToDecimal(lval_totalcost.Text);
+
+                if (difference > 0)
+                {
+                    // Change
+                    ltex_outstanding.Text = "Change:";
+                    lval_outstanding.Text = cg.price(difference);
+                }
+                else
+                {
+                    // Amount Outstanding
+                    ltex_outstanding.Text = "Amount Outstanding:";
+                    lval_outstanding.Text = cg.price(difference * -1);
+                }
+
+                difference_store = difference;
+
+                panel_step2.Visible = false;
+                panel_step3.Left = dataGridView1.Left;
+
+                button1.Text = "Close";
+                button2.Visible = false;
+                button1.Focus();
+
+
+
+
+            }
+            /* End of Cash Only Clause */
+
+            if (button2.Text == "Add Payment")
+            {
+                if (m_parent.Name == "consignment_purchase_order")
+                {
+                    ((consignment_purchase_order)m_parent).addPayment(pe_code.Text, pe_description.Text, pe_reference.Text, pe_expiry.Text, pe_vendor_code.Text, pe_vendor_name.Text, cg.price(pe_payment_total.Text));
+                }
+                if (m_parent.Name == "consignment_sale_order")
+                {
+                    ((consignment_sale_order)m_parent).addPayment(pe_code.Text, pe_description.Text, pe_reference.Text, pe_expiry.Text, pe_vendor_code.Text, pe_vendor_name.Text, cg.price(pe_payment_total.Text));
+                }
+
+                this.Close();
+            }
+
             if (button2.Text == "Select")
             {
                 if (pe_code.Text == "CASH")
                 {
                     button2.Text = "Calculate Change and Add Payment";
+                    pe_payment_total.Focus();
                 }
                 else
                 {
@@ -129,45 +213,9 @@ namespace Multi_Express_Consignment
 
             }
 
-            /* Cash Only */
-            if (button2.Text == "Calculate Change and Add Payment")
-            {
-                lval_totalcost.Text = cg.price(total_cost);
-                lval_amountpaid.Text = cg.price(pe_payment_total.Text);
-
-                decimal difference = Convert.ToDecimal(lval_amountpaid.Text) - Convert.ToDecimal(ltex_totalcost);
-
-                if (difference > 0)
-                {
-                    // Change
-                    ltex_outstanding.Text = "Change:";
-                    lval_outstanding.Text = cg.price(difference);
-                }
-                else
-                {
-                    // Amount Outstanding
-                    ltex_outstanding.Text = "Amount Outstanding:";
-                    lval_outstanding.Text = cg.price(difference * -1);
-                }
+            
 
 
-
-            }
-            /* End of Cash Only Clause */
-
-            if (button2.Text == "Add Payment")
-            {
-                if (m_parent.Name == "consignment_purchase_order")
-                {
-                    ((consignment_purchase_order)m_parent).addPayment(pe_code.Text, pe_description.Text, pe_reference.Text, pe_expiry.Text, pe_vendor_code.Text, pe_vendor_name.Text, cg.price(pe_payment_total.Text));
-                }
-                if (m_parent.Name == "consignment_sale_order")
-                {
-                    ((consignment_sale_order)m_parent).addPayment(pe_code.Text, pe_description.Text, pe_reference.Text, pe_expiry.Text, pe_vendor_code.Text, pe_vendor_name.Text, cg.price(pe_payment_total.Text));
-                }
-                
-                this.Close();
-            }
         }
 
         private string currencyAlign(string input)
@@ -193,6 +241,10 @@ namespace Multi_Express_Consignment
             {
                 ((Control)sender).Text = currencyAlign(((Control)sender).Text);
             }
+            if (e.KeyCode == Keys.Enter)
+            {
+                button2_Click(null, null);
+            }
         }
 
         private void pe_payment_total_Enter(object sender, EventArgs e)
@@ -209,6 +261,11 @@ namespace Multi_Express_Consignment
         private void stringToCurrencyEvt(object sender, EventArgs e)
         {
             (sender as MaskedTextBox).Text = stringToCurrency(cg.price((sender as MaskedTextBox).Text));
+        }
+
+        private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            button2_Click(null, null);
         }
 
     }

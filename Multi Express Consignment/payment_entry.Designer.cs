@@ -52,13 +52,13 @@
             this.label2 = new System.Windows.Forms.Label();
             this.selectalldelay = new System.Windows.Forms.Timer(this.components);
             this.panel_step3 = new System.Windows.Forms.Panel();
-            this.label6 = new System.Windows.Forms.Label();
-            this.ltex_totalcost = new System.Windows.Forms.Label();
-            this.ltex_amountpaid = new System.Windows.Forms.Label();
-            this.ltex_outstanding = new System.Windows.Forms.Label();
-            this.lval_outstanding = new System.Windows.Forms.Label();
-            this.lval_amountpaid = new System.Windows.Forms.Label();
             this.lval_totalcost = new System.Windows.Forms.Label();
+            this.lval_amountpaid = new System.Windows.Forms.Label();
+            this.lval_outstanding = new System.Windows.Forms.Label();
+            this.ltex_outstanding = new System.Windows.Forms.Label();
+            this.ltex_amountpaid = new System.Windows.Forms.Label();
+            this.ltex_totalcost = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.panel_step2.SuspendLayout();
             this.panel_step3.SuspendLayout();
@@ -99,6 +99,7 @@
             this.dataGridView1.Size = new System.Drawing.Size(369, 213);
             this.dataGridView1.TabIndex = 2;
             this.dataGridView1.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellClick);
+            this.dataGridView1.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellDoubleClick);
             // 
             // payment_code
             // 
@@ -182,7 +183,7 @@
             // pe_payment_total
             // 
             this.pe_payment_total.Location = new System.Drawing.Point(128, 156);
-            this.pe_payment_total.Mask = "999999.9999";
+            this.pe_payment_total.Mask = "######.####";
             this.pe_payment_total.Name = "pe_payment_total";
             this.pe_payment_total.PromptChar = ' ';
             this.pe_payment_total.Size = new System.Drawing.Size(117, 20);
@@ -278,56 +279,16 @@
             this.panel_step3.Size = new System.Drawing.Size(369, 213);
             this.panel_step3.TabIndex = 14;
             // 
-            // label6
+            // lval_totalcost
             // 
-            this.label6.AutoSize = true;
-            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(3, 3);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(154, 20);
-            this.label6.TabIndex = 0;
-            this.label6.Text = "Payment Overview";
-            // 
-            // ltex_totalcost
-            // 
-            this.ltex_totalcost.AutoSize = true;
-            this.ltex_totalcost.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ltex_totalcost.Location = new System.Drawing.Point(89, 41);
-            this.ltex_totalcost.Name = "ltex_totalcost";
-            this.ltex_totalcost.Size = new System.Drawing.Size(104, 20);
-            this.ltex_totalcost.TabIndex = 1;
-            this.ltex_totalcost.Text = "Order Total:";
-            // 
-            // ltex_amountpaid
-            // 
-            this.ltex_amountpaid.AutoSize = true;
-            this.ltex_amountpaid.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ltex_amountpaid.Location = new System.Drawing.Point(77, 61);
-            this.ltex_amountpaid.Name = "ltex_amountpaid";
-            this.ltex_amountpaid.Size = new System.Drawing.Size(116, 20);
-            this.ltex_amountpaid.TabIndex = 2;
-            this.ltex_amountpaid.Text = "Amount Paid:";
-            // 
-            // ltex_outstanding
-            // 
-            this.ltex_outstanding.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ltex_outstanding.Location = new System.Drawing.Point(3, 81);
-            this.ltex_outstanding.Name = "ltex_outstanding";
-            this.ltex_outstanding.Size = new System.Drawing.Size(190, 20);
-            this.ltex_outstanding.TabIndex = 4;
-            this.ltex_outstanding.Text = "Amount Outstanding:";
-            this.ltex_outstanding.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            // 
-            // lval_outstanding
-            // 
-            this.lval_outstanding.AutoSize = true;
-            this.lval_outstanding.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lval_outstanding.ForeColor = System.Drawing.Color.Red;
-            this.lval_outstanding.Location = new System.Drawing.Point(199, 81);
-            this.lval_outstanding.Name = "lval_outstanding";
-            this.lval_outstanding.Size = new System.Drawing.Size(54, 20);
-            this.lval_outstanding.TabIndex = 5;
-            this.lval_outstanding.Text = "$0.00";
+            this.lval_totalcost.AutoSize = true;
+            this.lval_totalcost.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lval_totalcost.ForeColor = System.Drawing.Color.Black;
+            this.lval_totalcost.Location = new System.Drawing.Point(199, 41);
+            this.lval_totalcost.Name = "lval_totalcost";
+            this.lval_totalcost.Size = new System.Drawing.Size(54, 20);
+            this.lval_totalcost.TabIndex = 8;
+            this.lval_totalcost.Text = "$0.00";
             // 
             // lval_amountpaid
             // 
@@ -340,16 +301,56 @@
             this.lval_amountpaid.TabIndex = 7;
             this.lval_amountpaid.Text = "$0.00";
             // 
-            // lval_totalcost
+            // lval_outstanding
             // 
-            this.lval_totalcost.AutoSize = true;
-            this.lval_totalcost.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lval_totalcost.ForeColor = System.Drawing.Color.Black;
-            this.lval_totalcost.Location = new System.Drawing.Point(199, 41);
-            this.lval_totalcost.Name = "lval_totalcost";
-            this.lval_totalcost.Size = new System.Drawing.Size(54, 20);
-            this.lval_totalcost.TabIndex = 8;
-            this.lval_totalcost.Text = "$0.00";
+            this.lval_outstanding.AutoSize = true;
+            this.lval_outstanding.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lval_outstanding.ForeColor = System.Drawing.Color.Red;
+            this.lval_outstanding.Location = new System.Drawing.Point(199, 81);
+            this.lval_outstanding.Name = "lval_outstanding";
+            this.lval_outstanding.Size = new System.Drawing.Size(54, 20);
+            this.lval_outstanding.TabIndex = 5;
+            this.lval_outstanding.Text = "$0.00";
+            // 
+            // ltex_outstanding
+            // 
+            this.ltex_outstanding.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ltex_outstanding.Location = new System.Drawing.Point(3, 81);
+            this.ltex_outstanding.Name = "ltex_outstanding";
+            this.ltex_outstanding.Size = new System.Drawing.Size(190, 20);
+            this.ltex_outstanding.TabIndex = 4;
+            this.ltex_outstanding.Text = "Amount Outstanding:";
+            this.ltex_outstanding.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // ltex_amountpaid
+            // 
+            this.ltex_amountpaid.AutoSize = true;
+            this.ltex_amountpaid.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ltex_amountpaid.Location = new System.Drawing.Point(77, 61);
+            this.ltex_amountpaid.Name = "ltex_amountpaid";
+            this.ltex_amountpaid.Size = new System.Drawing.Size(116, 20);
+            this.ltex_amountpaid.TabIndex = 2;
+            this.ltex_amountpaid.Text = "Amount Paid:";
+            // 
+            // ltex_totalcost
+            // 
+            this.ltex_totalcost.AutoSize = true;
+            this.ltex_totalcost.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ltex_totalcost.Location = new System.Drawing.Point(89, 41);
+            this.ltex_totalcost.Name = "ltex_totalcost";
+            this.ltex_totalcost.Size = new System.Drawing.Size(104, 20);
+            this.ltex_totalcost.TabIndex = 1;
+            this.ltex_totalcost.Text = "Order Total:";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.Location = new System.Drawing.Point(3, 3);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(154, 20);
+            this.label6.TabIndex = 0;
+            this.label6.Text = "Payment Overview";
             // 
             // payment_entry
             // 
@@ -363,11 +364,12 @@
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.pe_code);
             this.Controls.Add(this.label1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "payment_entry";
-            this.Text = "Select Payment";
+            this.Text = "Select and Make Payment";
             this.Load += new System.EventHandler(this.payment_entry_Load);
             this.Shown += new System.EventHandler(this.payment_entry_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();

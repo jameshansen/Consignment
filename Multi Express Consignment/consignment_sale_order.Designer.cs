@@ -56,6 +56,7 @@
             this.input_CMFAX1 = new System.Windows.Forms.TextBox();
             this.label16 = new System.Windows.Forms.Label();
             this.input_CMPHONE = new System.Windows.Forms.TextBox();
+            this.date_order = new System.Windows.Forms.DateTimePicker();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.button10 = new System.Windows.Forms.Button();
             this.button9 = new System.Windows.Forms.Button();
@@ -74,6 +75,7 @@
             this.pg_status = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.button5 = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.button13 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.input_item = new System.Windows.Forms.TextBox();
@@ -99,12 +101,16 @@
             this.label14 = new System.Windows.Forms.Label();
             this.output_totalbeforetax = new System.Windows.Forms.TextBox();
             this.label17 = new System.Windows.Forms.Label();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.button12 = new System.Windows.Forms.Button();
+            this.button11 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            this.groupBox5.SuspendLayout();
             this.SuspendLayout();
             // 
             // customer_code_textbox
@@ -290,7 +296,7 @@
             this.groupBox2.Controls.Add(this.input_CMPHONE);
             this.groupBox2.Location = new System.Drawing.Point(379, 35);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(227, 150);
+            this.groupBox2.Size = new System.Drawing.Size(227, 128);
             this.groupBox2.TabIndex = 28;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Details";
@@ -362,6 +368,16 @@
             this.input_CMPHONE.ReadOnly = true;
             this.input_CMPHONE.Size = new System.Drawing.Size(143, 20);
             this.input_CMPHONE.TabIndex = 21;
+            // 
+            // date_order
+            // 
+            this.date_order.Enabled = false;
+            this.date_order.Location = new System.Drawing.Point(9, 14);
+            this.date_order.Name = "date_order";
+            this.date_order.Size = new System.Drawing.Size(143, 20);
+            this.date_order.TabIndex = 31;
+            this.date_order.CloseUp += new System.EventHandler(this.date_order_CloseUp);
+            this.date_order.ValueChanged += new System.EventHandler(this.date_order_CloseUp);
             // 
             // groupBox3
             // 
@@ -522,7 +538,7 @@
             // 
             this.button5.BackColor = System.Drawing.Color.White;
             this.button5.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button5.Location = new System.Drawing.Point(379, 191);
+            this.button5.Location = new System.Drawing.Point(379, 172);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(227, 28);
             this.button5.TabIndex = 31;
@@ -532,23 +548,34 @@
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.button13);
             this.groupBox4.Controls.Add(this.button4);
             this.groupBox4.Controls.Add(this.button2);
             this.groupBox4.Controls.Add(this.input_item);
             this.groupBox4.Controls.Add(this.label13);
             this.groupBox4.Controls.Add(this.dataGridView1);
-            this.groupBox4.Location = new System.Drawing.Point(12, 225);
+            this.groupBox4.Location = new System.Drawing.Point(12, 272);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(594, 206);
+            this.groupBox4.Size = new System.Drawing.Size(594, 159);
             this.groupBox4.TabIndex = 32;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Manage Items in Order";
             // 
+            // button13
+            // 
+            this.button13.Location = new System.Drawing.Point(419, 22);
+            this.button13.Name = "button13";
+            this.button13.Size = new System.Drawing.Size(78, 20);
+            this.button13.TabIndex = 20;
+            this.button13.Text = "Edit Item";
+            this.button13.UseVisualStyleBackColor = true;
+            this.button13.Click += new System.EventHandler(this.button13_Click_1);
+            // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(480, 22);
+            this.button4.Location = new System.Drawing.Point(503, 22);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(101, 20);
+            this.button4.Size = new System.Drawing.Size(78, 20);
             this.button4.TabIndex = 19;
             this.button4.Text = "Remove Item";
             this.button4.UseVisualStyleBackColor = true;
@@ -594,12 +621,12 @@
             this.ig_display_date_sold,
             this.ig_date_sold,
             this.ig_status});
-            this.dataGridView1.Location = new System.Drawing.Point(12, 50);
+            this.dataGridView1.Location = new System.Drawing.Point(12, 48);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.RowHeadersVisible = false;
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(569, 150);
+            this.dataGridView1.Size = new System.Drawing.Size(569, 105);
             this.dataGridView1.TabIndex = 1;
             // 
             // ig_upc
@@ -773,11 +800,44 @@
             this.label17.TabIndex = 49;
             this.label17.Text = "+ 12% HST";
             // 
+            // groupBox5
+            // 
+            this.groupBox5.Controls.Add(this.button12);
+            this.groupBox5.Controls.Add(this.button11);
+            this.groupBox5.Controls.Add(this.date_order);
+            this.groupBox5.Location = new System.Drawing.Point(12, 225);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(466, 41);
+            this.groupBox5.TabIndex = 50;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "Order Date";
+            // 
+            // button12
+            // 
+            this.button12.Location = new System.Drawing.Point(268, 13);
+            this.button12.Name = "button12";
+            this.button12.Size = new System.Drawing.Size(188, 21);
+            this.button12.TabIndex = 33;
+            this.button12.Text = "Update All Items with New Date";
+            this.button12.UseVisualStyleBackColor = true;
+            this.button12.Click += new System.EventHandler(this.button12_Click_1);
+            // 
+            // button11
+            // 
+            this.button11.Location = new System.Drawing.Point(160, 13);
+            this.button11.Name = "button11";
+            this.button11.Size = new System.Drawing.Size(102, 21);
+            this.button11.TabIndex = 32;
+            this.button11.Text = "Change Date";
+            this.button11.UseVisualStyleBackColor = true;
+            this.button11.Click += new System.EventHandler(this.button11_Click_1);
+            // 
             // consignment_sale_order
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(619, 753);
+            this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.label17);
             this.Controls.Add(this.label14);
             this.Controls.Add(this.output_totalbeforetax);
@@ -818,6 +878,7 @@
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            this.groupBox5.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -895,5 +956,10 @@
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.TextBox output_totalbeforetax;
         private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.DateTimePicker date_order;
+        private System.Windows.Forms.GroupBox groupBox5;
+        private System.Windows.Forms.Button button11;
+        private System.Windows.Forms.Button button12;
+        private System.Windows.Forms.Button button13;
     }
 }
