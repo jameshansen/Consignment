@@ -13,6 +13,8 @@ using MySql.Data;
 using MySql.Data.MySqlClient;
 using MySql.Data.Types;
 
+using System.Threading;
+
 namespace Multi_Express_Consignment
 {
     public partial class add_item_to_cpo : Form
@@ -46,8 +48,17 @@ namespace Multi_Express_Consignment
             m_rowIndex = rowIndex;
         }
 
+        public string brandfieldasremarks = "N";
         private void add_item_to_cpo_Shown(object sender, EventArgs e)
         {
+            // Brand Field as Remarks 2011-07-11
+            brandfieldasremarks = iniglobal.ini.IniReadValue("company", "brandfieldasremarks");
+
+            if (brandfieldasremarks == "Y")
+            {
+                Brandlabel.Text = "Remarks";
+                input_desc_brand.AutoCompleteMode = AutoCompleteMode.None; // Disable Auto Complete
+            }
 
             // Drop Down Share Type Default
             input_share_type.SelectedIndex = input_share_type.FindString(@"%");
@@ -55,42 +66,81 @@ namespace Multi_Express_Consignment
             // Clear existing UPC since no two items would have the same
             existing_upc.Text = "";
 
-            // Expiry Date Default
+            // Old Expiry Date Default
             // Date 1: 31st January
             // Date 2: 30th June
 
-            if (DateTime.Now.Month < 6)
+            // New Expiry Date Default as of 2011-07-11
+            // Date 1: 28th February
+            // Date 2: 31st August
+
+            DateTime expiry1 = new DateTime(DateTime.Now.Year, 2, 28); // Feb 28 Current Year
+            DateTime expiry2 = new DateTime(DateTime.Now.Year, 8, 31); // August 31 Current Year
+            DateTime expiry3 = new DateTime(DateTime.Now.Year + 1, 2, 28); // Feb 28 Next Year
+
+            if (DateTime.Now < expiry3)
+            {
+                input_date_expiry.Value = expiry3;
+            }
+            if (DateTime.Now < expiry2)
+            {
+                input_date_expiry.Value = expiry2;
+            }
+            if (DateTime.Now < expiry1)
+            {
+                input_date_expiry.Value = expiry1;
+            }
+
+            /*
+            if (DateTime.Now.Month < 8) // 6 = June Expiry Month
             {
                 // June Expiry
-                input_date_expiry.Value = new DateTime(DateTime.Now.Year, 6, 30);
+                //input_date_expiry.Value = new DateTime(DateTime.Now.Year, 6, 30);
+
+                // August Expiry
+                input_date_expiry.Value = new DateTime(DateTime.Now.Year, 8, 31);
             }
             else
             {
                 // Jan Year + 1 Expiry
-                input_date_expiry.Value = new DateTime(DateTime.Now.Year + 1, 1, 31);
+                //input_date_expiry.Value = new DateTime(DateTime.Now.Year + 1, 1, 31);
+
+                // Feb Year/+1 Expiry
+                if (DateTime.Now.Month == 1)
+                {
+                    input_date_expiry.Value = 
+                }
+                else
+                {
+                    input_date_expiry.Value = new DateTime(DateTime.Now.Year + 1, 1, 31);
+                }
             }
+             */
 
             // Load up Row Data if in Edit Mode
             if (m_rowIndex >= 0)
             {
                 this.Text = "Edit Item in Consignment Order";
                 button2.Text = "Save Changes";
-                input_description.Text = Convert.ToString(m_parent.dataGridView1.Rows[m_rowIndex].Cells[2].Value);
-                input_price_minimum.Text = stringToCurrency(Convert.ToString(m_parent.dataGridView1.Rows[m_rowIndex].Cells[3].Value));
-                input_price_suggested.Text = stringToCurrency(Convert.ToString(m_parent.dataGridView1.Rows[m_rowIndex].Cells[4].Value));
-                input_share.Text = stringToCurrency(Convert.ToString(m_parent.dataGridView1.Rows[m_rowIndex].Cells[6].Value));
-                input_share_type.SelectedIndex = input_share_type.FindString(Convert.ToString(m_parent.dataGridView1.Rows[m_rowIndex].Cells[7].Value));
+
+                // 2011-08-19 Change Absolute Cell Indexes to Cell Index References to fix Transpose problem.
+
+                input_description.Text = Convert.ToString(m_parent.dataGridView1.Rows[m_rowIndex].Cells[m_parent.ig_description.Index].Value);
+                input_price_minimum.Text = stringToCurrency(Convert.ToString(m_parent.dataGridView1.Rows[m_rowIndex].Cells[m_parent.ig_price_minimum.Index].Value));
+                input_price_suggested.Text = stringToCurrency(Convert.ToString(m_parent.dataGridView1.Rows[m_rowIndex].Cells[m_parent.ig_price_suggested.Index].Value));
+                input_share.Text = stringToCurrency(Convert.ToString(m_parent.dataGridView1.Rows[m_rowIndex].Cells[m_parent.ig_share.Index].Value));
+                input_share_type.SelectedIndex = input_share_type.FindString(Convert.ToString(m_parent.dataGridView1.Rows[m_rowIndex].Cells[m_parent.ig_share_type.Index].Value));
 
                 // Load Received and Expiry Dates
-                input_date_received.Value = mysqlglobal.ConvertFromUnixTimestamp(Convert.ToDouble(m_parent.dataGridView1.Rows[m_rowIndex].Cells[8].Value));
-                input_date_expiry.Value = mysqlglobal.ConvertFromUnixTimestamp(Convert.ToDouble(m_parent.dataGridView1.Rows[m_rowIndex].Cells[9].Value));
+                input_date_received.Value = mysqlglobal.ConvertFromUnixTimestamp(Convert.ToDouble(m_parent.dataGridView1.Rows[m_rowIndex].Cells[m_parent.ig_date_received.Index].Value));
+                input_date_expiry.Value = mysqlglobal.ConvertFromUnixTimestamp(Convert.ToDouble(m_parent.dataGridView1.Rows[m_rowIndex].Cells[m_parent.ig_date_expiry.Index].Value));
 
-                input_desc_brand.Text = Convert.ToString(m_parent.dataGridView1.Rows[m_rowIndex].Cells[13].Value);
-                input_desc_gender.SelectedIndex = input_desc_gender.FindString(Convert.ToString(m_parent.dataGridView1.Rows[m_rowIndex].Cells[14].Value));
-                input_desc_garment.Text = Convert.ToString(m_parent.dataGridView1.Rows[m_rowIndex].Cells[15].Value);
-                input_desc_material.Text = Convert.ToString(m_parent.dataGridView1.Rows[m_rowIndex].Cells[16].Value);
-                input_desc_colour.Text = Convert.ToString(m_parent.dataGridView1.Rows[m_rowIndex].Cells[17].Value);
-                input_desc_size.Text = Convert.ToString(m_parent.dataGridView1.Rows[m_rowIndex].Cells[18].Value);
+                input_desc_brand.Text = Convert.ToString(m_parent.dataGridView1.Rows[m_rowIndex].Cells[m_parent.ig_desc_brand.Index].Value);
+                input_desc_gender.SelectedIndex = input_desc_gender.FindString(Convert.ToString(m_parent.dataGridView1.Rows[m_rowIndex].Cells[m_parent.ig_desc_gender.Index].Value));
+                input_desc_garment.Text = Convert.ToString(m_parent.dataGridView1.Rows[m_rowIndex].Cells[m_parent.ig_desc_garment.Index].Value);
+                input_desc_material.Text = Convert.ToString(m_parent.dataGridView1.Rows[m_rowIndex].Cells[m_parent.ig_desc_material.Index].Value);
+                input_desc_colour.Text = Convert.ToString(m_parent.dataGridView1.Rows[m_rowIndex].Cells[m_parent.ig_desc_colour.Index].Value);
+                input_desc_size.Text = Convert.ToString(m_parent.dataGridView1.Rows[m_rowIndex].Cells[m_parent.ig_desc_size.Index].Value);
             }
             else
             {
@@ -103,23 +153,7 @@ namespace Multi_Express_Consignment
 
 
             // Compile matrix lists
-            string strSQL = "SELECT * FROM `CSTITEM`";
-            MySqlCommand mysqlCmd = new MySqlCommand(strSQL, mysqlglobal.mysqlCon);
-            MySqlDataAdapter myDA = new MySqlDataAdapter(mysqlCmd);
-            DataSet item_file = new DataSet();
-            myDA.Fill(item_file, "CSTITEM");
-
-
-
-            foreach (DataRow row in item_file.Tables["CSTITEM"].Rows)
-            {
-                if (input_desc_brand.Items.IndexOf(row["desc_brand"]) == -1) input_desc_brand.Items.Add(row["desc_brand"]);
-                if (input_desc_garment.Items.IndexOf(row["desc_garment"]) == -1) input_desc_garment.Items.Add(row["desc_garment"]);
-                if (input_desc_material.Items.IndexOf(row["desc_material"]) == -1) input_desc_material.Items.Add(row["desc_material"]);
-                if (input_desc_colour.Items.IndexOf(row["desc_colour"]) == -1) input_desc_colour.Items.Add(row["desc_colour"]);
-                if (input_desc_size.Items.IndexOf(row["desc_size"]) == -1) input_desc_size.Items.Add(row["desc_size"]);
-                if (input_description.AutoCompleteCustomSource.IndexOf(Convert.ToString(row["description"])) == -1) input_description.AutoCompleteCustomSource.Add(Convert.ToString(row["description"]));
-            }
+            loadAutocompletes.RunWorkerAsync();
 
             // Focus on Description
             input_description.Focus();
@@ -286,6 +320,47 @@ namespace Multi_Express_Consignment
                     (sender as MaskedTextBox).Text = stringToCurrency("100.00");
                 }
             }
+        }
+
+        private void loadAutocompletes_DoWork(object sender, DoWorkEventArgs e)
+        {
+            // Compile matrix lists
+            string strSQL = "SELECT * FROM `CSTITEM`";
+            MySqlCommand mysqlCmd = new MySqlCommand(strSQL, mysqlglobal.mysqlCon);
+            MySqlDataAdapter myDA = new MySqlDataAdapter(mysqlCmd);
+            DataSet item_file = new DataSet();
+            myDA.Fill(item_file, "CSTITEM");
+
+            foreach (DataRow row in item_file.Tables["CSTITEM"].Rows)
+            {
+                Application.DoEvents();
+                if (input_desc_brand.Items.IndexOf(Convert.ToString(row["desc_brand"])) == -1) input_desc_brand.Items.Add(Convert.ToString(row["desc_brand"]));
+                if (input_desc_garment.Items.IndexOf(Convert.ToString(row["desc_garment"])) == -1) input_desc_garment.Items.Add(Convert.ToString(row["desc_garment"]));
+                if (input_desc_material.Items.IndexOf(Convert.ToString(row["desc_material"])) == -1) input_desc_material.Items.Add(Convert.ToString(row["desc_material"]));
+                if (input_desc_colour.Items.IndexOf(Convert.ToString(row["desc_colour"])) == -1) input_desc_colour.Items.Add(Convert.ToString(row["desc_colour"]));
+                if (input_desc_size.Items.IndexOf(Convert.ToString(row["desc_size"])) == -1) input_desc_size.Items.Add(Convert.ToString(row["desc_size"]));
+                if (input_description.AutoCompleteCustomSource.IndexOf(Convert.ToString(row["description"])) == -1) this.input_description.AutoCompleteCustomSource.Add(Convert.ToString(row["description"]));               
+                
+            }
+
+
+        }
+
+        private void loadAutocompletes_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (e.Error != null)
+            {
+                error_dialog ed = new error_dialog(e.Error);
+                ed.ShowDialog(this);
+                return;
+            }
+
+            input_desc_brand.AutoCompleteSource = AutoCompleteSource.ListItems;
+            input_desc_garment.AutoCompleteSource = AutoCompleteSource.ListItems;
+            input_desc_material.AutoCompleteSource = AutoCompleteSource.ListItems;
+            input_desc_colour.AutoCompleteSource = AutoCompleteSource.ListItems;
+            input_desc_size.AutoCompleteSource = AutoCompleteSource.ListItems;
+            input_description.AutoCompleteSource = AutoCompleteSource.CustomSource;
         }
 
 }

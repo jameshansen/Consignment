@@ -36,6 +36,7 @@ namespace Multi_Express_Consignment
         public static bool customerModified = false;
         public static bool read_only = false;
 
+        public DateTime old_date;
 
         public static string order_status = null;
 
@@ -135,6 +136,9 @@ namespace Multi_Express_Consignment
 
                 customer_code = Convert.ToString(order_row["customer_code"]);
                 order_status = Convert.ToString(order_row["order_status"]);
+
+                old_date = mysqlglobal.ConvertFromUnixTimestamp(Convert.ToInt64(order_row["date_order"])); // New 2011-08-08
+                date_order.Value = mysqlglobal.ConvertFromUnixTimestamp(Convert.ToInt64(order_row["date_order"]));
 
                 setOrderStatus(order_status); // Blank Status Button Fix
 
@@ -288,8 +292,8 @@ namespace Multi_Express_Consignment
             // customer_code
             string customer_first_name = mysqlglobal.escapeString(input_CMNAME1ST.Text);
             string customer_last_name = mysqlglobal.escapeString(input_CMNAMESUR.Text);
-            string date_order = Convert.ToString(mysqlglobal.ConvertToUnixTimestamp(DateTime.Now)); // Now the order is placed
-            string items = Convert.ToString(dataGridView1.Rows.Count);
+            string date_order_str = Convert.ToString(mysqlglobal.ConvertToUnixTimestamp(date_order.Value)); // Now the order is placed
+            string items = Convert.ToString(dataGridView1.DisplayedRowCount(true)); // Visible Row Count! Deleted items are invisible
             string total = output_totalowed.Text; // Must do CalcTotals beforehand
 
             if (order_status == "Invoiced")
@@ -325,7 +329,7 @@ namespace Multi_Express_Consignment
                     """ + customer_code + @""",
                     """ + customer_first_name + @""",
                     """ + customer_last_name + @""",
-                    """ + date_order + @""",
+                    """ + date_order_str + @""",
                     """ + items + @""",
                     """ + total + @""")";
             }
@@ -338,6 +342,7 @@ namespace Multi_Express_Consignment
                     `order_status` = """ + order_status + @""",
                     `customer_first_name` = """ + customer_first_name + @""",
                     `customer_last_name` = """ + customer_last_name + @""",
+                    `date_order` = """ + date_order_str + @""",
                     `items` = """ + items + @""",
                     `total` = """ + total + @""" WHERE `order_number` = '" + order_number + "'";                
             }
@@ -357,6 +362,31 @@ namespace Multi_Express_Consignment
             if (read_only == false)
             {
                 // Update Items with Sold Date and Order Number
+                // JH: New 2 passes, so that deleted are removed, then new are saved.
+                for (int i = records - 1; i >= 0; i--) // Has to do a backwards for loop, last row is row 0.
+                {
+                    string upc = Convert.ToString(dataGridView1.Rows[i].Cells[ig_upc.Index].Value);
+                    string date_sold = Convert.ToString(dataGridView1.Rows[i].Cells[ig_date_sold.Index].Value);
+                    string price_sale = Convert.ToString(dataGridView1.Rows[i].Cells[ig_price_sale.Index].Value);
+                    string item_status = Convert.ToString(dataGridView1.Rows[i].Cells[ig_status.Index].Value);
+
+                    string strSQL;
+
+                    
+                    if (item_status == "Deleted") 
+                    {
+                        strSQL =
+                               @"UPDATE `CSTITEM` SET
+                    `order_number` = '0',
+                    `customer_code` = '',
+                    `price_sale` = '',
+                    `date_sold` = '',
+                    `status` = 'unsold' WHERE `upc` = '" + upc + "'";
+                     mysqlglobal.executeNonQuery(strSQL, this);
+                    }
+                    
+                }
+
                 for (int i = records - 1; i >= 0; i--) // Has to do a backwards for loop, last row is row 0.
                 {
                     string upc = Convert.ToString(dataGridView1.Rows[i].Cells[ig_upc.Index].Value);
@@ -376,19 +406,11 @@ namespace Multi_Express_Consignment
                     `price_sale` = '" + price_sale + @"',
                     `date_sold` = '" + date_sold + @"',
                     `status` = 'sold' WHERE `upc` = '" + upc + "'";
+                        mysqlglobal.executeNonQuery(strSQL, this);
                     }
-                    else
-                    {
-                        strSQL =
-                               @"UPDATE `CSTITEM` SET
-                    `order_number` = '0',
-                    `customer_code` = '',
-                    `price_sale` = '',
-                    `date_sold` = '',
-                    `status` = 'unsold' WHERE `upc` = '" + upc + "'";
-                    }
-                    mysqlglobal.executeNonQuery(strSQL, this);
+
                 }
+
             }
             // If Vendor has been Modified
             if (customerModified == true)
@@ -442,6 +464,7 @@ namespace Multi_Express_Consignment
                 string strSQL = "";
                 if (payment_status != "Deleted")
                 {
+
                     if (payment_id == "")
                     {
                         // Insert into Database
@@ -502,8 +525,41 @@ namespace Multi_Express_Consignment
             outputRow.Cells[pg_desc.Index].Value = payment_description;
             outputRow.Cells[pg_cn.Index].Value = payment_reference;
             outputRow.Cells[pg_expiry.Index].Value = payment_expiry;
-            outputRow.Cells[pg_display_date.Index].Value = mysqlglobal.formatDate(DateTime.Now);
-            outputRow.Cells[pg_date.Index].Value = Convert.ToString(mysqlglobal.ConvertToUnixTimestamp(DateTime.Now));
+            if (date_order.Enabled && dataGridView2.DisplayedRowCount(true) == 0) // ONLY FIRST OR SINGLE PAYMENT CAN BE BACKDATED
+            {
+                if (MessageBox.Show("Would you like to Backdate this Payment to the Specified Order Date?", "Backdate Payment", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    outputRow.Cells[pg_display_date.Index].Value = mysqlglobal.formatDate(date_order.Value);
+                    // Forgot to add UNIXTIME DATE!
+                    outputRow.Cells[pg_date.Index].Value = mysqlglobal.ConvertToUnixTimestamp(date_order.Value).ToString();
+
+                }
+                else
+                {
+                    outputRow.Cells[pg_display_date.Index].Value = mysqlglobal.formatDate(DateTime.Now);
+                    outputRow.Cells[pg_date.Index].Value = mysqlglobal.ConvertToUnixTimestamp(DateTime.Now).ToString();
+                }
+            }
+            else
+            {
+                outputRow.Cells[pg_display_date.Index].Value = mysqlglobal.formatDate(DateTime.Now);
+                outputRow.Cells[pg_date.Index].Value = mysqlglobal.ConvertToUnixTimestamp(DateTime.Now).ToString();
+            }
+
+            if (dataGridView2.DisplayedRowCount(true) > 0)
+            {                
+                // New, Warn about Adding Payment IF Date is different
+                if (MessageBox.Show("Adding an additional payment will change the date of this order, is this OK?", "Backdate Payment", MessageBoxButtons.YesNo) == DialogResult.No)
+                {
+                    return; // Don't add payment
+                }
+
+                old_date = DateTime.Now;
+                date_order.Value = old_date;
+
+            }
+
+            //outputRow.Cells[pg_date.Index].Value = Convert.ToString(mysqlglobal.ConvertToUnixTimestamp(DateTime.Now));
             outputRow.Cells[pg_amount.Index].Value = cg.price(payment_amount);
 
             outputRow.Cells[pg_vendor_code.Index].Value = payment_customer_code;
@@ -552,9 +608,12 @@ namespace Multi_Express_Consignment
             int item_records = dataGridView1.RowCount;
             for (int i = item_records - 1; i >= 0; i--) // Has to do a backwards for loop, last row is row 0.
             {
-                
+                /* Fixed Totalling Problem if Item Deleted 2011-07-08 */
+                if (dataGridView1.Rows[i].Visible == true)
+                {
                     decimal sold_row = Convert.ToDecimal(dataGridView1.Rows[i].Cells[ig_price_sale.Index].Value);
                     totalBeforeTax = totalBeforeTax + sold_row;
+                }
             }
 
             output_totalbeforetax.Text = cg.price(totalBeforeTax);
@@ -585,6 +644,16 @@ namespace Multi_Express_Consignment
 
         private void button6_Click(object sender, EventArgs e)
         {
+            /* JH: Limited to ONE payment per order.
+             * This is so the Daily Sales Report has no Problem.
+             * 
+             * If this is removed, the logic in the Daily Sales Report should be fixed, otherwise multiple dates will mess up daily/monthly total.
+             * 
+             * TODO
+             */
+
+            
+
             // Open enter Payment window
             string vendor_name = input_CMNAME1ST.Text + " " + input_CMNAMESUR.Text;
             string totalcost = output_totaloutstanding.Text;
@@ -654,6 +723,8 @@ namespace Multi_Express_Consignment
             }
             
             // Update Sale Desktop
+            this.Close();
+
             foreach (Form form_search in Application.OpenForms)
             {
                 if (form_search.Name == "consignment_sale_desktop")
@@ -701,13 +772,19 @@ namespace Multi_Express_Consignment
             // Mark Row as Deleted
             dataGridView2.SelectedRows[0].Cells[pg_status.Index].Value = "Deleted";
 
+            // If Status is Invoiced, Change it to Open
+            if (statusButton.Text == "Invoiced")
+            {
+                setOrderStatus("Open");
+            }
+
             // Calc Totals
             calcTotals();
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            change_status_cpo statusWin = new change_status_cpo(this,order_status);
+            change_status_cpo statusWin = new change_status_cpo(this,statusButton.Text,output_totalowed.Text,output_totalpaid.Text);
             statusWin.ShowDialog(this);
         }
 
@@ -723,6 +800,23 @@ namespace Multi_Express_Consignment
         {
             bool notFound = true;
 
+            /* Look for item in current DataGridView (2011-07-08) */
+            
+            for (int a = 0; a < dataGridView1.Rows.Count; a++)
+            {
+                if (dataGridView1.Rows[a].Visible == true)/* Flail. Should SKIP deleted (hidden) items (2011-08-05) */
+                {
+                    string upcC = dataGridView1.Rows[a].Cells[ig_upc.Index].Value.ToString();
+                    if (upcC == upc)
+                    {
+                        // A1
+                        MessageBox.Show("This item has already been added to this order.", "Item Already Added");
+                        return;
+                    }
+                }    
+
+            }
+
             /* Look for exact Match */
             string strSQL = "SELECT * FROM `CSTITEM` WHERE `upc` = \"" + upc + "\"";
             DataSet results = mysqlglobal.executeDataSetQuery(strSQL, "CSTITEM", this);
@@ -734,8 +828,13 @@ namespace Multi_Express_Consignment
                 /* Check if Item Already Sold */
                 if (itemRow["status"].ToString() == "sold")
                 {
-                    MessageBox.Show("This item has already been sold in Order #" + itemRow["order_number"].ToString(), "Item Already Sold");
-                    return;
+                    // Check if it's THIS order. If it got this far, it must have been deleted (see A1)
+                    if (itemRow["order_number"].ToString() != order_number)
+                    {
+                        // It's a different order, so warn the user.
+                        MessageBox.Show("This item has already been sold in Order #" + itemRow["order_number"].ToString(), "Item Already Sold");
+                        return;
+                    }
                 }
 
                 /* Prompt for Price */
@@ -812,8 +911,96 @@ namespace Multi_Express_Consignment
 
             // Mark Row as Deleted
             dataGridView1.SelectedRows[0].Cells[ig_status.Index].Value = "Deleted";
+
+            // Recalc totals!
+            calcTotals();
         }
 
+
+        private void button11_Click_1(object sender, EventArgs e)
+        {
+            date_order.Enabled = true;
+        }
+
+        
+
+        private void date_order_CloseUp(object sender, EventArgs e)
+        {
+            // Will Update Order Header On Save
+
+            if (date_order.Value != old_date)
+            {
+                // 2011-08-19 If more than two payments, force following payment dates to change.
+                if (dataGridView2.DisplayedRowCount(true) > 1)
+                {
+                    if (MessageBox.Show(this, "Changing the Order Date will Update all Payment Dates Except the First Payment to Selected Date, is this OK?", "Update all Items?", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
+                    /* Update Dates */
+                    for (int a = 1; a < dataGridView2.Rows.Count; a++)
+                    {
+                        if (dataGridView2.Rows[a].Visible == false) continue; // Skip
+                        dataGridView2.Rows[a].Cells[pg_date.Index].Value = mysqlglobal.ConvertToUnixTimestamp(date_order.Value);
+                        dataGridView2.Rows[a].Cells[pg_display_date.Index].Value = mysqlglobal.formatDate(date_order.Value);
+                    }
+                }
+
+                
+                old_date = date_order.Value;
+
+                // Would you like to update all items with the new date?
+                if (MessageBox.Show(this, "Would you like to update all items with the new date?", "Update all Items?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    update_items_with_date(date_order.Value);
+                }
+
+
+                
+                
+            }
+        }
+
+        private void update_items_with_date(DateTime date)
+        {
+            int item_count = dataGridView1.Rows.Count;
+            for (int i = 0; i < item_count; i++)
+            {
+                dataGridView1.Rows[i].Cells[ig_date_sold.Index].Value = mysqlglobal.ConvertToUnixTimestamp(date);
+                dataGridView1.Rows[i].Cells[ig_display_date_sold.Index].Value = mysqlglobal.formatDate(date);
+
+            }
+        }
+
+        private void button12_Click_1(object sender, EventArgs e)
+        {
+            update_items_with_date(date_order.Value);
+        }
+
+        private void button13_Click_1(object sender, EventArgs e)
+        {
+            // Edit Item. New Function 2011-08-05
+                DataGridViewCellCollection itemRowD = dataGridView1.SelectedRows[0].Cells; 
+                /* Prompt for Price */
+                string strSQL = "SELECT * FROM `CSTITEM` WHERE `upc` = \"" + itemRowD[ig_upc.Index].Value.ToString() + "\"";
+                //MessageBox.Show(strSQL);
+                DataSet results = mysqlglobal.executeDataSetQuery(strSQL, "CSTITEM", this);
+                DataRow itemRow = results.Tables["CSTITEM"].Rows[0];    
+                string formattedExpiry = mysqlglobal.formatDate(mysqlglobal.ConvertFromUnixTimestamp(Convert.ToDouble(itemRow["date_expiry"].ToString())));
+
+                add_item_to_order_form = new add_item_to_order(this, itemRowD[ig_upc.Index].Value.ToString(), itemRowD[ig_description.Index].Value.ToString(), itemRow["price_suggested"].ToString(), itemRow["price_minimum"].ToString(), formattedExpiry, itemRow["consignment_code"].ToString(), itemRowD[ig_price_sale.Index].Value.ToString());
+
+                add_item_to_order_form.ShowDialog(this);
+
+                if (add_item_to_order_form.DialogResult == DialogResult.OK)
+                {
+                    string final_price = add_item_to_order_form.final_price.Trim();
+                    dataGridView1.SelectedRows[0].Cells[ig_price_sale.Index].Value = final_price;
+                    calcTotals();
+                }
+
+        }
 
     }
 }
