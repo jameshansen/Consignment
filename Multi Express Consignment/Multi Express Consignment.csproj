@@ -127,6 +127,10 @@
     <Compile Include="add_vendor.Designer.cs">
       <DependentUpon>add_vendor.cs</DependentUpon>
     </Compile>
+    <Compile Include="consignment_db.cs">
+      <DependentUpon>consignment_db.xsd</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="consignment_purchase_desktop.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -150,11 +154,30 @@
     <Compile Include="consignment_sale_order.Designer.cs">
       <DependentUpon>consignment_sale_order.cs</DependentUpon>
     </Compile>
+    <Compile Include="report_cash_log_report.cs">
+      <DependentUpon>report_cash_log_report.rpt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <SubType>Component</SubType>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="report_consolidated_consignor_report.cs">
+      <DependentUpon>report_consolidated_consignor_report.rpt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <SubType>Component</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="error_dialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="error_dialog.Designer.cs">
       <DependentUpon>error_dialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="exportimport_form.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="exportimport_form.Designer.cs">
+      <DependentUpon>exportimport_form.cs</DependentUpon>
     </Compile>
     <Compile Include="purge_consignments.cs">
       <SubType>Form</SubType>
@@ -168,6 +191,19 @@
       <SubType>Component</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="report_daily_sales_report.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>report_daily_sales_report.rpt</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="report_order_detail_report.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>report_order_detail_report.rpt</DependentUpon>
+      <SubType>Component</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
     <Compile Include="report_net_payment_report.cs">
       <DependentUpon>report_net_payment_report.rpt</DependentUpon>
@@ -307,8 +343,26 @@
     <EmbeddedResource Include="consignment_sale_order.resx">
       <DependentUpon>consignment_sale_order.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="report_cash_log_report.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>report_cash_log_report.cs</LastGenOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="report_consolidated_consignor_report.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>report_consolidated_consignor_report.cs</LastGenOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="report_daily_sales_report.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>report_daily_sales_report.cs</LastGenOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="error_dialog.resx">
       <DependentUpon>error_dialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="exportimport_form.resx">
+      <DependentUpon>exportimport_form.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="purge_consignments.resx">
       <DependentUpon>purge_consignments.cs</DependentUpon>
@@ -316,6 +370,11 @@
     <EmbeddedResource Include="report_consignment_invoice.rpt">
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
       <LastGenOutput>report_consignment_invoice.cs</LastGenOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="report_order_detail_report.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>report_order_detail_report.cs</LastGenOutput>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="report_net_payment_report.rpt">
@@ -392,6 +451,7 @@
     <None Include="app.config" />
     <None Include="ClassDiagram1.cd" />
     <None Include="ClassDiagram2.cd" />
+    <None Include="ClassDiagram3.cd" />
     <None Include="consignment_db.xsc">
       <DependentUpon>consignment_db.xsd</DependentUpon>
     </None>
