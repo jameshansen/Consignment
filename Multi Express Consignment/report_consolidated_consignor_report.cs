@@ -16,14 +16,14 @@ namespace Multi_Express_Consignment {
     using CrystalDecisions.CrystalReports.Engine;
     
     
-    public class report_consignment_invoice : ReportClass {
+    public class report_consolidated_consignor_report : ReportClass {
         
-        public report_consignment_invoice() {
+        public report_consolidated_consignor_report() {
         }
         
         public override string ResourceName {
             get {
-                return "report_consignment_invoice.rpt";
+                return "report_consolidated_consignor_report.rpt";
             }
             set {
                 // Do nothing
@@ -41,7 +41,7 @@ namespace Multi_Express_Consignment {
         
         public override string FullResourceName {
             get {
-                return "Multi_Express_Consignment.report_consignment_invoice.rpt";
+                return "Multi_Express_Consignment.report_consolidated_consignor_report.rpt";
             }
             set {
                 // Do nothing
@@ -90,9 +90,9 @@ namespace Multi_Express_Consignment {
     }
     
     [System.Drawing.ToolboxBitmapAttribute(typeof(CrystalDecisions.Shared.ExportOptions), "report.bmp")]
-    public class Cachedreport_consignment_invoice : Component, ICachedReport {
+    public class Cachedreport_consolidated_consignor_report : Component, ICachedReport {
         
-        public Cachedreport_consignment_invoice() {
+        public Cachedreport_consolidated_consignor_report() {
         }
         
         [Browsable(false)]
@@ -129,7 +129,7 @@ namespace Multi_Express_Consignment {
         }
         
         public virtual CrystalDecisions.CrystalReports.Engine.ReportDocument CreateReport() {
-            report_consignment_invoice rpt = new report_consignment_invoice();
+            report_consolidated_consignor_report rpt = new report_consolidated_consignor_report();
             rpt.Site = this.Site;
             return rpt;
         }

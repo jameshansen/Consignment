@@ -18,8 +18,10 @@ using CrystalDecisions.Windows.Forms;
 using CrystalDecisions.CrystalReports.Engine;
 using CrystalDecisions.Shared;
 
+
 using System.Data.OleDb;
 using System.Xml.Serialization;
+using System.IO;
 
 namespace Multi_Express_Consignment
 {
@@ -56,12 +58,21 @@ namespace Multi_Express_Consignment
 
         private void print_report_Load(object sender, EventArgs e)
         {
+            /* Set Current Working Folder to Application Path */
+            Directory.SetCurrentDirectory(Path.GetDirectoryName(Application.ExecutablePath));
+
+            // JH: 2011-11-16 Clear the DataSet (BUG 3)
+            consignment_db.Clear();
+
             /* Item Data */
             if (consignment_code != null)
             {
                 /* Load Item Data based on Consignment */
                 string strSQL = "SELECT * FROM `CSTITEM` WHERE `consignment_code` = \"" + consignment_code + "\" ORDER BY `upc`";
                 consignment_db = mysqlglobal.executeDataSetQuery(strSQL, "CSTITEM", this); // Fill Consignment_DB CSTITEM File
+
+                strSQL = "SELECT * FROM `CSTPAYMENT` WHERE `consignment_code` = \"" + consignment_code + "\" ORDER BY `date`";
+                mysqlglobal.executeDataSetQuery(strSQL, "CSTPAYMENT", this, consignment_db); // Fill Consignment_DB CSTPAYMENT File
 
                 /* Load Vendor Information */
                 try
@@ -90,7 +101,10 @@ namespace Multi_Express_Consignment
 
                 /* Load Item Data based on Sale */
                 string strSQL = "SELECT * FROM `CSTITEM` WHERE `order_number` = \"" + order_number + "\" ORDER BY `upc`";
-                consignment_db = mysqlglobal.executeDataSetQuery(strSQL, "CSTITEM", this); // Fill Consignment_DB CSTITEM File
+                mysqlglobal.executeDataSetQuery(strSQL, "CSTITEM", this, consignment_db); // Fill Consignment_DB CSTITEM File
+
+                strSQL = "SELECT * FROM `CSTPAYMENT` WHERE `order_number` = \"" + order_number + "\" ORDER BY `date`";
+                mysqlglobal.executeDataSetQuery(strSQL, "CSTPAYMENT", this, consignment_db); // Fill Consignment_DB CSTPAYMENT File
 
                 /* Load Customer Information */
                 MySqlCommand mysqlCmd = new MySqlCommand("SELECT `customer_code` FROM `CSTORDER` WHERE `order_number` = \"" + order_number + "\"",  mysqlglobal.mysqlCon);
@@ -131,77 +145,62 @@ namespace Multi_Express_Consignment
         
         private void print_report_Shown(object sender, EventArgs e)
         {
+            bool foundFirst = false;
+
             /* Filter Form_List */
+
+            // JH: New Method, Load All Into Dictionary, Delete All, Filter, Write Out from Dictionary
+            Dictionary<string, bool> reportList = new Dictionary<string, bool>();
+            
+            string key = "";
+            bool show = true;
             for (int i = 0; i < form_list.Items.Count; i++)
             {
+                key = form_list.Items[i].ToString();
+                show = true;
+
                 if (consignment_code != null)
                 {
-                    // Remove All that Don't start with C-
-                    try
+                    // Remove All that Don't Start with C-
+                    if (key.Substring(0, 2) != "C-")
                     {
-                        if (Convert.ToString(form_list.Items[i]).Substring(0, 2) != "C-")
-                        {
-                            form_list.Items.RemoveAt(i);
-                            i = -1; // Start scan again.
-                        }
-                    }
-                    catch
-                    {
-                        // Skip
+                        show = false; // false = Do not reinsert this record
                     }
                 }
-
+            
                 if (order_number != null)
                 {
                     // Remove All that Don't Start with S-
-                    try
+                    if (key.Substring(0, 2) != "S-")
                     {
-                        if (Convert.ToString(form_list.Items[i]).Substring(0, 2) != "S-")
-                        {
-                            form_list.Items.RemoveAt(i);
-                            i = -1; // Start scan again.
-                        }
-                    }
-                    catch
-                    {
-                        // Skip
+                        show = false; // false = Do not reinsert this record
                     }
                 }
                 
                 if (item_number != null)
                 {
-                    // Remove All that Don't Start with S-
-                    try
+                    // Remove All that Don't Start with I-
+                    if (key.Substring(0, 2) != "I-")
                     {
-                        if (Convert.ToString(form_list.Items[i]).Substring(0, 2) != "I-")
-                        {
-                            form_list.Items.RemoveAt(i);
-                            i = -1; // Start scan again.
-                        }
-                    }
-                    catch
-                    {
-                        // Skip
+                        show = false; // false = Do not reinsert this record
                     }
                 }
-                
+
+                reportList.Add(key, show);
 
             }
+
+            form_list.Items.Clear();
       
-            /* Remove Prefixes */
-            for (int i = 0; i < form_list.Items.Count; i++)
+            /* Remove Prefixes and Insert Qualified Records into List */
+            foreach (var pair in reportList)
             {
-                try
-                {
-                    form_list.Items[i] = form_list.Items[i].ToString().Substring(2);
-                }
-                catch
-                {
-                    // Do Nothing
+                if(pair.Value) {
+                    form_list.Items.Add(pair.Key.Substring(2));
                 }
             }
 
-            /* Select Report in List From Report Code */
+            /* Select Report in List From Report Code */            
             try
             {
                 if (report_code != null)
@@ -245,7 +244,7 @@ namespace Multi_Express_Consignment
             rptwin = new crystalreportglobal();
             cryRpt = new ReportDocument();
 
-            /* Close This Window */
+            /* CloseThis Window */
             this.Close();
             Application.DoEvents();
 
@@ -327,6 +326,39 @@ namespace Multi_Express_Consignment
                 crystalreportglobal.SetFormulaFieldString(cryRpt, "vendor_phone", vendor_detail_row["CMPHONE"].ToString());
                 crystalreportglobal.SetFormulaFieldString(cryRpt, "vendor_fax", vendor_detail_row["CMFAX1"].ToString());
 
+                /* Fetch Payment for Payment Totals on Report */
+
+                double totalPaid = 0;
+                double totalPaidToday = 0;
+
+                //MessageBox.Show(@"Rows in CSTPAYMENT: " + consignment_db.Tables["cstpayment"].Rows.Count);
+
+                /*
+                 *             input_startdate.Value = input_startdate.Value.Date; // Set to Midnight 2011-08-08
+            
+            TimeSpan input_endtime = new TimeSpan(23, 59, 59);
+            input_enddate.Value = input_enddate.Value.Date + input_endtime; // Set to 11:59:59 2011-08-08
+
+            double start_unixtime = mysqlglobal.ConvertToUnixTimestamp(input_startdate.Value);
+            double end_unixtime   = mysqlglobal.ConvertToUnixTimestamp(input_enddate.Value); // Since it's to 00:00 UTC
+                 */
+
+                foreach (DataRow a in consignment_db.Tables["CSTPAYMENT"].Rows)
+                {
+                    totalPaid += Convert.ToDouble(a["amount"]);
+                    DateTime paydate = mysqlglobal.ConvertFromUnixTimestamp(Convert.ToDouble(a["date"]));
+                    paydate = paydate.Date; // Set to date
+
+                    if (paydate == DateTime.Now.Date)
+                    {
+                        // Same date.
+                        totalPaidToday += Convert.ToDouble(a["amount"]);
+                    }
+                }
+                crystalreportglobal.SetFormulaFieldString(cryRpt, "paid_today", cg.price(totalPaidToday));
+                
+
+                crystalreportglobal.SetFormulaFieldString(cryRpt, "paid_amt", cg.price(totalPaid));
 
                 /* Consignment Text */
                 //string consignment_agreement_text = System.IO.File.ReadAllText("consignment_agreement_text.txt");

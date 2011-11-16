@@ -48,6 +48,29 @@ namespace Multi_Express_Consignment
             }
         }
 
+        public static object executeScalarQuery(string query, Form sender)
+        {
+            object o = "";
+            /* Connection Check */
+            checkConnection(sender);
+            
+            /* Build MySqlCommand Function for Query */
+            MySqlCommand mysqlCmd = new MySqlCommand(query, mysqlglobal.mysqlCon);
+
+            /* Execute Query */
+            try
+            {
+                o = mysqlCmd.ExecuteScalar();
+            }
+            catch (Exception e)
+            {
+                // Error With Query, Log
+                logglobal.log.logListbox.Items.Insert(0, "MySQL Error at " + DateTime.Now + ": " + Convert.ToString(e.Message));
+            }
+            mysqlCmd.Dispose();
+            return o;
+        }
+
         public static void executeNonQuery(string query, Form sender)
         {
             /* Connection Check */
@@ -69,7 +92,7 @@ namespace Multi_Express_Consignment
             mysqlCmd.Dispose();
         }
 
-        public static DataSet executeDataSetQuery(string query, string table_name, Form sender)
+        public static DataSet executeDataSetQuery(string query, string table_name, Form sender, DataSet mysqlDS = null)
         {
             /* Connection Check */
             checkConnection(sender);
@@ -79,7 +102,11 @@ namespace Multi_Express_Consignment
 
             /* Execute Query */
             MySqlDataAdapter mysqlDA = null;
-            DataSet mysqlDS = new DataSet();
+            if (mysqlDS == null)
+            {
+                mysqlDS = new DataSet();
+                mysqlDS.Clear(); // New Dataset.                    
+            }
 
             try
             {
@@ -206,6 +233,7 @@ namespace Multi_Express_Consignment
             }
 
             output = decimal_input.ToString("#0.00");
+            if (output == "") output = "0.00";
             return output;
         }
 

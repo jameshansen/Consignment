@@ -30,14 +30,17 @@ namespace Multi_Express_Consignment
 
         public Dictionary<string, string> key2db = new Dictionary<string, string>()
         {
-            {"UPC", "upc"},
-            {"Description", "description"},
-            {"Brand", "desc_brand"},
-            {"Gender", "desc_gender"},
-            {"Garment", "desc_garment"},
-            {"Material", "desc_material"},
-            {"Colour", "desc_colour"},
-            {"Size", "desc_size"}
+            {"UPC", "cstitem`.`upc"},
+            {"Description", "cstitem`.`description"},
+            {"Vendor Code", "cstitem`.`vendor_code"}, // New as of 2011-07-08
+            {"Consignor First Name", "psvemast`.`CMNAME1ST"}, // New as of 2011-07-08 (Requires join to PSVEMAST table)
+            {"Consignor Last Name", "psvemast`.`CMNAMESUR"}, // New as of 2011-07-08 (Requires join to PSVEMAST table)
+            {"Brand", "cstitem`.`desc_brand"},
+            {"Gender", "cstitem`.`desc_gender"},
+            {"Garment", "cstitem`.`desc_garment"},
+            {"Material", "cstitem`.`desc_material"},
+            {"Colour", "cstitem`.`desc_colour"},
+            {"Size", "cstitem`.`desc_size"}
         };
 
         private Dictionary<string, string> getSearchRow(int index) {
@@ -164,7 +167,7 @@ namespace Multi_Express_Consignment
             bool andAtTheEnd = false;
             bool whereAtTheEnd = false;
 
-            query += "SELECT * FROM `CSTITEM` WHERE ";
+            query += "SELECT * FROM `CSTITEM` LEFT JOIN `PSVEMAST` ON `CSTITEM`.`vendor_code` = `PSVEMAST`.`CMCUCODE` WHERE ";
             whereAtTheEnd = true;
 
             for (int i = 1; i <= 5; i++)
@@ -207,14 +210,14 @@ namespace Multi_Express_Consignment
             if (m_mode == "consignment_sale_order")
             {
                 /* Only UnSold Items */
-                query += "`status` = \"unsold\"";
+                query += "`cstitem`.`status` = \"unsold\"";
                 andAtTheEnd = false;
                 whereAtTheEnd = false;
             
                 if (added_items != "")
                 {
                     // item1,item2,item3 -> `upc` != "item1" AND `upc` != "item2"
-                    string additional = " AND `upc` != " + added_items.Replace(",", " AND `upc` != ");
+                    string additional = " AND `cstitem`.`upc` != " + added_items.Replace(",", " AND `cstitem`.`upc` != ");
 
                     query += additional;
                     andAtTheEnd = false;
@@ -234,7 +237,9 @@ namespace Multi_Express_Consignment
             // Debug:
             //MessageBox.Show(query);
 
-            DataSet results = mysqlglobal.executeDataSetQuery(query, "CSTITEM", this);
+            DataSet results = new DataSet();
+            results.Clear();
+            results = mysqlglobal.executeDataSetQuery(query, "CSTITEM", this);
 
             /* Clear and Populate DataGrid */
             dataGridView1.Rows.Clear();
@@ -266,7 +271,9 @@ namespace Multi_Express_Consignment
             /* Check Selected Item */
             checkSelectedRowCO();
 
-
+            // JH: 2011-11-16 Clear the DataSet (BUG 3)
+            results.Clear();
+             
 
         }
 
