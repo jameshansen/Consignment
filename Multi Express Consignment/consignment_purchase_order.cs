@@ -37,6 +37,10 @@ namespace Multi_Express_Consignment
 
         public static string consignment_status = null;
 
+        public static DateTime openFormDate = DateTime.Now;
+
+        public bool allSold = true;
+
         public string getconsignment_code()
         {
             return consignment_code;
@@ -138,6 +142,13 @@ namespace Multi_Express_Consignment
                     outputRow.CreateCells(dataGridView1);
 
                     outputRow.Cells[ig_status.Index].Value = UppercaseFirst(row["status"].ToString());
+
+                    // See if status is unsold
+                    if (row["status"].ToString() == "unsold")
+                    {
+                        allSold = false;
+                    }
+
                     outputRow.Cells[ig_upc.Index].Value = row["upc"];
                     outputRow.Cells[ig_description.Index].Value = row["description"];
 
@@ -157,6 +168,10 @@ namespace Multi_Express_Consignment
                     outputRow.Cells[ig_desc_material.Index].Value = row["desc_material"];
                     outputRow.Cells[ig_desc_colour.Index].Value = row["desc_colour"];
                     outputRow.Cells[ig_desc_size.Index].Value = row["desc_size"];
+
+                    // JH: 2011-11-16 Load Date Sold, Date Paid (BUG 2)
+                    outputRow.Cells[ig_date_sold.Index].Value = row["date_sold"];
+                    outputRow.Cells[ig_date_paid.Index].Value = row["date_paid"];
 
                     vendor_code = Convert.ToString(row["vendor_code"]);
                     consignment_status = Convert.ToString(row["consignment_status"]);
@@ -490,6 +505,8 @@ namespace Multi_Express_Consignment
 
         }
 
+        public int payment_id_int = 10;
+
         public void addPayment(string payment_code, string payment_description, string payment_reference, string payment_expiry, string payment_vendor_code, string payment_vendor_name, string payment_amount)
         {
             DataGridViewRow outputRow = new DataGridViewRow();
@@ -504,12 +521,52 @@ namespace Multi_Express_Consignment
 
             outputRow.Cells[pg_vendor_code.Index].Value = payment_vendor_code;
             outputRow.Cells[pg_vendor_name.Index].Value = payment_vendor_name;
+            
+            // Internal Payment ID 2011-07-11          
+            string payment_id = payment_id_int.ToString();
+            payment_id_int++;
+            outputRow.Cells[pg_payment_id.Index].Value = payment_id;
+
+
             dataGridView2.Rows.Add(outputRow);
 
             payment_entry_form.Dispose();
 
             // ReCalc Totals
             calcTotals();
+
+            
+
+            // Flag all items with blank date_paid field with current date (New 2011-07-11)
+            for (int a = 0; a < dataGridView1.Rows.Count; a++)
+            {
+                string date_paid = "";
+
+                try
+                {
+                    date_paid = dataGridView1.Rows[a].Cells[ig_date_paid.Index].Value.ToString();
+                }
+                catch
+                {
+                    // Catch Null Exceptions
+                }
+
+                string status = dataGridView1.Rows[a].Cells[ig_status.Index].Value.ToString();
+
+                if ((date_paid == "" || date_paid == "0") && status == "Sold") // JH: 2011-12-14 Fix, Date paid is 0 not blank for existing orders!
+                {
+                    // Problem with this is if the user deletes the payment then saves, the date_paids will still be updated
+                    date_paid = mysqlglobal.ConvertToUnixTimestamp(openFormDate).ToString();
+                    dataGridView1.Rows[a].Cells[ig_date_paid.Index].Value = date_paid;
+
+                    // So we must also store an internal payment id
+                    dataGridView1.Rows[a].Cells[ig_payment_id.Index].Value = payment_id;
+
+                }
+            }
+            
+
+
         }
 
         public void addItem(string description, string price_minimum, string price_suggested, string share, string share_type, string desc_brand, string desc_gender, string desc_garment, string desc_material, string desc_colour, string desc_size, DateTime input_date_received, DateTime input_date_expiry, string existing_upc, int rowIndex)
@@ -703,9 +760,13 @@ namespace Multi_Express_Consignment
 
             if (Convert.ToDecimal(output_totaloutstanding.Text) <= 0 && Convert.ToDecimal(output_totalowed.Text) > 0 && statusButton.Text.ToLower() != "invoiced")
             {
-                if (MessageBox.Show("Payment has been made, mark this consignment as invoiced?", "Mark as Invoiced", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                // 2011-07-26 Don't mark as Invoiced if not all sold.
+                if (allSold)
                 {
-                    setConsignmentStatus("Invoiced");
+                    if (MessageBox.Show("Payment has been made, mark this consignment as invoiced?", "Mark as Invoiced", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    {
+                        setConsignmentStatus("Invoiced");
+                    }
                 }
             }
             
@@ -743,11 +804,13 @@ namespace Multi_Express_Consignment
             }
 
             // Update Purchase Desktop
+            this.Close();
+
             foreach (Form form_search in Application.OpenForms)
             {
                 if (form_search.Name == "consignment_purchase_desktop")
                 {
-                    (form_search as consignment_purchase_desktop).loadConsignments();
+                    (form_search as consignment_purchase_desktop).loadConsignments(consignment_code);
                 }
             }
             
@@ -757,6 +820,12 @@ namespace Multi_Express_Consignment
 
         private void button12_Click(object sender, EventArgs e)
         {
+            // Check if sold, if so, do NOT allow deletion.
+            if (dataGridView1.SelectedRows[0].Cells[ig_status.Index].Value.ToString() == "Sold")
+            {
+                MessageBox.Show("Sorry, but you cannot delete sold items.", "Cannot Delete");
+            }
+            
             // Hide Row
             dataGridView1.SelectedRows[0].Visible = false;
 
@@ -787,6 +856,29 @@ namespace Multi_Express_Consignment
 
             // Mark Row as Deleted
             dataGridView2.SelectedRows[0].Cells[pg_status.Index].Value = "Deleted";
+
+            // Remove Date_Paids 2011-07-11
+            try
+            {
+                string payment_id = dataGridView2.SelectedRows[0].Cells[pg_payment_id.Index].Value.ToString();
+
+                if (payment_id != "")
+                {
+                    for (int a = 0; a < dataGridView1.Rows.Count; a++)
+                    {
+                        string item_payment_id = dataGridView1.Rows[a].Cells[ig_payment_id.Index].Value.ToString();
+                        if (payment_id == item_payment_id)
+                        {
+                            dataGridView1.Rows[a].Cells[ig_date_paid.Index].Value = "";
+                            dataGridView1.Rows[a].Cells[ig_payment_id.Index].Value = "";
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                // JH: Catch errors if Payment ID has nevar been used like :)
+            }
 
             // Calc Totals
             calcTotals();

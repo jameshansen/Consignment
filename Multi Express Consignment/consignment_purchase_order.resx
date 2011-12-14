@@ -121,8 +121,8 @@
   <data name="button3.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAAlwSFlzAAALBQAA
-        CwUByY3ISQAAACpJREFUGFdjZGBg+A/E+MF/iBIQiRWD5UEELoVwORgDXSGKODIHphBdDAB10DjJNRCF
+        YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAAlwSFlzAAAK/QAA
+        Cv0BS5xZCwAAACpJREFUGFdjZGBg+A/E+MF/iBIQiRWD5UEELoVwORgDXSGKODIHphBdDAB10DjJNRCF
         agAAAABJRU5ErkJggg==
 </value>
   </data>
@@ -168,11 +168,14 @@
   <metadata name="pg_status.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
+  <metadata name="pg_payment_id.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
   <data name="button4.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAAlwSFlzAAALAwAA
-        CwMBSY6M0gAAAKpJREFUOE+NUwEOxCAIG/9/tLdy4ArUZUtM1NJSYNpa6zp9ZnbDy44BACCwF3ZxBuSA
+        YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAAlwSFlzAAAK+wAA
+        CvsBy58dkAAAAKpJREFUOE+NUwEOxCAIG/9/tLdy4ArUZUtM1NJSYNpa6zp9ZnbDy44BACCwF3ZxBuSA
         h1BM21dynDb5UTuKTAcpEmTkfnNSBNwu3aT5fSXKISxqFmZblhIhBXrbvgu0ErIcLqFPpTpAC3J8fXa4
         D5whISBENnn+FwcBEiEyRvShBJBzpe1/419LiDdB5HARI1Fk58xePVm9oeRGvYkhUJ1o23IK2slsWo/7
         AcQGY76VR6ozAAAAAElFTkSuQmCC
@@ -209,6 +212,9 @@
     <value>True</value>
   </metadata>
   <metadata name="ig_display_date_expiry.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="ig_payment_id.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
   <metadata name="ig_date_sold.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">

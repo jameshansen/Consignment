@@ -74,6 +74,7 @@
             this.pg_vendor_code = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.pg_vendor_name = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.pg_status = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.pg_payment_id = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.button5 = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.button13 = new System.Windows.Forms.Button();
@@ -92,6 +93,7 @@
             this.ig_date_received = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ig_date_expiry = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ig_display_date_expiry = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ig_payment_id = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ig_date_sold = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ig_date_paid = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ig_desc_brand = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -388,19 +390,21 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox3.Controls.Add(this.button10);
             this.groupBox3.Controls.Add(this.button9);
             this.groupBox3.Controls.Add(this.button6);
             this.groupBox3.Controls.Add(this.dataGridView2);
-            this.groupBox3.Location = new System.Drawing.Point(13, 464);
+            this.groupBox3.Location = new System.Drawing.Point(13, 462);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(594, 151);
+            this.groupBox3.Size = new System.Drawing.Size(722, 151);
             this.groupBox3.TabIndex = 30;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Payment Details";
             // 
             // button10
             // 
+            this.button10.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.button10.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(189)))), ((int)(((byte)(182)))));
             this.button10.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button10.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -414,6 +418,7 @@
             // 
             // button9
             // 
+            this.button9.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.button9.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(189)))), ((int)(((byte)(182)))));
             this.button9.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button9.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -427,11 +432,12 @@
             // 
             // button6
             // 
+            this.button6.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.button6.BackColor = System.Drawing.Color.Lime;
             this.button6.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button6.Image = ((System.Drawing.Image)(resources.GetObject("button6.Image")));
             this.button6.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.button6.Location = new System.Drawing.Point(453, 100);
+            this.button6.Location = new System.Drawing.Point(581, 100);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(127, 37);
             this.button6.TabIndex = 12;
@@ -444,6 +450,8 @@
             this.dataGridView2.AllowUserToAddRows = false;
             this.dataGridView2.AllowUserToDeleteRows = false;
             this.dataGridView2.AllowUserToResizeRows = false;
+            this.dataGridView2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView2.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.pg_id,
@@ -456,13 +464,14 @@
             this.pg_amount,
             this.pg_vendor_code,
             this.pg_vendor_name,
-            this.pg_status});
+            this.pg_status,
+            this.pg_payment_id});
             this.dataGridView2.Location = new System.Drawing.Point(15, 19);
             this.dataGridView2.Name = "dataGridView2";
             this.dataGridView2.ReadOnly = true;
             this.dataGridView2.RowHeadersVisible = false;
             this.dataGridView2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView2.Size = new System.Drawing.Size(565, 75);
+            this.dataGridView2.Size = new System.Drawing.Size(693, 75);
             this.dataGridView2.TabIndex = 2;
             // 
             // pg_id
@@ -541,6 +550,13 @@
             this.pg_status.ReadOnly = true;
             this.pg_status.Visible = false;
             // 
+            // pg_payment_id
+            // 
+            this.pg_payment_id.HeaderText = "(Internal) Payment ID";
+            this.pg_payment_id.Name = "pg_payment_id";
+            this.pg_payment_id.ReadOnly = true;
+            this.pg_payment_id.Visible = false;
+            // 
             // button5
             // 
             this.button5.BackColor = System.Drawing.Color.White;
@@ -555,6 +571,8 @@
             // 
             // groupBox4
             // 
+            this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox4.Controls.Add(this.button13);
             this.groupBox4.Controls.Add(this.button11);
             this.groupBox4.Controls.Add(this.button12);
@@ -562,7 +580,7 @@
             this.groupBox4.Controls.Add(this.dataGridView1);
             this.groupBox4.Location = new System.Drawing.Point(12, 225);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(594, 206);
+            this.groupBox4.Size = new System.Drawing.Size(722, 206);
             this.groupBox4.TabIndex = 32;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Manage Items in Consignment";
@@ -575,11 +593,11 @@
             this.button13.TabIndex = 17;
             this.button13.Text = "Debug";
             this.button13.UseVisualStyleBackColor = true;
-            this.button13.Visible = false;
             this.button13.Click += new System.EventHandler(this.button13_Click);
             // 
             // button11
             // 
+            this.button11.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.button11.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(189)))), ((int)(((byte)(182)))));
             this.button11.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button11.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -593,6 +611,7 @@
             // 
             // button12
             // 
+            this.button12.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.button12.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(189)))), ((int)(((byte)(182)))));
             this.button12.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button12.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -606,11 +625,12 @@
             // 
             // button4
             // 
+            this.button4.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.button4.BackColor = System.Drawing.Color.Yellow;
             this.button4.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button4.Image = ((System.Drawing.Image)(resources.GetObject("button4.Image")));
             this.button4.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.button4.Location = new System.Drawing.Point(473, 156);
+            this.button4.Location = new System.Drawing.Point(601, 156);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(108, 37);
             this.button4.TabIndex = 11;
@@ -623,6 +643,8 @@
             this.dataGridView1.AllowUserToAddRows = false;
             this.dataGridView1.AllowUserToDeleteRows = false;
             this.dataGridView1.AllowUserToResizeRows = false;
+            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.ig_status,
@@ -636,6 +658,7 @@
             this.ig_date_received,
             this.ig_date_expiry,
             this.ig_display_date_expiry,
+            this.ig_payment_id,
             this.ig_date_sold,
             this.ig_date_paid,
             this.ig_desc_brand,
@@ -649,28 +672,30 @@
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.RowHeadersVisible = false;
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(569, 131);
+            this.dataGridView1.Size = new System.Drawing.Size(697, 131);
             this.dataGridView1.TabIndex = 1;
             this.dataGridView1.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellDoubleClick);
             // 
             // ig_status
             // 
             this.ig_status.HeaderText = "Status";
+            this.ig_status.MinimumWidth = 60;
             this.ig_status.Name = "ig_status";
             this.ig_status.ReadOnly = true;
-            this.ig_status.Width = 50;
+            this.ig_status.Width = 60;
             // 
             // ig_upc
             // 
             this.ig_upc.HeaderText = "UPC";
             this.ig_upc.Name = "ig_upc";
             this.ig_upc.ReadOnly = true;
+            this.ig_upc.Width = 80;
             // 
             // ig_description
             // 
             this.ig_description.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.ig_description.HeaderText = "Description";
-            this.ig_description.MinimumWidth = 50;
+            this.ig_description.MinimumWidth = 100;
             this.ig_description.Name = "ig_description";
             this.ig_description.ReadOnly = true;
             // 
@@ -686,7 +711,7 @@
             this.ig_price_suggested.HeaderText = "Suggested Price";
             this.ig_price_suggested.Name = "ig_price_suggested";
             this.ig_price_suggested.ReadOnly = true;
-            this.ig_price_suggested.Visible = false;
+            this.ig_price_suggested.Width = 60;
             // 
             // ig_price_sale
             // 
@@ -700,7 +725,7 @@
             this.ig_share.HeaderText = "Share";
             this.ig_share.Name = "ig_share";
             this.ig_share.ReadOnly = true;
-            this.ig_share.Width = 60;
+            this.ig_share.Width = 40;
             // 
             // ig_share_type
             // 
@@ -722,6 +747,7 @@
             this.ig_date_expiry.Name = "ig_date_expiry";
             this.ig_date_expiry.ReadOnly = true;
             this.ig_date_expiry.Visible = false;
+            this.ig_date_expiry.Width = 14;
             // 
             // ig_display_date_expiry
             // 
@@ -729,6 +755,13 @@
             this.ig_display_date_expiry.Name = "ig_display_date_expiry";
             this.ig_display_date_expiry.ReadOnly = true;
             this.ig_display_date_expiry.Width = 80;
+            // 
+            // ig_payment_id
+            // 
+            this.ig_payment_id.HeaderText = "(Internal) Payment ID";
+            this.ig_payment_id.Name = "ig_payment_id";
+            this.ig_payment_id.ReadOnly = true;
+            this.ig_payment_id.Visible = false;
             // 
             // ig_date_sold
             // 
@@ -788,9 +821,10 @@
             // 
             // button7
             // 
+            this.button7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(189)))), ((int)(((byte)(182)))));
             this.button7.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button7.Location = new System.Drawing.Point(474, 704);
+            this.button7.Location = new System.Drawing.Point(603, 731);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(133, 37);
             this.button7.TabIndex = 13;
@@ -800,10 +834,11 @@
             // 
             // button8
             // 
+            this.button8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button8.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(189)))), ((int)(((byte)(182)))));
             this.button8.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button8.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.button8.Location = new System.Drawing.Point(360, 704);
+            this.button8.Location = new System.Drawing.Point(489, 731);
             this.button8.Name = "button8";
             this.button8.Size = new System.Drawing.Size(108, 37);
             this.button8.TabIndex = 34;
@@ -813,15 +848,17 @@
             // 
             // panel2
             // 
+            this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.panel2.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.panel2.Location = new System.Drawing.Point(12, 443);
+            this.panel2.Location = new System.Drawing.Point(12, 446);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(593, 10);
+            this.panel2.Size = new System.Drawing.Size(721, 10);
             this.panel2.TabIndex = 34;
             // 
             // output_totaloutstanding
             // 
-            this.output_totaloutstanding.Location = new System.Drawing.Point(116, 696);
+            this.output_totaloutstanding.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.output_totaloutstanding.Location = new System.Drawing.Point(603, 695);
             this.output_totaloutstanding.Name = "output_totaloutstanding";
             this.output_totaloutstanding.ReadOnly = true;
             this.output_totaloutstanding.Size = new System.Drawing.Size(132, 20);
@@ -829,7 +866,8 @@
             // 
             // output_totalpaid
             // 
-            this.output_totalpaid.Location = new System.Drawing.Point(116, 670);
+            this.output_totalpaid.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.output_totalpaid.Location = new System.Drawing.Point(603, 669);
             this.output_totalpaid.Name = "output_totalpaid";
             this.output_totalpaid.ReadOnly = true;
             this.output_totalpaid.Size = new System.Drawing.Size(132, 20);
@@ -837,8 +875,9 @@
             // 
             // label11
             // 
+            this.label11.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(9, 673);
+            this.label11.Location = new System.Drawing.Point(503, 672);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(94, 13);
             this.label11.TabIndex = 44;
@@ -846,8 +885,9 @@
             // 
             // label10
             // 
+            this.label10.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(9, 647);
+            this.label10.Location = new System.Drawing.Point(496, 646);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(101, 13);
             this.label10.TabIndex = 43;
@@ -855,7 +895,8 @@
             // 
             // output_totalowed
             // 
-            this.output_totalowed.Location = new System.Drawing.Point(116, 644);
+            this.output_totalowed.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.output_totalowed.Location = new System.Drawing.Point(603, 643);
             this.output_totalowed.Name = "output_totalowed";
             this.output_totalowed.ReadOnly = true;
             this.output_totalowed.Size = new System.Drawing.Size(132, 20);
@@ -863,16 +904,18 @@
             // 
             // panel1
             // 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.panel1.Location = new System.Drawing.Point(12, 625);
+            this.panel1.Location = new System.Drawing.Point(14, 619);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(593, 10);
+            this.panel1.Size = new System.Drawing.Size(721, 10);
             this.panel1.TabIndex = 41;
             // 
             // label12
             // 
+            this.label12.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(9, 699);
+            this.label12.Location = new System.Drawing.Point(505, 698);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(91, 13);
             this.label12.TabIndex = 46;
@@ -887,7 +930,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(619, 753);
+            this.ClientSize = new System.Drawing.Size(747, 780);
             this.Controls.Add(this.label12);
             this.Controls.Add(this.output_totaloutstanding);
             this.Controls.Add(this.output_totalpaid);
@@ -981,6 +1024,7 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label label12;
         public System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.DataGridViewTextBoxColumn pg_id;
         private System.Windows.Forms.DataGridViewTextBoxColumn pg_type;
         private System.Windows.Forms.DataGridViewTextBoxColumn pg_desc;
@@ -992,25 +1036,26 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn pg_vendor_code;
         private System.Windows.Forms.DataGridViewTextBoxColumn pg_vendor_name;
         private System.Windows.Forms.DataGridViewTextBoxColumn pg_status;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ig_status;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ig_upc;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ig_description;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ig_price_minimum;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ig_price_suggested;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ig_price_sale;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ig_share;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ig_share_type;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ig_date_received;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ig_date_expiry;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ig_display_date_expiry;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ig_date_sold;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ig_date_paid;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ig_desc_brand;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ig_desc_gender;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ig_desc_garment;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ig_desc_material;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ig_desc_colour;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ig_desc_size;
-        private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn pg_payment_id;
+        public System.Windows.Forms.DataGridViewTextBoxColumn ig_status;
+        public System.Windows.Forms.DataGridViewTextBoxColumn ig_upc;
+        public System.Windows.Forms.DataGridViewTextBoxColumn ig_description;
+        public System.Windows.Forms.DataGridViewTextBoxColumn ig_price_minimum;
+        public System.Windows.Forms.DataGridViewTextBoxColumn ig_price_suggested;
+        public System.Windows.Forms.DataGridViewTextBoxColumn ig_price_sale;
+        public System.Windows.Forms.DataGridViewTextBoxColumn ig_share;
+        public System.Windows.Forms.DataGridViewTextBoxColumn ig_share_type;
+        public System.Windows.Forms.DataGridViewTextBoxColumn ig_date_received;
+        public System.Windows.Forms.DataGridViewTextBoxColumn ig_date_expiry;
+        public System.Windows.Forms.DataGridViewTextBoxColumn ig_display_date_expiry;
+        public System.Windows.Forms.DataGridViewTextBoxColumn ig_payment_id;
+        public System.Windows.Forms.DataGridViewTextBoxColumn ig_date_sold;
+        public System.Windows.Forms.DataGridViewTextBoxColumn ig_date_paid;
+        public System.Windows.Forms.DataGridViewTextBoxColumn ig_desc_brand;
+        public System.Windows.Forms.DataGridViewTextBoxColumn ig_desc_gender;
+        public System.Windows.Forms.DataGridViewTextBoxColumn ig_desc_garment;
+        public System.Windows.Forms.DataGridViewTextBoxColumn ig_desc_material;
+        public System.Windows.Forms.DataGridViewTextBoxColumn ig_desc_colour;
+        public System.Windows.Forms.DataGridViewTextBoxColumn ig_desc_size;
     }
 }
