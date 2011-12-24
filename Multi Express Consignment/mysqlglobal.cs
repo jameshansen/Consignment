@@ -71,18 +71,35 @@ namespace Multi_Express_Consignment
             return o;
         }
 
-        public static void executeNonQuery(string query, Form sender)
+        public static int executeNonQuery(string query, Form sender, bool get_insert_id = false)
         {
+            int output = 0;
+
             /* Connection Check */
             checkConnection(sender);
-            
+
+            /* Add LAST_INSERT_ID() to Query (2011-12-23) */
+            if (get_insert_id)
+            {
+                if (query.EndsWith(";") == false) query += ";";
+                query += " SELECT last_insert_id()";
+            }
+
             /* Build MySqlCommand Function for Query */
             MySqlCommand mysqlCmd = new MySqlCommand(query, mysqlglobal.mysqlCon);
 
             /* Execute Query */
             try
             {
-                mysqlCmd.ExecuteNonQuery();
+                if (get_insert_id)
+                {                    
+                    object temp = mysqlCmd.ExecuteScalar();
+                    output = Convert.ToInt32(temp);
+                }
+                else
+                {
+                    mysqlCmd.ExecuteNonQuery();
+                }
             }
             catch (Exception e)
             {
@@ -90,6 +107,7 @@ namespace Multi_Express_Consignment
                 logglobal.log.logListbox.Items.Insert(0, "MySQL Error at " + DateTime.Now + ": " + Convert.ToString(e.Message));
             }
             mysqlCmd.Dispose();
+            return output;
         }
 
         public static DataSet executeDataSetQuery(string query, string table_name, Form sender, DataSet mysqlDS = null)

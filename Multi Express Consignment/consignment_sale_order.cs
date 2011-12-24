@@ -26,19 +26,19 @@ namespace Multi_Express_Consignment
     public partial class consignment_sale_order : Form
     {
 
-        public static string order_number;
-        public static string customer_code;
+        public string order_number;
+        public string customer_code;
 
-        public static string selected_upc; // If in Item Mode
+        public string selected_upc; // If in Item Mode
 
-        public static string mode;
+        public string mode;
 
-        public static bool customerModified = false;
-        public static bool read_only = false;
+        public bool customerModified = false;
+        public bool read_only = false;
 
         public DateTime old_date;
 
-        public static string order_status = null;
+        public string order_status = null;
 
         public string getorder_number()
         {

@@ -215,6 +215,27 @@ namespace Multi_Express_Consignment
 
         }
 
+        private void processPayments()
+        {
+            // Process payments on CSTITEM database
+            for (int a = 0; a < consignment_db.Tables["CSTITEM"].Rows.Count; a++)
+            {
+                consignment_db.Tables["CSTITEM"].Rows[a]["date_paid"] = fetchPaymentDate(consignment_db.Tables["CSTITEM"].Rows[a]["date_paid"]);
+            }
+
+        }
+
+        public Int64 fetchPaymentDate(object id)
+        {
+            Int64 output = 0;
+
+            output = Convert.ToInt64(mysqlglobal.executeScalarQuery("SELECT `date` FROM `CSTPAYMENT` WHERE `id` = " + id.ToString(), this));
+
+            return output;
+        }
+
+
+
         private void standard_headers()
         {
             /* Load Header Details from INI File [company] section */
@@ -236,6 +257,9 @@ namespace Multi_Express_Consignment
         private void process(object sender, EventArgs e)
         {
             report_code = form_list.Text;
+
+            /* Process Payment Dates */
+            processPayments();
 
             /* Recreate Report Stuff */
             cryRpt.Dispose();
