@@ -69,6 +69,33 @@ namespace Multi_Express_Consignment
             crystalreportglobal.SetFormulaFieldString(cryRpt, "dateFormat", dateFormat); // Branch 1 Telephone
         }
 
+        private void processPayments()
+        {
+            // Process payments on CSTITEM database
+            try
+            {
+                for (int a = 0; a < consignment_db_var.Tables["CSTITEM"].Rows.Count; a++)
+                {
+                    consignment_db_var.Tables["CSTITEM"].Rows[a]["date_paid"] = fetchPaymentDate(consignment_db_var.Tables["CSTITEM"].Rows[a]["date_paid"]);
+                }
+            }
+            catch
+            {
+                // Null ref
+            }
+
+        }
+
+        public Int64 fetchPaymentDate(object id)
+        {
+            Int64 output = 0;
+
+            output = Convert.ToInt64(mysqlglobal.executeScalarQuery("SELECT `date` FROM `CSTPAYMENT` WHERE `id` = " + id.ToString(), this));
+
+            return output;
+        }
+
+
         public void print_report_method(string reportName, double start_unixtime, double end_unixtime, string output, string totals_shown = "", string report_type = "", string consignor_code = "", double upto_unixtime = 0)
         {
             // Dispose of it, memory problem workaround (one of the many worarounds) for Crystal Reports(tm)
@@ -350,6 +377,9 @@ namespace Multi_Express_Consignment
                 }
 
             }
+
+            /* Process Payments */
+            processPayments();
 
             /* Standard Headers */
             standard_headers();

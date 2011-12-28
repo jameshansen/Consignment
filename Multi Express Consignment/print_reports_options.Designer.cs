@@ -285,7 +285,7 @@
             // 
             // input_startdate
             // 
-            this.input_startdate.Location = new System.Drawing.Point(7, 24);
+            this.input_startdate.Location = new System.Drawing.Point(9, 24);
             this.input_startdate.Name = "input_startdate";
             this.input_startdate.Size = new System.Drawing.Size(197, 20);
             this.input_startdate.TabIndex = 5;

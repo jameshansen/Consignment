@@ -110,7 +110,6 @@
             this.label11 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.output_totalowed = new System.Windows.Forms.TextBox();
-            this.panel1 = new System.Windows.Forms.Panel();
             this.label12 = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.groupBox1.SuspendLayout();
@@ -139,6 +138,7 @@
             this.button1.TabIndex = 3;
             this.button1.Text = "Consignment";
             this.button1.UseVisualStyleBackColor = false;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // label1
             // 
@@ -397,7 +397,7 @@
             this.groupBox3.Controls.Add(this.dataGridView2);
             this.groupBox3.Location = new System.Drawing.Point(13, 462);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(722, 151);
+            this.groupBox3.Size = new System.Drawing.Size(722, 175);
             this.groupBox3.TabIndex = 30;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Payment Details";
@@ -408,13 +408,14 @@
             this.button10.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(189)))), ((int)(((byte)(182)))));
             this.button10.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button10.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.button10.Location = new System.Drawing.Point(141, 100);
+            this.button10.Location = new System.Drawing.Point(137, 132);
             this.button10.Name = "button10";
             this.button10.Size = new System.Drawing.Size(120, 37);
             this.button10.TabIndex = 14;
             this.button10.Text = "Edit Payment";
             this.button10.UseVisualStyleBackColor = false;
             this.button10.Visible = false;
+            this.button10.Click += new System.EventHandler(this.button10_Click);
             // 
             // button9
             // 
@@ -422,7 +423,7 @@
             this.button9.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(189)))), ((int)(((byte)(182)))));
             this.button9.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button9.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.button9.Location = new System.Drawing.Point(15, 100);
+            this.button9.Location = new System.Drawing.Point(11, 132);
             this.button9.Name = "button9";
             this.button9.Size = new System.Drawing.Size(120, 37);
             this.button9.TabIndex = 13;
@@ -437,7 +438,7 @@
             this.button6.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button6.Image = ((System.Drawing.Image)(resources.GetObject("button6.Image")));
             this.button6.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.button6.Location = new System.Drawing.Point(581, 100);
+            this.button6.Location = new System.Drawing.Point(581, 132);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(127, 37);
             this.button6.TabIndex = 12;
@@ -466,12 +467,12 @@
             this.pg_vendor_name,
             this.pg_status,
             this.pg_payment_id});
-            this.dataGridView2.Location = new System.Drawing.Point(15, 19);
+            this.dataGridView2.Location = new System.Drawing.Point(11, 19);
             this.dataGridView2.Name = "dataGridView2";
             this.dataGridView2.ReadOnly = true;
             this.dataGridView2.RowHeadersVisible = false;
             this.dataGridView2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView2.Size = new System.Drawing.Size(693, 75);
+            this.dataGridView2.Size = new System.Drawing.Size(697, 107);
             this.dataGridView2.TabIndex = 2;
             // 
             // pg_id
@@ -580,28 +581,29 @@
             this.groupBox4.Controls.Add(this.dataGridView1);
             this.groupBox4.Location = new System.Drawing.Point(12, 225);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(722, 206);
+            this.groupBox4.Size = new System.Drawing.Size(722, 215);
             this.groupBox4.TabIndex = 32;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Manage Items in Consignment";
             // 
             // button13
             // 
-            this.button13.Location = new System.Drawing.Point(270, 156);
+            this.button13.Location = new System.Drawing.Point(270, 172);
             this.button13.Name = "button13";
             this.button13.Size = new System.Drawing.Size(75, 23);
             this.button13.TabIndex = 17;
             this.button13.Text = "Debug";
             this.button13.UseVisualStyleBackColor = true;
+            this.button13.Visible = false;
             this.button13.Click += new System.EventHandler(this.button13_Click);
             // 
             // button11
             // 
-            this.button11.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.button11.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.button11.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(189)))), ((int)(((byte)(182)))));
             this.button11.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button11.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.button11.Location = new System.Drawing.Point(138, 156);
+            this.button11.Location = new System.Drawing.Point(138, 172);
             this.button11.Name = "button11";
             this.button11.Size = new System.Drawing.Size(120, 37);
             this.button11.TabIndex = 16;
@@ -611,11 +613,11 @@
             // 
             // button12
             // 
-            this.button12.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.button12.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.button12.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(189)))), ((int)(((byte)(182)))));
             this.button12.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button12.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.button12.Location = new System.Drawing.Point(12, 156);
+            this.button12.Location = new System.Drawing.Point(12, 172);
             this.button12.Name = "button12";
             this.button12.Size = new System.Drawing.Size(120, 37);
             this.button12.TabIndex = 15;
@@ -625,12 +627,12 @@
             // 
             // button4
             // 
-            this.button4.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button4.BackColor = System.Drawing.Color.Yellow;
             this.button4.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button4.Image = ((System.Drawing.Image)(resources.GetObject("button4.Image")));
             this.button4.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.button4.Location = new System.Drawing.Point(601, 156);
+            this.button4.Location = new System.Drawing.Point(601, 172);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(108, 37);
             this.button4.TabIndex = 11;
@@ -643,7 +645,8 @@
             this.dataGridView1.AllowUserToAddRows = false;
             this.dataGridView1.AllowUserToDeleteRows = false;
             this.dataGridView1.AllowUserToResizeRows = false;
-            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
@@ -672,7 +675,7 @@
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.RowHeadersVisible = false;
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(697, 131);
+            this.dataGridView1.Size = new System.Drawing.Size(697, 147);
             this.dataGridView1.TabIndex = 1;
             this.dataGridView1.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellDoubleClick);
             // 
@@ -902,15 +905,6 @@
             this.output_totalowed.Size = new System.Drawing.Size(132, 20);
             this.output_totalowed.TabIndex = 42;
             // 
-            // panel1
-            // 
-            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel1.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.panel1.Location = new System.Drawing.Point(14, 619);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(721, 10);
-            this.panel1.TabIndex = 41;
-            // 
             // label12
             // 
             this.label12.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
@@ -937,7 +931,6 @@
             this.Controls.Add(this.label11);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.output_totalowed);
-            this.Controls.Add(this.panel1);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.button8);
             this.Controls.Add(this.button7);
@@ -1021,7 +1014,6 @@
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.TextBox output_totalowed;
-        private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label label12;
         public System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.Timer timer1;

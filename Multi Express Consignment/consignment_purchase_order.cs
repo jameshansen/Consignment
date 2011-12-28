@@ -26,18 +26,20 @@ namespace Multi_Express_Consignment
     public partial class consignment_purchase_order : Form
     {
 
-        public static string consignment_code;
-        public static string vendor_code;
+        // JH: 2011-12-23 Cannot use Static Variables on a Form that appears more than once at one time.
 
-        public static string selected_upc; // If in Item Mode
+        public string consignment_code;
+        public string vendor_code;
 
-        public static string mode;
+        public string selected_upc; // If in Item Mode
+        
+        public string mode;
 
-        public static bool vendorModified = false;
+        public bool vendorModified = false;
 
-        public static string consignment_status = null;
+        public string consignment_status = null;
 
-        public static DateTime openFormDate = DateTime.Now;
+        public DateTime openFormDate = DateTime.Now;
 
         public bool allSold = true;
 
@@ -171,7 +173,8 @@ namespace Multi_Express_Consignment
 
                     // JH: 2011-11-16 Load Date Sold, Date Paid (BUG 2)
                     outputRow.Cells[ig_date_sold.Index].Value = row["date_sold"];
-                    outputRow.Cells[ig_date_paid.Index].Value = row["date_paid"];
+                    outputRow.Cells[ig_date_paid.Index].Value = fetchPaymentDate(row["date_paid"]);
+                    outputRow.Cells[ig_payment_id.Index].Value = row["date_paid"];
 
                     vendor_code = Convert.ToString(row["vendor_code"]);
                     consignment_status = Convert.ToString(row["consignment_status"]);
@@ -267,6 +270,16 @@ namespace Multi_Express_Consignment
             return output;
         }
 
+        public string fetchPaymentDate(object id)
+        {
+            string output = "";
+
+            output = Convert.ToString(mysqlglobal.executeScalarQuery("SELECT `date` FROM `CSTPAYMENT` WHERE `id` = " + id.ToString(), this));
+
+            return output;
+        }
+
+
         public void saveItems()
         {
             calcTotals();
@@ -311,9 +324,117 @@ namespace Multi_Express_Consignment
 
             }
 
+            // Insert new Payments into DB
+            // Doing this first as of 2011-12-22
+            int records = dataGridView2.RowCount;
+            for (int i = records - 1; i >= 0; i--) // Has to do a backwards for loop, last row is row 0.
+            {
+                // consignment_code = global
+                // vendor_code = global
+
+                string payment_id = Convert.ToString(dataGridView2.Rows[i].Cells[pg_id.Index].Value);
+                string internal_payment_id = Convert.ToString(dataGridView2.Rows[i].Cells[pg_payment_id.Index].Value);
+                string payment_code = Convert.ToString(dataGridView2.Rows[i].Cells[pg_type.Index].Value);
+                string payment_description = Convert.ToString(dataGridView2.Rows[i].Cells[pg_desc.Index].Value);
+                string payment_reference = Convert.ToString(dataGridView2.Rows[i].Cells[pg_cn.Index].Value);
+                string payment_expiry = Convert.ToString(dataGridView2.Rows[i].Cells[pg_expiry.Index].Value);
+                string payment_date = Convert.ToString(dataGridView2.Rows[i].Cells[pg_date.Index].Value);
+                string payment_amount = Convert.ToString(dataGridView2.Rows[i].Cells[pg_amount.Index].Value);
+                string payment_vendor_name = Convert.ToString(dataGridView2.Rows[i].Cells[pg_vendor_name.Index].Value);
+
+                string status = Convert.ToString(dataGridView2.Rows[i].Cells[pg_status.Index].Value);
+                string strSQL = "";
+                bool insert = false;
+                if (status != "Deleted")
+                {
+                    if (payment_id == "")
+                    {
+                        // Insert into Database
+                        insert = true;
+                        strSQL =
+                        @"INSERT INTO `CSTPAYMENT` (
+                            `consignment_code`,
+                            `type`,
+                            `description`,
+                            `cn`,
+                            `expiry`,
+                            `date`,
+                            `amount`,
+                            `vendor_code`,
+                            `vendor_name`
+                            ) VALUES (
+                            '" + consignment_code + @"',
+                            '" + payment_code + @"',
+                            '" + payment_description + @"',
+                            '" + payment_reference + @"',
+                            '" + payment_expiry + @"',
+                            " + payment_date + @",
+                            '" + payment_amount + @"',
+                            '" + vendor_code + @"',
+                            '" + payment_vendor_name + @"');";
+
+                    }
+                    else
+                    {
+                        strSQL =
+                        @"UPDATE `CSTPAYMENT` SET
+                    `consignment_code` = '" + consignment_code + @"',
+                    `type` = '" + payment_code + @"',
+                    `description` = '" + payment_description + @"',
+                    `cn` = '" + payment_reference + @"',
+                    `expiry` = '" + payment_expiry + @"',
+                    `date` = '" + payment_date + @"',
+                    `amount` = '" + payment_amount + @"',
+                    `vendor_code` = '" + vendor_code + @"',
+                    `vendor_name` = '" + payment_vendor_name + @"' WHERE `id` = '" + payment_id + "'";
+                    }
+                }
+                else
+                {
+                    // Remove row
+                    strSQL =
+                        @"DELETE FROM `CSTPAYMENT` WHERE `id` = '" + payment_id + "'";
+                }
+                if (insert)
+                {
+                    int id = mysqlglobal.executeNonQuery(strSQL, this, true);
+
+                    // Update Payment IDs in Item List with this ID.
+                    
+                    
+
+                    for (int a = 0; a < dataGridView1.Rows.Count; a++)
+                    {
+                        string item_payment_id = "";
+                        try
+                        {
+                            item_payment_id  = dataGridView1.Rows[a].Cells[ig_payment_id.Index].Value.ToString();
+                        }
+                        catch
+                        {
+                            /* Catch Null Exceptions */
+                        }
+
+                        //MessageBox.Show(@"JH: DEBUG: id: " + id + ". internal_payment_id: " + internal_payment_id + ". item_payment_id: " + item_payment_id);
+
+                        if (internal_payment_id == item_payment_id)
+                        {
+                            dataGridView1.Rows[a].Cells[ig_payment_id.Index].Value = id;
+                        }
+                    }
+
+                }
+                else
+                {
+                    mysqlglobal.executeNonQuery(strSQL, this);
+                }
+
+            }
+
+
 
             // Insert new items into DB
-            int records = dataGridView1.RowCount;
+            records = dataGridView1.RowCount;
             for (int i = records - 1; i >= 0; i--) // Has to do a backwards for loop, last row is row 0.
             {
                 // consignment_code = global
@@ -330,6 +451,8 @@ namespace Multi_Express_Consignment
                     string date_received = Convert.ToString(dataGridView1.Rows[i].Cells[ig_date_received.Index].Value);
                     string date_expiry = Convert.ToString(dataGridView1.Rows[i].Cells[ig_date_expiry.Index].Value);
                     string date_sold = Convert.ToString(dataGridView1.Rows[i].Cells[ig_date_sold.Index].Value);
+
+                    string payment_id = Convert.ToString(dataGridView1.Rows[i].Cells[ig_payment_id.Index].Value);
                     string date_paid = Convert.ToString(dataGridView1.Rows[i].Cells[ig_date_paid.Index].Value);
 
                     string desc_brand = Convert.ToString(dataGridView1.Rows[i].Cells[ig_desc_brand.Index].Value);
@@ -393,13 +516,14 @@ namespace Multi_Express_Consignment
                     '" + date_received + @"',
                     '" + date_expiry + @"',
                     '" + date_sold + @"',
-                    '" + date_paid + @"',
+                    '" + payment_id + @"',
                     '" + desc_brand + @"',
                     '" + desc_gender + @"',
                     '" + desc_garment + @"',
                     '" + desc_material + @"',
                     '" + desc_colour + @"',
                     '" + desc_size + "');";
+                        //'" + date_paid + @"',
                     }
                     else
                     {
@@ -415,7 +539,7 @@ namespace Multi_Express_Consignment
                     `consignment_status` = '" + consignment_status + @"',
                     `date_received` = '" + date_received + @"',
                     `date_expiry` = '" + date_expiry + @"',
-                    `date_paid` = '" + date_paid + @"',
+                    `date_paid` = '" + payment_id + @"',
                     `desc_brand` = '" + desc_brand + @"',
                     `desc_gender` = '" + desc_gender + @"',
                     `desc_garment` = '" + desc_garment + @"',
@@ -433,75 +557,6 @@ namespace Multi_Express_Consignment
                 mysqlglobal.executeNonQuery(strSQL, this);              
             }
 
-            // Insert new Payments into DB
-            records = dataGridView2.RowCount;
-            for (int i = records - 1; i >= 0; i--) // Has to do a backwards for loop, last row is row 0.
-            {
-                // consignment_code = global
-                // vendor_code = global
-
-                string payment_id = Convert.ToString(dataGridView2.Rows[i].Cells[pg_id.Index].Value);
-                string payment_code = Convert.ToString(dataGridView2.Rows[i].Cells[pg_type.Index].Value);
-                string payment_description = Convert.ToString(dataGridView2.Rows[i].Cells[pg_desc.Index].Value);
-                string payment_reference = Convert.ToString(dataGridView2.Rows[i].Cells[pg_cn.Index].Value);
-                string payment_expiry = Convert.ToString(dataGridView2.Rows[i].Cells[pg_expiry.Index].Value);
-                string payment_date = Convert.ToString(dataGridView2.Rows[i].Cells[pg_date.Index].Value);
-                string payment_amount = Convert.ToString(dataGridView2.Rows[i].Cells[pg_amount.Index].Value);
-                string payment_vendor_name = Convert.ToString(dataGridView2.Rows[i].Cells[pg_vendor_name.Index].Value);
-
-                string status = Convert.ToString(dataGridView2.Rows[i].Cells[pg_status.Index].Value);
-                string strSQL = "";
-                if (status != "Deleted")
-                {
-                    if (payment_id == "")
-                    {
-                        // Insert into Database
-                            strSQL =
-                            @"INSERT INTO `CSTPAYMENT` (
-                            `consignment_code`,
-                            `type`,
-                            `description`,
-                            `cn`,
-                            `expiry`,
-                            `date`,
-                            `amount`,
-                            `vendor_code`,
-                            `vendor_name`
-                            ) VALUES (
-                            '" + consignment_code + @"',
-                            '" + payment_code + @"',
-                            '" + payment_description + @"',
-                            '" + payment_reference + @"',
-                            '" + payment_expiry + @"',
-                            " + payment_date + @",
-                            '" + payment_amount + @"',
-                            '" + vendor_code + @"',
-                            '" + payment_vendor_name + @"');";
-
-                    }
-                    else
-                    {
-                        strSQL =
-                        @"UPDATE `CSTPAYMENT` SET
-                    `consignment_code` = '" + consignment_code + @"',
-                    `type` = '" + payment_code + @"',
-                    `description` = '" + payment_description + @"',
-                    `cn` = '" + payment_reference + @"',
-                    `expiry` = '" + payment_expiry + @"',
-                    `date` = '" + payment_date + @"',
-                    `amount` = '" + payment_amount + @"',
-                    `vendor_code` = '" + vendor_code + @"',
-                    `vendor_name` = '" + payment_vendor_name + @"' WHERE `id` = '" + payment_id + "'";
-                    }
-                }
-                else
-                {
-                    // Remove row
-                    strSQL =
-                        @"DELETE FROM `CSTPAYMENT` WHERE `id` = '" + payment_id + "'";
-                }
-                mysqlglobal.executeNonQuery(strSQL, this);
-            }
 
         }
 
@@ -739,6 +794,11 @@ namespace Multi_Express_Consignment
             for(int i = 0; i < dataGridView1.Columns.Count; i++) {
                 dataGridView1.Columns[i].Visible = true;
             }
+
+            for (int i = 0; i < dataGridView2.Columns.Count; i++)
+            {
+                dataGridView2.Columns[i].Visible = true;
+            }
         }
 
         private void button8_Click(object sender, EventArgs e)
@@ -795,9 +855,10 @@ namespace Multi_Express_Consignment
 
 
 
-                if (MessageBox.Show("Do you wish to Print Item Labels Now?", "Print Consignment Agreement", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (MessageBox.Show("Do you wish to Print Item Labels Now?", "Print Item Labels", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
                     //printRptConsignment();
+                    
                     print_report prt = new print_report(consignment_code, null, null, "Consignment Barcode Item Labels");
                     prt.ShowDialog(this);
                 }
@@ -820,6 +881,19 @@ namespace Multi_Express_Consignment
 
         private void button12_Click(object sender, EventArgs e)
         {
+
+            if (dataGridView1.SelectedRows.Count == 0) MessageBox.Show("You must select the item you wish to delete.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+            if (MessageBox.Show("Are you sure you want to Delete this item?", "Delete Payment", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.No)
+            {
+                // Don't Continue
+                return;
+            }
+            else
+            {
+                // Continue
+            }
+
             // Check if sold, if so, do NOT allow deletion.
             if (dataGridView1.SelectedRows[0].Cells[ig_status.Index].Value.ToString() == "Sold")
             {
@@ -835,6 +909,7 @@ namespace Multi_Express_Consignment
 
         private void button11_Click(object sender, EventArgs e)
         {
+            if (dataGridView1.SelectedRows.Count == 0) MessageBox.Show("You must select the item you wish to edit.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
             //if(additem != null || additem.IsDisposed == false) additem.Dispose();
             int editRow = dataGridView1.SelectedRows[0].Index;
@@ -851,6 +926,18 @@ namespace Multi_Express_Consignment
 
         private void button9_Click(object sender, EventArgs e)
         {
+            if (dataGridView2.SelectedRows.Count == 0) MessageBox.Show("You must select the payment you wish to delete.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+            if (MessageBox.Show("Are you sure you want to Delete this payment? This will clear the 'Date Paid' value of all items that were paid at the time of this Payment.", "Delete Payment", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.No)
+            {
+                // Don't Continue
+                return;
+            }
+            else
+            {
+                // Continue
+            }
+            
             // Hide Row
             dataGridView2.SelectedRows[0].Visible = false;
 
@@ -858,27 +945,60 @@ namespace Multi_Express_Consignment
             dataGridView2.SelectedRows[0].Cells[pg_status.Index].Value = "Deleted";
 
             // Remove Date_Paids 2011-07-11
+
+            string int_pid = "";            
+            string db_pid = "";
             try
             {
-                string payment_id = dataGridView2.SelectedRows[0].Cells[pg_payment_id.Index].Value.ToString();
-
-                if (payment_id != "")
-                {
-                    for (int a = 0; a < dataGridView1.Rows.Count; a++)
-                    {
-                        string item_payment_id = dataGridView1.Rows[a].Cells[ig_payment_id.Index].Value.ToString();
-                        if (payment_id == item_payment_id)
-                        {
-                            dataGridView1.Rows[a].Cells[ig_date_paid.Index].Value = "";
-                            dataGridView1.Rows[a].Cells[ig_payment_id.Index].Value = "";
-                        }
-                    }
-                }
+                int_pid = dataGridView2.SelectedRows[0].Cells[pg_payment_id.Index].Value.ToString();
             }
             catch
             {
-                // JH: Catch errors if Payment ID has nevar been used like :)
+                // Not set
             }
+
+            try
+            {
+                db_pid = dataGridView2.SelectedRows[0].Cells[pg_id.Index].Value.ToString();
+            }
+            catch
+            {
+                // Not set
+            }
+
+            
+                string item_payment_id = "";
+                    for (int a = 0; a < dataGridView1.Rows.Count; a++)
+                    {
+                        try
+                        {
+                            item_payment_id = dataGridView1.Rows[a].Cells[ig_payment_id.Index].Value.ToString();
+                        }
+                        catch
+                        {
+                            // JH: Catch errors if Payment ID has nevar been used like :)
+                        }
+                        if (int_pid != "")
+                        {
+                            if (int_pid == item_payment_id)
+                            {
+                                dataGridView1.Rows[a].Cells[ig_date_paid.Index].Value = "";
+                                dataGridView1.Rows[a].Cells[ig_payment_id.Index].Value = "";
+                            }
+                        }
+
+                        if (db_pid != "")
+                        {
+                            if (db_pid == item_payment_id)
+                            {
+                                dataGridView1.Rows[a].Cells[ig_date_paid.Index].Value = "";
+                                dataGridView1.Rows[a].Cells[ig_payment_id.Index].Value = "";
+                            }
+                        }
+
+                    }
+                
+
 
             // Calc Totals
             calcTotals();
@@ -905,6 +1025,19 @@ namespace Multi_Express_Consignment
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             button11_Click(null, null);
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (Control.ModifierKeys == Keys.Shift)
+            {
+                button13.Visible = true;
+            }
         }
 
 
