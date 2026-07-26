@@ -6,7 +6,7 @@ C# WinForms Application. Management program for retail stores that work on a con
 
 I wrote this Consignment Management program for a Consignment Store located in Vancouver in 2011. I was employed by CompuMAX to develop this system. The CEO, Ken Tung, gave me permission to share the source code of the project publicly on my GitHub under a GPL license. Thank you Ken.
 
-This project was written The project took 6-12 months to complete from start to the first version beginning in January 2011, the first release to the customer in August 2011, followed by updates through to December 2011.
+The project took 6-12 months to complete from start to finish. Work began in January 2011, with the first release to the customer in August 2011, followed by updates through to December 2011.
 
 **Concept**
 
