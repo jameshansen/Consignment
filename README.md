@@ -59,7 +59,7 @@ Finally there are a number of plain-text MySQL queries in the source code which 
 
 Originally an installer was used that setup the database and installed all dependancies - this is not included in the Git repository.
 
-There will not be a pre-built binary or release at this time until the other issues are addressed and I confirm the code is safe to distribute.
+There will not be a pre-built binary or release at this time until the above issues are addressed and I confirm it is safe to distribute.
 
 **Screenshots**
 
