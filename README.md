@@ -8,6 +8,14 @@ I wrote this Consignment Management program for a Consignment Store located in V
 
 The project took 6-12 months to complete from start to finish. Work began in January 2011, with the first release to the customer in August 2011, followed by updates through to December 2011.
 
+**Live Online Demo**
+
+The most interesting part of restoring and releasing this project was that enough time has passed since it's release in 2011 that modern PCs are able to run it inside a browser inside a Virtual Machine (VM) powered by the [v86](https://github.com/copy/v86) Emulator.
+
+You can try the demo on the project page: https://jameshansen.ai/projects/consignment
+
+Potentially this could be a way to bring more legacy Windows apps to the web without rewrites. To learn more about how this VM was created, check out the VM folder in this repository.
+
 **Concept**
 
 The concept is simple, a vendor provides items to a store to stock on their shelves. Upon the sale, the store pays the vendor a percentage of the revenue.
@@ -34,6 +42,8 @@ Crystal Reports Runtime is required which includes the required CrystalDecisions
 MySQL Connector .net is required - the original connector 6.3.4 installer is included here - mysql.data.msi
 
 The database structure has to be prepopulated from consignment_db_structure.sql
+
+For a demonstration dataset of fictional vendors, customers, consignments, sales and payments, load demo_database.sql afterwards. Its dates are generated relative to the day it is loaded, so the data always reads as recent.
 
 **Important Notes**
 

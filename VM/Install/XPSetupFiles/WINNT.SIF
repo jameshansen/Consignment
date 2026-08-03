@@ -1,0 +1,139 @@
+; Unattended answer file for the Consignment demo image.
+;
+; Read by SETUPLDR.BIN out of I386 on the boot CD. build_install_iso.py injects
+; it with iso_add.py, substituting the product key, so no key is ever stored
+; here.
+;
+; The install is aimed at v86, and two settings exist only for that:
+;
+;   ComputerType   forces the non-ACPI "Standard PC" HAL, which is the one thing
+;                  v86 requires of an NT-family guest: with the ACPI HAL,
+;                  Windows 2000 and XP fault during startup under v86. See
+;                  docs/windows-nt.md in the v86 tree. The description string has
+;                  to match a [Computer] entry in the media's TXTSETUP.SIF, where
+;                  "Standard PC" is key e_isa_up, and the second token is Retail
+;                  (the HAL comes off the Windows CD, not from an $OEM$ folder).
+;                  Retail is not optional spelling: an unrecognised token here
+;                  makes setup ignore the line and autodetect an ACPI HAL, and
+;                  the HAL choice is the one thing that cannot be corrected after
+;                  the fact. install.mjs runs the machine with acpi: false to
+;                  match.
+;   SFCQuota = 0   stops Windows File Protection populating i386\dllcache, which
+;                  is around 350 MB of duplicated system files. Nothing in this
+;                  image is ever repaired, and every megabyte here becomes
+;                  blocks the browser may have to fetch.
+
+[Data]
+    AutoPartition = 1
+    MsDosInitiated = "0"
+    UnattendedInstall = "Yes"
+
+[Unattended]
+    UnattendMode = FullUnattended
+    OemSkipEula = Yes
+    TargetPath = \WINDOWS
+
+    ; OemPreinstall makes setup read \$OEM$ off the disc, and OemPnPDriversPath
+    ; adds the directories it copied to C: to the driver search path before
+    ; hardware is detected. That is what installs the VBE display driver during
+    ; setup, which is what makes the [Display] section below mean anything: XP's
+    ; own VGA driver has no mode above 640x480 to offer, so without this the
+    ; resolution asked for is simply ignored. Setting it during setup also avoids
+    ; the "do you want to keep these settings?" dialog, which only ever appears
+    ; for a change made after the fact.
+    OemPreinstall = Yes
+    OemPnPDriversPath = "drivers\video"
+    Repartition = Yes
+    FileSystem = ConvertNTFS
+    ComputerType = "Standard PC", Retail
+    DriverSigningPolicy = Ignore
+    WaitForReboot = No
+
+[GuiUnattended]
+    AdminPassword = *
+    EncryptedAdminPassword = NO
+    AutoLogon = Yes
+    AutoLogonCount = 1
+    OEMSkipRegional = 1
+    OemSkipWelcome = 1
+    TimeZone = 4
+
+[UserData]
+    ProductKey = "@PRODUCTKEY@"
+    FullName = "Demo"
+    OrgName = "Consignment"
+    ComputerName = CONSIGNMENT
+
+; Applied on the first boot by the VBE display driver installed above. Anything
+; the video BIOS can do is available; 1024x768 is chosen because the program's
+; main form is laid out at 1279x1010 and maximises into it. VRefresh is nominal,
+; since there is no monitor.
+[Display]
+    BitsPerPel = 16
+    Xresolution = 1024
+    YResolution = 768
+    Vrefresh = 60
+
+[Identification]
+    JoinWorkgroup = WORKGROUP
+
+; This machine is built without a network device. v86 can emulate an NE2000, but
+; the demo does not ask for one, so there is nothing to bind a stack to and
+; nothing to secure. MySQL is reached over a named pipe instead; see my.ini and
+; settings.ini.
+[Networking]
+    InstallDefaultComponents = No
+
+[SystemFileProtection]
+    SFCQuota = 0
+
+[TerminalServices]
+    AllowConnections = 0
+
+; Everything optional that XP will let an answer file leave out. This is not
+; nLite: it removes optional components, not the core OS, so the saving is
+; modest. It matters less than it looks like it should anyway, because the
+; browser fetches only the disk blocks the guest reads and the demo resumes from
+; a savestate rather than booting.
+[Components]
+    msmsgs = Off
+    msnexplr = Off
+    freecell = Off
+    hearts = Off
+    minesweeper = Off
+    pinball = Off
+    solitaire = Off
+    spider = Off
+    zonegames = Off
+    media_clips = Off
+    media_utopia = Off
+    templates = Off
+    fp_extensions = Off
+    iis_common = Off
+    iis_inetmgr = Off
+    iis_www = Off
+    accessopt = Off
+    autoupdate = Off
+    chat = Off
+    clipbook = Off
+    deskpaper = Off
+    dialer = Off
+    fax = Off
+    hypertrm = Off
+    indexsrv_system = Off
+    mousepoint = Off
+    mswordpad = Off
+    netcis = Off
+    objectpkg = Off
+    OEAccess = Off
+    paint = Off
+    rec = Off
+    reminst = Off
+    tour = Off
+    vol = Off
+    WMAccess = Off
+
+; The setup CD's drive letter is not known here, so probe for it. This is a
+; cmd /c command line and not a batch file, so the FOR variable takes one %.
+[GuiRunOnce]
+    Command0 = "cmd /c for %d in (D E F G H) do @if exist %d:\SETUP\INSTALL.CMD call %d:\SETUP\INSTALL.CMD"

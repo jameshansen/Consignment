@@ -1,0 +1,14 @@
+{
+  "_": "The machine, defined once. capture.mjs builds this and the page resumes into it; a savestate records the sizes the machine had, so a page that disagrees with the capture restores into the wrong shape and bugchecks. Anything here that differs between the two is a bug, which is why neither one carries its own copy.",
+
+  "memory_size": 268435456,
+  "vga_memory_size": 8388608,
+
+  "_acpi": "Must stay false: WINNT.SIF installed the Standard PC HAL, and v86 faults during XP startup with the ACPI one.",
+  "acpi": false,
+
+  "_boot_order": "0x132, hard disk first. The install ISO is long gone by this point.",
+  "boot_order": 306,
+
+  "_memory_note": "256 MB, not the 512 MB the install ran with. The disk does not care what it was installed with, and the savestate carries a flat copy of RAM, so this size is what every visitor downloads."
+}

@@ -17,8 +17,12 @@ namespace Multi_Express_Consignment
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Form1 form1 = new Form1();
+            // The form's designer size (1279x1010) is larger than the 1024x768
+            // demo screen, so start it maximized. Cleaner than maximizing it from
+            // the outside once it has shown.
+            form1.WindowState = FormWindowState.Maximized;
             Application.ThreadException += new ThreadExceptionEventHandler(form1.UnhandledThreadExceptionHandler);
-            Application.Run(form1);            
+            Application.Run(form1);
         }
     }
 }

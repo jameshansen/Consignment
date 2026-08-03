@@ -1,0 +1,63 @@
+Windows Registry Editor Version 5.00
+
+; The Windows 2000 "Windows Standard" appearance
+;
+; Turning the Themes service off gets Classic, but Classic on XP still uses XP's
+; own palette and metrics: a 25 px caption, a bright blue title gradient and the
+; beige 236 233 216 button face. Windows 2000 used an 18 px caption, a navy
+; 10 36 106 gradient and the grey 212 208 200 face. Both are "Classic"; they are
+; not the same scheme.
+;
+; This is imported and applied by STARTDEMO.CMD on every boot rather than written
+; once during setup, because USER32 writes the live metrics and colours back over
+; these keys at logoff. Anything set during the unattended install is destroyed
+; by the shutdown at the end of it.
+;
+; The fonts are deliberately absent. Both versions use Tahoma 8 pt here, so the
+; LOGFONT blobs are already right and are not worth carrying as REG_BINARY.
+
+[HKEY_CURRENT_USER\Control Panel\Colors]
+"ActiveBorder"="212 208 200"
+"ActiveTitle"="10 36 106"
+"AppWorkspace"="128 128 128"
+"Background"="58 110 165"
+"ButtonAlternateFace"="181 181 181"
+"ButtonDkShadow"="64 64 64"
+"ButtonFace"="212 208 200"
+"ButtonHilight"="255 255 255"
+"ButtonLight"="212 208 200"
+"ButtonShadow"="128 128 128"
+"ButtonText"="0 0 0"
+"GradientActiveTitle"="166 202 240"
+"GradientInactiveTitle"="192 192 192"
+"GrayText"="128 128 128"
+"Hilight"="10 36 106"
+"HilightText"="255 255 255"
+"HotTrackingColor"="0 0 128"
+"InactiveBorder"="212 208 200"
+"InactiveTitle"="128 128 128"
+"InactiveTitleText"="212 208 200"
+"InfoText"="0 0 0"
+"InfoWindow"="255 255 225"
+"Menu"="212 208 200"
+"MenuBar"="212 208 200"
+"MenuHilight"="10 36 106"
+"MenuText"="0 0 0"
+"Scrollbar"="212 208 200"
+"TitleText"="255 255 255"
+"Window"="255 255 255"
+"WindowFrame"="0 0 0"
+"WindowText"="0 0 0"
+
+; Twips at -15 per pixel, so -270 is the 18 px caption. XP's Classic default is
+; 25 px, which is the "blocky" part.
+[HKEY_CURRENT_USER\Control Panel\Desktop\WindowMetrics]
+"BorderWidth"="-15"
+"CaptionHeight"="-270"
+"CaptionWidth"="-270"
+"MenuHeight"="-270"
+"MenuWidth"="-270"
+"ScrollHeight"="-240"
+"ScrollWidth"="-240"
+"SmCaptionHeight"="-225"
+"SmCaptionWidth"="-225"

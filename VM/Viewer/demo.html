@@ -1,0 +1,192 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Consignment Manager</title>
+<!--
+  The demo: Windows XP and the program, running in the page under v86.
+
+  The disk is never downloaded. v86 asks for the blocks it touches with HTTP
+  range requests, so a four gigabyte image costs whatever XP actually reads,
+  and serve.py rewrites the date inside one of those blocks on the way past.
+
+  By default this resumes state.bin.zst, which is the machine as it stood the
+  moment MySQL answered. Add ?cold to boot from the disk instead, which takes
+  minutes rather than seconds and is the way to tell an image problem from a
+  savestate problem.
+-->
+<style>
+  :root { color-scheme: dark; }
+  body {
+    margin: 0; background: #111; color: #ccc;
+    font: 14px/1.5 system-ui, sans-serif;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; min-height: 100vh;
+  }
+  #screen_container { position: relative; background: #000; }
+  #screen_container > div { white-space: pre; font: 14px/14px monospace; }
+  canvas { display: block; }
+  #status {
+    position: absolute; inset: 0; display: flex;
+    flex-direction: column; align-items: center; justify-content: center;
+    background: #000; text-align: center; gap: .75rem;
+  }
+  #status.done { display: none; }
+  /* The guest draws its own cursor and the mouse is a relative PS/2 device, so
+     without pointer lock there are two cursors drifting apart and the host one
+     can wander off the canvas. This says so, and goes away once locked. */
+  /* Bottom right and only as wide as its own text. A full width bar sat across
+     the program's status line; this leaves all but a corner of the guest visible. */
+  #grab {
+    position: absolute; right: 0; bottom: 0;
+    padding: 6px 10px; background: rgba(0, 0, 0, .72);
+    color: #cfd6d3; font-size: 12px;
+    border-top-left-radius: 5px;
+    cursor: pointer; user-select: none;
+  }
+  #grab[hidden] { display: none; }
+  #bar { width: 260px; height: 3px; background: #333; }
+  #bar > i { display: block; height: 100%; width: 0; background: #6a9; transition: width .3s; }
+  #detail { color: #777; font-size: 12px; min-height: 1.2em; }
+  footer { margin-top: 1rem; color: #666; font-size: 12px; }
+  a { color: #8ab; }
+</style>
+
+<div id="screen_container">
+  <div></div>
+  <canvas></canvas>
+  <div id="status">
+    <div id="msg">Starting</div>
+    <div id="bar"><i></i></div>
+    <div id="detail"></div>
+  </div>
+  <div id="grab" hidden>Click to control the mouse</div>
+</div>
+<footer id="foot"></footer>
+
+<script type="module">
+import { V86 } from "./libv86.mjs";
+
+const params = new URLSearchParams(location.search);
+// ?img= points at another image in this directory, which is how a half built or
+// broken one gets looked at without renaming the good one. Only serve.py's
+// configured image gets the date rewritten, so this is for diagnosis, not use.
+const IMAGE = params.get("img") || "xp.img";
+const STATE = params.get("state") || "state.bin.zst";
+const cold = params.has("cold");
+
+const container = document.getElementById("screen_container");
+const grab = document.getElementById("grab");
+const locked = () => document.pointerLockElement === document.body;
+
+// The bar says one of two things and is never blank once the guest is drawing.
+// While the mouse is captured the only thing worth saying is how to get it back,
+// and that is exactly when the visitor cannot go looking for it: the browser's
+// own "press Esc" toast fades after a second or two. Same box either way, only
+// the words change.
+function show_grab() {
+    grab.innerHTML = locked()
+        ? 'Press <b>Esc</b> to release the mouse'
+        : 'Click to control the mouse';
+    grab.hidden = !status.classList.contains("done");
+}
+const status = document.getElementById("status");
+const msg = document.getElementById("msg");
+const detail = document.getElementById("detail");
+const bar = document.querySelector("#bar > i");
+const foot = document.getElementById("foot");
+
+function say(text, note) {
+    msg.textContent = text;
+    if(note !== undefined) detail.textContent = note;
+}
+
+// v86 needs the image size up front. Asking for one byte is also how it probes,
+// so this doubles as a check that the server does ranges at all.
+async function image_size(url) {
+    const r = await fetch(url, { headers: { Range: "bytes=0-0" } });
+    if(r.status !== 206) {
+        throw new Error(`the server ignored a range request on ${url} (${r.status}).` +
+                        ` Serve this directory with serve.py, not a plain file server.`);
+    }
+    const total = /\/(\d+)\s*$/.exec(r.headers.get("Content-Range") || "");
+    if(!total) throw new Error(`no Content-Range for ${url}`);
+    return +total[1];
+}
+
+async function exists(url) {
+    try { return (await fetch(url, { method: "HEAD" })).ok; }
+    catch { return false; }
+}
+
+try {
+    say("Loading", "reading the machine definition");
+    const machine = await (await fetch("./machine.json")).json();
+    const size = await image_size(IMAGE);
+
+    const resume = !cold && await exists(STATE);
+    say(resume ? "Restoring the session" : "Starting Windows",
+        resume ? "" : "a cold boot takes a few minutes");
+
+    const emulator = new V86({
+        wasm_path: "./v86.wasm",
+        bios: { url: "./bios/seabios.bin" },
+        vga_bios: { url: "./bios/vgabios.bin" },
+        hda: { url: IMAGE, async: true, size },
+        ...(resume ? { initial_state: { url: STATE } } : {}),
+        memory_size: machine.memory_size,
+        vga_memory_size: machine.vga_memory_size,
+        acpi: machine.acpi,
+        boot_order: machine.boot_order,
+        fastboot: true,
+        autostart: true,
+        screen: { container: document.getElementById("screen_container") },
+    });
+
+    // Reachable from the console. A guest that comes up black gives you nothing
+    // to go on from outside the module scope, and this is the difference between
+    // guessing and reading v86.cpu state.
+    window.emulator = emulator;
+
+    // The savestate is the download worth showing a bar for; the disk arrives a
+    // block at a time and has no total.
+    emulator.add_listener("download-progress", e => {
+        if(!e.lengthComputable || !e.total) return;
+        bar.style.width = (100 * e.loaded / e.total) + "%";
+        detail.textContent =
+            `${(e.loaded / 1048576).toFixed(0)} of ${(e.total / 1048576).toFixed(0)} MB`;
+    });
+    emulator.add_listener("download-error", e => {
+        say("Could not load", `${e.file_name} did not arrive`);
+        status.classList.remove("done");
+    });
+
+    // Hide the overlay once the guest is actually drawing its own screen rather
+    // than after a timer, because a cold boot and a resume are minutes apart.
+    emulator.add_listener("screen-set-size", ([w, h, bpp]) => {
+        if(bpp) { status.classList.add("done"); show_grab(); }
+    });
+
+    // Pointer lock. The guest's mouse is a relative PS/2 device: it is told how
+    // far the pointer moved, never where it is, so the cursor XP draws and the
+    // one the browser draws drift apart and the host's can leave the canvas.
+    // Locking hands the movement straight to the guest and hides the browser's
+    // cursor, which is what makes clicking a toolbar button work.
+    //
+    // v86's lock_mouse() locks document.body. In an iframe the request is
+    // refused unless the frame carries the allow-pointer-lock sandbox token.
+    // Esc releases it, which the browser does for us.
+    container.addEventListener("click", () => { if(!locked()) emulator.lock_mouse(); });
+    document.addEventListener("pointerlockchange", show_grab);
+    emulator.add_listener("emulator-started", () => {
+        bar.style.width = "100%";
+        say(resume ? "Resuming" : "Booting", "");
+    });
+
+    foot.innerHTML = resume
+        ? 'Resumed from a snapshot. <a href="?cold">Cold boot instead</a>.'
+        : 'Cold booting. <a href="./">Resume the snapshot instead</a>.';
+}
+catch(err) {
+    say("Could not start", String(err.message || err));
+    console.error(err);
+}
+</script>
