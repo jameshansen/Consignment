@@ -21,7 +21,12 @@
     display: flex; flex-direction: column;
     align-items: center; justify-content: center; min-height: 100vh;
   }
-  #screen_container { position: relative; background: #000; }
+  /* touch-action is what makes a drag reach the guest on a phone. v86 already
+     turns touchmove into mouse movement and calls preventDefault to stop the
+     page scrolling, but touch listeners bound to window are passive by default,
+     so that call is ignored and the browser scrolls instead of the pointer
+     moving. Saying it in CSS is the one form the browser cannot ignore. */
+  #screen_container { position: relative; background: #000; touch-action: none; }
   #screen_container > div { white-space: pre; font: 14px/14px monospace; }
   canvas { display: block; }
   #status {
@@ -76,6 +81,10 @@ const cold = params.has("cold");
 const container = document.getElementById("screen_container");
 const grab = document.getElementById("grab");
 const locked = () => document.pointerLockElement === document.body;
+// No pointer lock on a phone: the API is desktop only, so a tap that tried to
+// capture the cursor would fail silently and the bar would ask for something
+// that can never happen. Touch gets a trackpad instead.
+const touch = matchMedia("(pointer: coarse)").matches;
 
 // The bar says one of two things and is never blank once the guest is drawing.
 // While the mouse is captured the only thing worth saying is how to get it back,
@@ -83,9 +92,11 @@ const locked = () => document.pointerLockElement === document.body;
 // own "press Esc" toast fades after a second or two. Same box either way, only
 // the words change.
 function show_grab() {
-    grab.innerHTML = locked()
-        ? 'Press <b>Esc</b> to release the mouse'
-        : 'Click to control the mouse';
+    grab.innerHTML = touch
+        ? 'Drag to move the pointer &nbsp;·&nbsp; tap to click'
+        : locked()
+            ? 'Press <b>Esc</b> to release the mouse'
+            : 'Click to control the mouse';
     grab.hidden = !status.classList.contains("done");
 }
 const status = document.getElementById("status");
@@ -174,8 +185,67 @@ try {
     // v86's lock_mouse() locks document.body. In an iframe the request is
     // refused unless the frame carries the allow-pointer-lock sandbox token.
     // Esc releases it, which the browser does for us.
-    container.addEventListener("click", () => { if(!locked()) emulator.lock_mouse(); });
-    document.addEventListener("pointerlockchange", show_grab);
+    if(!touch) {
+        container.addEventListener("click", () => { if(!locked()) emulator.lock_mouse(); });
+        document.addEventListener("pointerlockchange", show_grab);
+    }
+    else {
+        // Touch. v86 already turns a drag into pointer movement; what it has no
+        // answer for is the click, because it only ever *releases* the buttons on
+        // touchend and nothing presses them. So measure the gesture: a drag moves
+        // the pointer and nothing else, a tap in one spot is a left click.
+        //
+        // preventDefault on touchend suppresses the synthetic mouse events a tap
+        // would otherwise generate, which would arrive as a second click.
+        let sx = 0, sy = 0, moved = 0;
+        container.addEventListener("touchstart", e => {
+            const t = e.changedTouches[0];
+            sx = t.clientX; sy = t.clientY; moved = 0;
+        }, { passive: true });
+        container.addEventListener("touchmove", e => {
+            const t = e.changedTouches[0];
+            moved = Math.max(moved, Math.abs(t.clientX - sx) + Math.abs(t.clientY - sy));
+        }, { passive: true });
+        container.addEventListener("touchend", e => {
+            e.preventDefault();
+            if(moved > 12) return;
+            emulator.bus.send("mouse-click", [true, false, false]);
+            // Released on a timer rather than in the same breath: the guest reads
+            // the button state off a stream of PS/2 packets, and a press and a
+            // release in the same instant can be sampled as neither.
+            setTimeout(() => emulator.bus.send("mouse-click", [false, false, false]), 40);
+        }, { passive: false });
+    }
+
+    // Stop for good. The emulator keeps a CPU busy and keeps fetching disk
+    // blocks until it is told not to, and a stopped machine cannot be resumed
+    // from where it was, so the way back is to load the page again.
+    function finished() {
+        emulator.stop();
+        if(document.exitPointerLock) document.exitPointerLock();
+        grab.hidden = true;
+        document.getElementById("bar").hidden = true;
+        say("Demo closed", "");
+        detail.innerHTML = '<a href="./demo.html">Start it again</a>';
+        status.classList.remove("done");
+    }
+
+    // The guest says when it is finished. STARTDEMO.CMD writes DEMO-EXIT to COM1
+    // the instant the program returns, which is before Windows starts tearing
+    // the session down, so stopping here means "Logging off" and the shutdown
+    // screen are never drawn. Waiting for the machine to actually halt would
+    // show the visitor several seconds of Windows saying goodbye.
+    let serial = "";
+    emulator.add_listener("serial0-output-byte", byte => {
+        const c = String.fromCharCode(byte);
+        if(c !== "\n" && c !== "\r") {
+            if(serial.length < 100) serial += c;
+            return;
+        }
+        const line = serial.trim();
+        serial = "";
+        if(line === "DEMO-EXIT") finished();
+    });
     emulator.add_listener("emulator-started", () => {
         bar.style.width = "100%";
         say(resume ? "Resuming" : "Booting", "");

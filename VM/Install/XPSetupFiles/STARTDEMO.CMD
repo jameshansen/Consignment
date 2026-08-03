@@ -56,3 +56,13 @@ rem here, this script ends, and SHELL.VBS shuts down. The program starts
 rem maximized on its own (Program.cs sets WindowState).
 cd /d C:\APP
 start "" /wait "C:\APP\Multi Express Consignment.exe"
+
+rem The program has closed. Say so on COM1 before returning, because everything
+rem after this point is Windows tearing the session down: SHELL.VBS calls
+rem shutdown, and the visitor gets "Logging off" and a shrinking blue screen for
+rem several seconds. The page stops the emulator on this line, in the same
+rem instruction the guest writes it, so none of that is ever drawn.
+rem
+rem Last line on purpose. Anything below it runs in a race with being switched
+rem off, so nothing that matters may go here.
+echo DEMO-EXIT>COM1 2>nul
