@@ -57,6 +57,8 @@ namespace Multi_Express_Consignment
             dataGridView2.SelectionChanged += rowSelectionChanged;
             rowSelectionChanged(null, null);
 
+            button10.Visible = false; // Bugfix (2026): "Edit Payment" has an empty handler, it has never done anything
+
 
             consignment_code = consignmentCode;
             mode = "edit";
@@ -230,7 +232,9 @@ namespace Multi_Express_Consignment
             string query = "SELECT * FROM PSVEMAST WHERE CMCUCODE = \"" + vendor_code + "\"";
 
             DataSet vendor_data = mysqlglobal.executeDataSetQuery(query, "PSVEMAST", this);
-            DataRow vendor_row = vendor_data.Tables["PSVEMAST"].Rows[0]; // vendor_data -> vendor_row
+
+            // Fix for missing record bug (2026): A deleted vendor (or a consignment with no items left) leaves a blank panel rather than crashing
+            DataRow vendor_row = vendor_data.Tables["PSVEMAST"].Rows.Count > 0 ? vendor_data.Tables["PSVEMAST"].Rows[0] : vendor_data.Tables["PSVEMAST"].NewRow();
 
             input_CMADD1.Text = vendor_row["CMADD1"].ToString();
             input_CMADD2.Text = vendor_row["CMADD2"].ToString();

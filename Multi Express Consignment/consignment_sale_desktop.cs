@@ -139,7 +139,9 @@ namespace Multi_Express_Consignment
                     // Fetch Data on Customer
                     query = "SELECT * FROM SFCUMAST WHERE CMCUCODE = \"" + row["customer_code"] + "\"";
                     DataSet customer_data = mysqlglobal.executeDataSetQuery(query, "SFCUMAST", this);
-                    DataRow customer_row = customer_data.Tables["SFCUMAST"].Rows[0]; // customer_data -> customer_row
+
+                    // Fix for missing record bug (2026): A deleted customer left the whole order list unloadable
+                    DataRow customer_row = customer_data.Tables["SFCUMAST"].Rows.Count > 0 ? customer_data.Tables["SFCUMAST"].Rows[0] : customer_data.Tables["SFCUMAST"].NewRow();
 
                     // End customer Data Fetch
 

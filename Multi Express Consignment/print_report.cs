@@ -87,9 +87,10 @@ namespace Multi_Express_Consignment
                 }
                 string query = "SELECT * FROM PSVEMAST WHERE CMCUCODE = \"" + vendor_code + "\"";
                 DataSet vendor_data = mysqlglobal.executeDataSetQuery(query, "PSVEMAST", this);
-                
+
                 /* Put Vendor Data into Global DataRow */
-                vendor_detail_row = vendor_data.Tables["PSVEMAST"].Rows[0]; // vendor_data -> vendor_row
+                // Fix for missing record bug (2026): A deleted vendor prints blank details rather than crashing
+                vendor_detail_row = vendor_data.Tables["PSVEMAST"].Rows.Count > 0 ? vendor_data.Tables["PSVEMAST"].Rows[0] : vendor_data.Tables["PSVEMAST"].NewRow();
 
             }
 
@@ -97,7 +98,16 @@ namespace Multi_Express_Consignment
             {
                 /* Load Order Header Row */
                 string strOH = "SELECT * FROM `CSTORDER` WHERE `order_number` = \"" + order_number + "\"";
-                order_header_row = mysqlglobal.executeDataSetQuery(strOH, "CSTORDER", this).Tables["CSTORDER"].Rows[0];
+                DataTable order_header_table = mysqlglobal.executeDataSetQuery(strOH, "CSTORDER", this).Tables["CSTORDER"];
+
+                if (order_header_table.Rows.Count == 0) // Fix for missing record bug (2026): Nothing to report on
+                {
+                    MessageBox.Show("Order #" + order_number + " could not be found.", "Order Not Found");
+                    this.Close();
+                    return;
+                }
+
+                order_header_row = order_header_table.Rows[0];
 
                 /* Load Item Data based on Sale */
                 string strSQL = "SELECT * FROM `CSTITEM` WHERE `order_number` = \"" + order_number + "\" ORDER BY `upc`";
@@ -124,7 +134,8 @@ namespace Multi_Express_Consignment
                 DataSet customer_data = mysqlglobal.executeDataSetQuery(query, "SFCUMAST", this);
 
                 /* Put Customer Data into Global DataRow */
-                customer_detail_row = customer_data.Tables["SFCUMAST"].Rows[0]; // vendor_data -> vendor_row
+                // Fix for missing record bug (2026): A deleted customer prints blank details rather than crashing
+                customer_detail_row = customer_data.Tables["SFCUMAST"].Rows.Count > 0 ? customer_data.Tables["SFCUMAST"].Rows[0] : customer_data.Tables["SFCUMAST"].NewRow();
             }         
    
             /* Item Data for Selected Items */

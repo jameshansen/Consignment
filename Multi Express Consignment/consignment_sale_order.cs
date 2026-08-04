@@ -54,6 +54,11 @@ namespace Multi_Express_Consignment
             dataGridView2.SelectionChanged += rowSelectionChanged;
             rowSelectionChanged(null, null);
 
+            // Fix for Read Only bug (2026): Remember the editable layout so it can be put back
+            item_area_top = dataGridView1.Top;
+            item_area_height = dataGridView1.Height;
+            item_area_caption = groupBox4.Text;
+
             order_number = orderNumber;
             mode = "edit";
             if (vendorCode != null)
@@ -116,7 +121,35 @@ namespace Multi_Express_Consignment
                 statusButton.ForeColor = Color.Red; // Readability
             }
 
+            // Fix for Read Only bug (2026): An order that is no longer invoiced can be edited again.
+            // Only this direction, an order invoiced during this session still has to save its items.
+            if (read_only && status != "Invoiced")
+            {
+                read_only = false;
+                applyReadOnly();
+            }
 
+        }
+
+        // Fix for Read Only bug (2026): Item editing is switched off while the order is invoiced
+        private int item_area_top = 0;
+        private int item_area_height = 0;
+        private string item_area_caption = null;
+
+        private void applyReadOnly()
+        {
+            label13.Visible = !read_only;
+            input_item.Visible = !read_only;
+            button2.Visible = !read_only; // OK (add scanned item)
+            button4.Visible = !read_only; // Remove Item
+            button13.Visible = !read_only; // Edit Item
+            button12.Enabled = !read_only; // Update All Items with New Date
+
+            groupBox4.Text = read_only ? "View Invoiced Items" : item_area_caption;
+            dataGridView1.Top = read_only ? 19 : item_area_top;
+            dataGridView1.Height = read_only ? item_area_height + (item_area_top - 19) : item_area_height;
+
+            rowSelectionChanged(null, null);
         }
 
         private void consignment_sale_order_Shown(object sender, EventArgs e)
@@ -136,7 +169,16 @@ namespace Multi_Express_Consignment
 
                 // Load up Order Header Row
                 string strSQL = "SELECT * FROM `CSTORDER` WHERE `order_number` = \"" + order_number + "\"";
-                DataRow order_row = mysqlglobal.executeDataSetQuery(strSQL, "CSTORDER", this).Tables["CSTORDER"].Rows[0];
+                DataTable order_table = mysqlglobal.executeDataSetQuery(strSQL, "CSTORDER", this).Tables["CSTORDER"];
+
+                if (order_table.Rows.Count == 0) // Fix for missing record bug (2026): The order is not there to open
+                {
+                    MessageBox.Show("Order #" + order_number + " could not be found.", "Order Not Found");
+                    this.Close();
+                    return;
+                }
+
+                DataRow order_row = order_table.Rows[0];
 
                 customer_code = Convert.ToString(order_row["customer_code"]);
                 order_status = Convert.ToString(order_row["order_status"]);
@@ -144,13 +186,11 @@ namespace Multi_Express_Consignment
                 old_date = mysqlglobal.ConvertFromUnixTimestamp(Convert.ToInt64(order_row["date_order"])); // New 2011-08-08
                 date_order.Value = mysqlglobal.ConvertFromUnixTimestamp(Convert.ToInt64(order_row["date_order"]));
 
-                setOrderStatus(order_status); // Blank Status Button Fix
+                // Fix for Read Only bug (2026): The saved status is "Invoiced", so this never matched and
+                // invoiced orders stayed editable. Set before setOrderStatus so the layout follows.
+                read_only = (order_status == "Invoiced");
 
-                read_only = false;
-                if (order_status == "Invoice")
-                {
-                    read_only = true;
-                }
+                setOrderStatus(order_status); // Blank Status Button Fix
 
                 // Load up Consignment
                 strSQL = "SELECT * FROM `CSTITEM` WHERE `order_number` = \"" + order_number + "\" ORDER BY `upc`";
@@ -216,7 +256,8 @@ namespace Multi_Express_Consignment
 
             DataSet customer_data = mysqlglobal.executeDataSetQuery(query, "SFCUMAST", this);
 
-            DataRow customer_row = customer_data.Tables["SFCUMAST"].Rows[0]; // customer_data -> customer_row
+            // Fix for missing record bug (2026): A deleted customer leaves a blank panel rather than crashing the order
+            DataRow customer_row = customer_data.Tables["SFCUMAST"].Rows.Count > 0 ? customer_data.Tables["SFCUMAST"].Rows[0] : customer_data.Tables["SFCUMAST"].NewRow();
 
             input_CMADD1.Text = customer_row["CMADD1"].ToString();
             input_CMADD2.Text = customer_row["CMADD2"].ToString();
@@ -231,44 +272,25 @@ namespace Multi_Express_Consignment
 
             calcTotals();
 
-            if (read_only == true)
-            {
-                label13.Visible = false;
-                input_item.Visible = false;
-                button2.Visible = false;
-                button4.Visible = false;
-                button13.Visible = false; // Bugfix (2026): Editing an invoiced item was allowed but silently discarded on save
-                groupBox4.Text = "View Invoiced Items";
-                dataGridView1.Top = 19;
-                dataGridView1.Height = 181;
+            applyReadOnly(); // Fix for Read Only bug (2026): Was an inline block that never ran
 
+            /*
+            // Button to Close
+            button8.Left = 499;
+            button7.Visible = false;
+            button8.Text = "Close";
 
-                /*
-                // Button to Close
-                button8.Left = 499;
-                button7.Visible = false;
-                button8.Text = "Close";
-
-                // Address Changes
-                button5.Visible = false;
-                groupBox2.Height = 184;
-                 */
-            }
+            // Address Changes
+            button5.Visible = false;
+            groupBox2.Height = 184;
+             */
 
             loaded = true;
 
         }
 
-        private static add_item_to_cpo additem = null;
-
-        private void button4_Click(object sender, EventArgs e)
-        {
-            if (additem == null || additem.IsDisposed == true)
-            {
-             //   additem = new add_item_to_cpo(this, -1);
-            }
-            additem.ShowDialog(this);
-        }
+        // Bugfix (2026): Removed the unused add_item_to_cpo handlers (button4_Click, button11_Click, button12_Click).
+        // Nothing was wired to them and they called ShowDialog on a form that was never created.
 
         public string nextConsignmentCode()
         {
@@ -298,7 +320,8 @@ namespace Multi_Express_Consignment
             string customer_first_name = mysqlglobal.escapeString(input_CMNAME1ST.Text);
             string customer_last_name = mysqlglobal.escapeString(input_CMNAMESUR.Text);
             string date_order_str = Convert.ToString(mysqlglobal.ConvertToUnixTimestamp(date_order.Value)); // Now the order is placed
-            string items = Convert.ToString(dataGridView1.DisplayedRowCount(true)); // Visible Row Count! Deleted items are invisible
+            // Bugfix (2026): DisplayedRowCount only counts the rows on screen, so a long order saved a short item count
+            string items = Convert.ToString(dataGridView1.Rows.Cast<DataGridViewRow>().Count(r => r.Visible)); // Visible Row Count! Deleted items are invisible
             string total = output_totalowed.Text; // Must do CalcTotals beforehand
 
             if (order_status == "Invoiced")
@@ -742,42 +765,15 @@ namespace Multi_Express_Consignment
         }
         
 
-        private void button12_Click(object sender, EventArgs e)
-        {
-            // Hide Row
-            dataGridView1.SelectedRows[0].Visible = false;
-
-            // Mark Row as Deleted
-            dataGridView1.SelectedRows[0].Cells[ig_status.Index].Value = "Deleted";
-
-            calcTotals();
-        }
-
-        private void button11_Click(object sender, EventArgs e)
-        {
-
-            //if(additem != null || additem.IsDisposed == false) additem.Dispose();
-            int editRow = dataGridView1.SelectedRows[0].Index;
-            if (Convert.ToString(dataGridView1.Rows[editRow].Cells[ig_status.Index].Value) == "Unsold")
-            {
-                //additem = new add_item_to_cpo(this, editRow);
-                additem.ShowDialog(this);
-            }
-            else
-            {
-                MessageBox.Show("Sorry, but you cannot edit sold items.", "Cannot Edit");
-            }
-        }
-
         // Bugfix (2026): A row button can only work on a row that is selected and not already deleted (hidden)
         private void rowSelectionChanged(object sender, EventArgs e)
         {
             bool itemSelected = dataGridView1.SelectedRows.Count > 0 && dataGridView1.SelectedRows[0].Visible;
             bool paymentSelected = dataGridView2.SelectedRows.Count > 0 && dataGridView2.SelectedRows[0].Visible;
 
-            button13.Enabled = itemSelected; // Edit Item
-            button4.Enabled = itemSelected; // Remove Item
-            button9.Enabled = paymentSelected; // Delete Payment
+            button13.Enabled = itemSelected && !read_only; // Edit Item. Fix for Read Only bug (2026)
+            button4.Enabled = itemSelected && !read_only; // Remove Item. Fix for Read Only bug (2026)
+            button9.Enabled = paymentSelected; // Delete Payment. Stays live, it is how an order is un-invoiced
         }
 
         private void button9_Click(object sender, EventArgs e)
@@ -971,7 +967,8 @@ namespace Multi_Express_Consignment
                 old_date = date_order.Value;
 
                 // Would you like to update all items with the new date?
-                if (MessageBox.Show(this, "Would you like to update all items with the new date?", "Update all Items?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                // Fix for Read Only bug (2026): Don't offer it on an invoiced order, the items are not saved
+                if (read_only == false && MessageBox.Show(this, "Would you like to update all items with the new date?", "Update all Items?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
                     update_items_with_date(date_order.Value);
                 }
