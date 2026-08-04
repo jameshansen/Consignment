@@ -49,6 +49,10 @@ namespace Multi_Express_Consignment
         {
             InitializeComponent();
 
+            // Bugfix (2026): Keep the row buttons greyed out until they have a row to work on
+            dataGridView1.SelectionChanged += rowSelectionChanged;
+            dataGridView2.SelectionChanged += rowSelectionChanged;
+            rowSelectionChanged(null, null);
 
             order_number = orderNumber;
             mode = "edit";
@@ -233,6 +237,7 @@ namespace Multi_Express_Consignment
                 input_item.Visible = false;
                 button2.Visible = false;
                 button4.Visible = false;
+                button13.Visible = false; // Bugfix (2026): Editing an invoiced item was allowed but silently discarded on save
                 groupBox4.Text = "View Invoiced Items";
                 dataGridView1.Top = 19;
                 dataGridView1.Height = 181;
@@ -764,6 +769,17 @@ namespace Multi_Express_Consignment
             }
         }
 
+        // Bugfix (2026): A row button can only work on a row that is selected and not already deleted (hidden)
+        private void rowSelectionChanged(object sender, EventArgs e)
+        {
+            bool itemSelected = dataGridView1.SelectedRows.Count > 0 && dataGridView1.SelectedRows[0].Visible;
+            bool paymentSelected = dataGridView2.SelectedRows.Count > 0 && dataGridView2.SelectedRows[0].Visible;
+
+            button13.Enabled = itemSelected; // Edit Item
+            button4.Enabled = itemSelected; // Remove Item
+            button9.Enabled = paymentSelected; // Delete Payment
+        }
+
         private void button9_Click(object sender, EventArgs e)
         {
             // Hide Row
@@ -780,6 +796,8 @@ namespace Multi_Express_Consignment
 
             // Calc Totals
             calcTotals();
+
+            rowSelectionChanged(null, null); // Bugfix (2026): Row is gone, re-check the buttons
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -914,6 +932,8 @@ namespace Multi_Express_Consignment
 
             // Recalc totals!
             calcTotals();
+
+            rowSelectionChanged(null, null); // Bugfix (2026): Row is gone, re-check the buttons
         }
 
 

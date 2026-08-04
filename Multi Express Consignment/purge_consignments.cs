@@ -33,9 +33,12 @@ namespace Multi_Express_Consignment
             // Get first consignment date and number
             DataSet results = mysqlglobal.executeDataSetQuery("SELECT * FROM `CSTITEM` ORDER BY `consignment_code` ASC LIMIT 1", "CSTITEM", this);
 
-            DataRow result = results.Tables["CSTITEM"].Rows[0];
+            if (results.Tables["CSTITEM"].Rows.Count > 0) // Bugfix (2026): No items in the database to date from
+            {
+                DataRow result = results.Tables["CSTITEM"].Rows[0];
 
-            input_dateFrom.Value = mysqlglobal.ConvertFromUnixTimestamp(Convert.ToDouble(result["date_received"]));
+                input_dateFrom.Value = mysqlglobal.ConvertFromUnixTimestamp(Convert.ToDouble(result["date_received"]));
+            }
         }
 
         private void radioButton1_CheckedChanged(object sender, EventArgs e)

@@ -56,6 +56,8 @@ namespace Multi_Express_Consignment
 
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
+            if (dataGridView1.SelectedRows.Count == 0) return; // Bugfix (2026): Header clicks leave nothing selected
+
             pe_code.Text = Convert.ToString(dataGridView1.SelectedRows[0].Cells[0].Value);
         }
 
@@ -180,6 +182,12 @@ namespace Multi_Express_Consignment
 
             if (button2.Text == "Select")
             {
+                if (dataGridView1.SelectedRows.Count == 0)
+                {
+                    MessageBox.Show("Please select a Payment Type.", "No Payment Type Selected"); // Bugfix (2026): Was indexing an empty selection
+                    return;
+                }
+
                 if (pe_code.Text == "CASH")
                 {
                     button2.Text = "Calculate Change and Add Payment";

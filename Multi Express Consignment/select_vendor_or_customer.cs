@@ -30,10 +30,21 @@ namespace Multi_Express_Consignment
             InitializeComponent();
             m_mode = mode;
             m_return_selection = return_selection;
+
+            // Bugfix (2026): Nothing in the list means nothing to select
+            dataGridView1.SelectionChanged += rowSelectionChanged;
+            rowSelectionChanged(null, null);
+        }
+
+        private void rowSelectionChanged(object sender, EventArgs e) // Bugfix (2026)
+        {
+            button1.Enabled = dataGridView1.SelectedRows.Count > 0; // Select
         }
 
         public void gotoList(string search_term)
         {
+            if (dataGridView1.RowCount == 0) return; // Bugfix (2026): Nothing listed to jump to
+
             // Highlist Record
             int best_match = searchglobal.findRow(search_term, dataGridView1, searchCellIndex);
             dataGridView1.CurrentCell = this.dataGridView1[searchCellIndex, best_match];
@@ -98,6 +109,12 @@ namespace Multi_Express_Consignment
 
         private void button1_Click(object sender, EventArgs e)
         {
+            if (dataGridView1.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Please select a " + m_mode + ".", "No Record Selected"); // Bugfix (2026): Was indexing an empty selection
+                return;
+            }
+
             string selectedID = Convert.ToString(dataGridView1.SelectedRows[0].Cells[0].Value);
             this.Close();
 

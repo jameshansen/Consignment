@@ -27,6 +27,29 @@ namespace Multi_Express_Consignment
         public consignment_purchase_desktop()
         {
             InitializeComponent();
+
+            // Bugfix (2026): Keep the record buttons greyed out until there is a record to work on
+            dataGridView1.SelectionChanged += rowSelectionChanged;
+            rowSelectionChanged(null, null);
+        }
+
+        // Bugfix (2026): Nothing selected (or nothing listed) means nothing to open, print or scroll to
+        private void rowSelectionChanged(object sender, EventArgs e)
+        {
+            bool rowSelected = dataGridView1.SelectedRows.Count > 0;
+            bool anyRows = dataGridView1.RowCount > 0;
+
+            button2.Enabled = rowSelected; // Open
+            button4.Enabled = rowSelected; // Print
+            toolStripButton3.Enabled = rowSelected; // Open
+            toolStripButton5.Enabled = rowSelected; // Print
+
+            toolStripButton6.Enabled = anyRows; // First record
+            toolStripButton7.Enabled = anyRows; // Up 10
+            toolStripButton8.Enabled = anyRows; // Up 1
+            toolStripButton9.Enabled = anyRows; // Down 1
+            toolStripButton10.Enabled = anyRows; // Down 10
+            toolStripButton11.Enabled = anyRows; // Last record
         }
 
         private void windowProportions()
@@ -53,7 +76,9 @@ namespace Multi_Express_Consignment
             if (search_key == "CMPHONE") searchCellIndex = 14;
             if (search_key == "CMNAME1ST") searchCellIndex = 12;
             if (search_key == "CMNAMESUR") searchCellIndex = 13;
-             
+
+            if (dataGridView1.RowCount == 0) return; // Bugfix (2026): Nothing listed to jump to
+
             int best_match = searchglobal.findRow(search_term, dataGridView1, searchCellIndex);
             dataGridView1.CurrentCell = this.dataGridView1[searchCellIndex, best_match];
 
@@ -303,13 +328,16 @@ namespace Multi_Express_Consignment
             {
                 if (dataGridView1.Rows.Count > 0) dataGridView1.CurrentCell = dataGridView1[0, Math.Max(dataGridView1.Rows.Count - 1, 0)];
             }
-            else
+            else if (dataGridView1.Rows.Count > 0) // Bugfix (2026): Nothing listed to jump to
             {
                 // Move cursor to updated consignment
                 int best_match = searchglobal.findRow(jump_to_consignment, dataGridView1, 2);
                 //MessageBox.Show("Best Match: " + best_match + ". Searched for '" + jump_to_consignment + "'");
                 dataGridView1.CurrentCell = this.dataGridView1[2, best_match];
             }
+
+            rowSelectionChanged(null, null); // Bugfix (2026): List has changed, re-check the buttons
+
             // Unlock Window
             EnableWindow(this.Handle, true);
             loadingPanel.Visible = false;
@@ -416,6 +444,12 @@ namespace Multi_Express_Consignment
 
         private void button4_Click(object sender, EventArgs e)
         {
+            if (dataGridView1.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Please select a Consignment", "No Record Selected"); // Bugfix (2026): Was indexing an empty selection
+                return;
+            }
+
             // Print Reports
             if (listMode == "consignment")
             {

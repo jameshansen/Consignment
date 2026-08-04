@@ -51,7 +51,12 @@ namespace Multi_Express_Consignment
         public consignment_purchase_order(string consignmentCode, string vendorCode, string upc)
         {
             InitializeComponent();
-          
+
+            // Bugfix (2026): Keep the row buttons greyed out until they have a row to work on
+            dataGridView1.SelectionChanged += rowSelectionChanged;
+            dataGridView2.SelectionChanged += rowSelectionChanged;
+            rowSelectionChanged(null, null);
+
 
             consignment_code = consignmentCode;
             mode = "edit";
@@ -879,10 +884,33 @@ namespace Multi_Express_Consignment
         }
         
 
+        // Bugfix (2026): A row button can only work on a row that is selected and not already deleted (hidden)
+        private void rowSelectionChanged(object sender, EventArgs e)
+        {
+            bool itemSelected = dataGridView1.SelectedRows.Count > 0 && dataGridView1.SelectedRows[0].Visible;
+            bool paymentSelected = dataGridView2.SelectedRows.Count > 0 && dataGridView2.SelectedRows[0].Visible;
+
+            button11.Enabled = itemSelected; // Edit Item
+            button12.Enabled = itemSelected; // Delete Item
+            button9.Enabled = paymentSelected; // Delete Payment
+        }
+
         private void button12_Click(object sender, EventArgs e)
         {
 
-            if (dataGridView1.SelectedRows.Count == 0) MessageBox.Show("You must select the item you wish to delete.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            if (dataGridView1.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("You must select the item you wish to delete.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return; // Bugfix (2026): Was carrying on into SelectedRows[0]
+            }
+
+            // Check if sold, if so, do NOT allow deletion.
+            // Bugfix (2026): Checked before confirming, and now actually stops the delete
+            if (dataGridView1.SelectedRows[0].Cells[ig_status.Index].Value.ToString() == "Sold")
+            {
+                MessageBox.Show("Sorry, but you cannot delete sold items.", "Cannot Delete");
+                return; // Bugfix (2026): Was deleting the item anyway
+            }
 
             if (MessageBox.Show("Are you sure you want to Delete this item?", "Delete Payment", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.No)
             {
@@ -894,22 +922,22 @@ namespace Multi_Express_Consignment
                 // Continue
             }
 
-            // Check if sold, if so, do NOT allow deletion.
-            if (dataGridView1.SelectedRows[0].Cells[ig_status.Index].Value.ToString() == "Sold")
-            {
-                MessageBox.Show("Sorry, but you cannot delete sold items.", "Cannot Delete");
-            }
-            
             // Hide Row
             dataGridView1.SelectedRows[0].Visible = false;
 
             // Mark Row as Deleted
             dataGridView1.SelectedRows[0].Cells[ig_status.Index].Value = "Deleted";
+
+            rowSelectionChanged(null, null); // Bugfix (2026): Row is gone, re-check the buttons
         }
 
         private void button11_Click(object sender, EventArgs e)
         {
-            if (dataGridView1.SelectedRows.Count == 0) MessageBox.Show("You must select the item you wish to edit.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            if (dataGridView1.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("You must select the item you wish to edit.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return; // Bugfix (2026): Was carrying on into SelectedRows[0]
+            }
 
             //if(additem != null || additem.IsDisposed == false) additem.Dispose();
             int editRow = dataGridView1.SelectedRows[0].Index;
@@ -926,7 +954,11 @@ namespace Multi_Express_Consignment
 
         private void button9_Click(object sender, EventArgs e)
         {
-            if (dataGridView2.SelectedRows.Count == 0) MessageBox.Show("You must select the payment you wish to delete.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            if (dataGridView2.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("You must select the payment you wish to delete.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return; // Bugfix (2026): Was carrying on into SelectedRows[0]
+            }
 
             if (MessageBox.Show("Are you sure you want to Delete this payment? This will clear the 'Date Paid' value of all items that were paid at the time of this Payment.", "Delete Payment", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.No)
             {
@@ -1002,6 +1034,8 @@ namespace Multi_Express_Consignment
 
             // Calc Totals
             calcTotals();
+
+            rowSelectionChanged(null, null); // Bugfix (2026): Row is gone, re-check the buttons
         }
 
         private void button3_Click(object sender, EventArgs e)

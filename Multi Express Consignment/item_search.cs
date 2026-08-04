@@ -110,7 +110,7 @@ namespace Multi_Express_Consignment
             {
                 openSale.Text = "Add Item to Sale";
                 openConsignment.Visible = false;
-                openSale.Enabled = true;
+                checkSelectedRowCO(); // Bugfix (2026): Was enabled even when the search found nothing
             }
 
             
@@ -317,34 +317,33 @@ namespace Multi_Express_Consignment
         public string s_upc = "";
         private void checkSelectedRowCO()
         {
-            if (dataGridView1.SelectedRows.Count > 0)
+            bool rowSelected = dataGridView1.SelectedRows.Count > 0; // Bugfix (2026): A search with no results leaves nothing to open
+
+            if (rowSelected)
             {
                 s_consign = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells[sg_consignment_code.Index].Value);
                 s_order = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells[sg_order_number.Index].Value);
                 s_upc = Convert.ToString(dataGridView1.SelectedRows[0].Cells[sg_upc.Index].Value);
 
                 //MessageBox.Show("Consignment #" + Convert.ToString(s_consign) + " Order #" + Convert.ToString(s_order));
+            }
+            else
+            {
+                // Bugfix (2026): Clear the last result so a stale consignment/order cannot be opened
+                s_consign = 0;
+                s_order = 0;
+                s_upc = "";
+            }
 
-                if (m_mode == null)
-                {
-                    if (s_consign > 0)
-                    {
-                        openConsignment.Enabled = true;
-                    }
-                    else
-                    {
-                        openConsignment.Enabled = false;
-                    }
+            if (m_mode == "consignment_sale_order")
+            {
+                openSale.Enabled = rowSelected; // Bugfix (2026): "Add Item to Sale" needs an item
+            }
 
-                    if (s_order > 0)
-                    {
-                        openSale.Enabled = true;
-                    }
-                    else
-                    {
-                        openSale.Enabled = false;
-                    }
-                }
+            if (m_mode == null)
+            {
+                openConsignment.Enabled = rowSelected && s_consign > 0;
+                openSale.Enabled = rowSelected && s_order > 0;
             }
         }
 
