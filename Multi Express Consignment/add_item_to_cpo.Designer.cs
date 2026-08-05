@@ -31,6 +31,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(add_item_to_cpo));
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.input_date_expiry = new System.Windows.Forms.DateTimePicker();
+            this.input_tax_code = new System.Windows.Forms.ComboBox();
+            this.label18 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.input_date_received = new System.Windows.Forms.DateTimePicker();
             this.label10 = new System.Windows.Forms.Label();
@@ -69,6 +71,8 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.input_tax_code);
+            this.groupBox2.Controls.Add(this.label18);
             this.groupBox2.Controls.Add(this.input_date_expiry);
             this.groupBox2.Controls.Add(this.label11);
             this.groupBox2.Controls.Add(this.input_date_received);
@@ -84,10 +88,29 @@
             this.groupBox2.Controls.Add(this.input_description);
             this.groupBox2.Location = new System.Drawing.Point(12, 12);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(336, 185);
+            this.groupBox2.Size = new System.Drawing.Size(336, 212);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Item Details";
+            // 
+            // input_tax_code
+            // 
+            this.input_tax_code.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.input_tax_code.FormattingEnabled = true;
+            this.input_tax_code.Location = new System.Drawing.Point(125, 175);
+            this.input_tax_code.Name = "input_tax_code";
+            this.input_tax_code.Size = new System.Drawing.Size(200, 21);
+            this.input_tax_code.TabIndex = 7;
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(65, 179);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(54, 13);
+            this.label18.TabIndex = 14;
+            this.label18.Text = "Tax Code";
+            this.label18.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // input_date_expiry
             // 
@@ -243,7 +266,7 @@
             this.groupBox1.Controls.Add(this.label6);
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.Brandlabel);
-            this.groupBox1.Location = new System.Drawing.Point(12, 203);
+            this.groupBox1.Location = new System.Drawing.Point(12, 230);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(336, 200);
             this.groupBox1.TabIndex = 2;
@@ -385,7 +408,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(273, 409);
+            this.button1.Location = new System.Drawing.Point(273, 436);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 12;
@@ -396,7 +419,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(153, 409);
+            this.button2.Location = new System.Drawing.Point(153, 436);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(114, 23);
             this.button2.TabIndex = 11;
@@ -408,7 +431,7 @@
             // 
             this.groupBox3.Controls.Add(this.label13);
             this.groupBox3.Controls.Add(this.existing_upc);
-            this.groupBox3.Location = new System.Drawing.Point(12, 438);
+            this.groupBox3.Location = new System.Drawing.Point(12, 465);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(336, 65);
             this.groupBox3.TabIndex = 13;
@@ -440,7 +463,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(360, 522);
+            this.ClientSize = new System.Drawing.Size(360, 549);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
@@ -491,6 +514,8 @@
         private System.Windows.Forms.DateTimePicker input_date_received;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.DateTimePicker input_date_expiry;
+        private System.Windows.Forms.ComboBox input_tax_code;
+        private System.Windows.Forms.Label label18;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.ComboBox input_desc_size;

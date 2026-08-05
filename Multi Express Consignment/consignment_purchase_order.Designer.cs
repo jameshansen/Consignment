@@ -102,6 +102,8 @@
             this.ig_desc_material = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ig_desc_colour = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ig_desc_size = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ig_tax_icon = new System.Windows.Forms.DataGridViewImageColumn();
+            this.ig_tax_code = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.button7 = new System.Windows.Forms.Button();
             this.button8 = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
@@ -669,7 +671,9 @@
             this.ig_desc_garment,
             this.ig_desc_material,
             this.ig_desc_colour,
-            this.ig_desc_size});
+            this.ig_desc_size,
+            this.ig_tax_icon,
+            this.ig_tax_code});
             this.dataGridView1.Location = new System.Drawing.Point(12, 19);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
@@ -821,6 +825,22 @@
             this.ig_desc_size.Name = "ig_desc_size";
             this.ig_desc_size.ReadOnly = true;
             this.ig_desc_size.Visible = false;
+            // 
+            // ig_tax_icon
+            // 
+            this.ig_tax_icon.HeaderText = "Tax";
+            this.ig_tax_icon.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Normal;
+            this.ig_tax_icon.Name = "ig_tax_icon";
+            this.ig_tax_icon.ReadOnly = true;
+            this.ig_tax_icon.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.ig_tax_icon.Width = 40;
+            // 
+            // ig_tax_code
+            // 
+            this.ig_tax_code.HeaderText = "Tax Code";
+            this.ig_tax_code.Name = "ig_tax_code";
+            this.ig_tax_code.ReadOnly = true;
+            this.ig_tax_code.Visible = false;
             // 
             // button7
             // 
@@ -1049,5 +1069,7 @@
         public System.Windows.Forms.DataGridViewTextBoxColumn ig_desc_material;
         public System.Windows.Forms.DataGridViewTextBoxColumn ig_desc_colour;
         public System.Windows.Forms.DataGridViewTextBoxColumn ig_desc_size;
+        public System.Windows.Forms.DataGridViewImageColumn ig_tax_icon;
+        public System.Windows.Forms.DataGridViewTextBoxColumn ig_tax_code;
     }
 }

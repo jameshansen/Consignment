@@ -1,8 +1,8 @@
 # Deps
 
 Everything the install needs that is not in this repository. None of it is
-committed: some of it is third-party redistributable that should not be, some of it
-is already in the repository root, and the Windows media is yours to supply.
+committed: some of it is third-party redistributable that should not be, and the
+Windows media is yours to supply.
 
 Put these here before running `python ../../build.py`.
 
@@ -12,7 +12,6 @@ Put these here before running `python ../../build.py`.
 | `dotNetFx40_Full_x86_x64.exe` | .NET Framework 4.0 full offline installer |
 | `CRRuntime_32bit_13_0.msi` | SAP Crystal Reports runtime, 32-bit |
 | `MYSQL/` | an unpacked MySQL server, with `bin/mysqld.exe` and `bin/mysql.exe` |
-| `SQL/` | the schema and the demo data, as `.sql` files |
 | `3of9.ttf` | the barcode font |
 | `vbempk.zip` | the VBE Miniport display driver, from <https://bearwindows.zcm.com.au/vbemp.htm> |
 
@@ -24,8 +23,12 @@ because XP ships no display driver that can do more on this hardware.
 That driver is **free for noncommercial use only**. Check that against whatever you
 are demoing.
 
-`MYSQL` must be exactly there, not nested under `SQL`. `stage_setupcd.py` checks for
-each of these and stops with the missing path rather than building a broken disc.
+`stage_setupcd.py` checks for each of these and stops with the missing path rather
+than building a broken disc.
+
+The schema and the demo data are not listed here. `stage_setupcd.py` takes
+`consignment_db_structure.sql` and `demo_database.sql` from the repository root, so
+the guest and the host test database load the same files.
 
 ## Use volume licence XP media
 

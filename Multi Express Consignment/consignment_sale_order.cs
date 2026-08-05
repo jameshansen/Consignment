@@ -121,8 +121,7 @@ namespace Multi_Express_Consignment
                 statusButton.ForeColor = Color.Red; // Readability
             }
 
-            // Fix for Read Only bug (2026): An order that is no longer invoiced can be edited again.
-            // Only this direction, an order invoiced during this session still has to save its items.
+            // Fix for Read Only bug (2026): Un-invoicing makes the order editable again, this direction only
             if (read_only && status != "Invoiced")
             {
                 read_only = false;
@@ -186,8 +185,7 @@ namespace Multi_Express_Consignment
                 old_date = mysqlglobal.ConvertFromUnixTimestamp(Convert.ToInt64(order_row["date_order"])); // New 2011-08-08
                 date_order.Value = mysqlglobal.ConvertFromUnixTimestamp(Convert.ToInt64(order_row["date_order"]));
 
-                // Fix for Read Only bug (2026): The saved status is "Invoiced", so this never matched and
-                // invoiced orders stayed editable. Set before setOrderStatus so the layout follows.
+                // Fix for Read Only bug (2026): Was compared against "Invoice", so it never matched
                 read_only = (order_status == "Invoiced");
 
                 setOrderStatus(order_status); // Blank Status Button Fix
@@ -208,6 +206,9 @@ namespace Multi_Express_Consignment
                     outputRow.Cells[ig_date_sold.Index].Value = row["date_sold"];
                     outputRow.Cells[ig_display_date_sold.Index].Value = mysqlglobal.formatDate(mysqlglobal.ConvertFromUnixTimestamp(Convert.ToDouble(row["date_sold"])));
                     outputRow.Cells[ig_price_sale.Index].Value = cg.price(row["price_sale"]);
+                    outputRow.Cells[ig_tax_code.Index].Value = mysqlglobal.field(row, "tax_code", "");
+                    taxglobal.showIcon(outputRow.Cells[ig_tax_icon.Index], outputRow.Cells[ig_tax_code.Index].Value);
+                    outputRow.Cells[ig_tax_rate.Index].Value = soldAtRate(mysqlglobal.field(row, "tax_rate", ""), outputRow.Cells[ig_tax_code.Index].Value);
 
                     dataGridView1.Rows.Add(outputRow);
 
@@ -289,8 +290,7 @@ namespace Multi_Express_Consignment
 
         }
 
-        // Bugfix (2026): Removed the unused add_item_to_cpo handlers (button4_Click, button11_Click, button12_Click).
-        // Nothing was wired to them and they called ShowDialog on a form that was never created.
+        // Bugfix (2026): Removed button4_Click, button11_Click and button12_Click, unwired and would null ref
 
         public string nextConsignmentCode()
         {
@@ -401,7 +401,7 @@ namespace Multi_Express_Consignment
                     string strSQL;
 
                     
-                    if (item_status == "Deleted") 
+                    if (item_status == "Deleted")
                     {
                         strSQL =
                                @"UPDATE `CSTITEM` SET
@@ -409,6 +409,7 @@ namespace Multi_Express_Consignment
                     `customer_code` = '',
                     `price_sale` = '',
                     `date_sold` = '',
+                    `tax_rate` = '0',
                     `status` = 'unsold' WHERE `upc` = '" + upc + "'";
                      mysqlglobal.executeNonQuery(strSQL, this);
                     }
@@ -421,6 +422,7 @@ namespace Multi_Express_Consignment
                     string date_sold = Convert.ToString(dataGridView1.Rows[i].Cells[ig_date_sold.Index].Value);
                     string price_sale = Convert.ToString(dataGridView1.Rows[i].Cells[ig_price_sale.Index].Value);
                     string item_status = Convert.ToString(dataGridView1.Rows[i].Cells[ig_status.Index].Value);
+                    string tax_rate = soldAtRate(Convert.ToString(dataGridView1.Rows[i].Cells[ig_tax_rate.Index].Value), dataGridView1.Rows[i].Cells[ig_tax_code.Index].Value); // (2026)
 
                     string strSQL;
 
@@ -433,6 +435,7 @@ namespace Multi_Express_Consignment
                     `customer_code` = '" + customer_code + @"',
                     `price_sale` = '" + price_sale + @"',
                     `date_sold` = '" + date_sold + @"',
+                    `tax_rate` = '" + tax_rate + @"',
                     `status` = 'sold' WHERE `upc` = '" + upc + "'";
                         mysqlglobal.executeNonQuery(strSQL, this);
                     }
@@ -603,7 +606,7 @@ namespace Multi_Express_Consignment
 
         private void consignment_sale_order_Load(object sender, EventArgs e)
         {
-
+            windowglobal.centre(this); // (2026)
         }
 
         private void button5_Click(object sender, EventArgs e)
@@ -627,6 +630,7 @@ namespace Multi_Express_Consignment
             decimal share_out = 0;
 
             decimal totalBeforeTax = 0;
+            decimal totalTax = 0;
             decimal totalOwed = 0;
             decimal totalPaid = 0;
             decimal totalOutstanding = 0;
@@ -641,14 +645,24 @@ namespace Multi_Express_Consignment
                 {
                     decimal sold_row = Convert.ToDecimal(dataGridView1.Rows[i].Cells[ig_price_sale.Index].Value);
                     totalBeforeTax = totalBeforeTax + sold_row;
+
+                    /* Each item is taxed at the rate it was sold at, held on the row (2026) */
+                    decimal line_rate = 0;
+                    decimal.TryParse(Convert.ToString(dataGridView1.Rows[i].Cells[ig_tax_rate.Index].Value), out line_rate);
+
+                    decimal line_tax = sold_row * line_rate / 100;
+                    dataGridView1.Rows[i].Cells[ig_tax_amount.Index].Value = cg.price(line_tax);
+                    totalTax = totalTax + line_tax;
                 }
             }
 
             output_totalbeforetax.Text = cg.price(totalBeforeTax);
 
-            totalOwed = totalBeforeTax * (decimal)1.12; // + 12% HST
+            totalTax = Math.Round(totalTax, 2, MidpointRounding.AwayFromZero); // Round up
 
-            totalOwed = Math.Round(totalOwed, 2, MidpointRounding.AwayFromZero); // Round up
+            totalOwed = totalBeforeTax + totalTax;
+
+            output_tax.Text = cg.price(totalTax);
 
             output_totalowed.Text   = cg.price(totalOwed);
 
@@ -765,6 +779,17 @@ namespace Multi_Express_Consignment
         }
         
 
+        /* The rate the item was sold at, falling back to its code if nothing was stored (2026) */
+        private string soldAtRate(string stored_rate, object tax_code)
+        {
+            decimal rate = 0;
+
+            // A stored zero is a real zero rate, only a blank means nothing was stored
+            if (stored_rate != "" && decimal.TryParse(stored_rate, out rate)) return rate.ToString();
+
+            return taxglobal.rate(tax_code).ToString();
+        }
+
         // Bugfix (2026): A row button can only work on a row that is selected and not already deleted (hidden)
         private void rowSelectionChanged(object sender, EventArgs e)
         {
@@ -870,6 +895,10 @@ namespace Multi_Express_Consignment
                     outputRow.Cells[ig_description.Index].Value = itemRow["description"];
 
                     outputRow.Cells[ig_price_sale.Index].Value = final_price;
+                    outputRow.Cells[ig_tax_code.Index].Value = mysqlglobal.field(itemRow, "tax_code", "");
+                    taxglobal.showIcon(outputRow.Cells[ig_tax_icon.Index], outputRow.Cells[ig_tax_code.Index].Value);
+                    // Today's rate for this code, fixed to the item from here on (2026)
+                    outputRow.Cells[ig_tax_rate.Index].Value = taxglobal.rate(outputRow.Cells[ig_tax_code.Index].Value).ToString();
 
                     outputRow.Cells[ig_date_sold.Index].Value = mysqlglobal.ConvertToUnixTimestamp(DateTime.Now);
                     outputRow.Cells[ig_display_date_sold.Index].Value = mysqlglobal.formatDate(DateTime.Now);

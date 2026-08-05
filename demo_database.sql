@@ -178,6 +178,9 @@ INSERT INTO `CSTPAYMENT` (`id`, `consignment_code`, `order_number`, `type`, `des
 -- from the [startcodes] section of settings.ini.
 --
 
+UPDATE `CSTITEM` SET `tax_code` = 'PG';
+UPDATE `CSTITEM` SET `tax_rate` = 12.0000 WHERE `status` = 'sold';
+
 ALTER TABLE `CSTITEM` AUTO_INCREMENT = 100062;
 ALTER TABLE `CSTORDER` AUTO_INCREMENT = 200011;
 ALTER TABLE `CSTPAYMENT` AUTO_INCREMENT = 16;

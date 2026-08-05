@@ -46,6 +46,36 @@ namespace Multi_Express_Consignment
             }
         }
 
+        /* Sets a formula to raw Crystal syntax, unquoted so it can do arithmetic. Subreport name optional. (2026) */
+        public static void SetFormulaFieldText(ReportDocument report, String subreportName, String fieldName, String formula)
+        {
+            try
+            {
+                ReportDocument target = (subreportName == null) ? report : report.Subreports[subreportName];
+                target.DataDefinition.FormulaFields[fieldName].Text = formula;
+            }
+            catch
+            {
+                /* Report does not have that formula, leave it as the report author wrote it */
+            }
+        }
+
+        /* Rewrites one of the report's own captions, by its designer name (2026) */
+        public static void SetTextObject(ReportDocument report, String objectName, String text)
+        {
+            foreach (Section section in report.ReportDefinition.Sections)
+            {
+                foreach (ReportObject item in section.ReportObjects)
+                {
+                    if (item.Name == objectName && item.Kind == ReportObjectKind.TextObject)
+                    {
+                        ((TextObject)item).Text = text;
+                        return;
+                    }
+                }
+            }
+        }
+
         private void crystalreportglobal_Shown(object sender, EventArgs e)
         {
             this.WindowState = FormWindowState.Maximized;

@@ -56,8 +56,34 @@ namespace Multi_Express_Consignment
             report_code = reportCode;
         }
 
+        /* "Tax (PG 12%):" when every item on the order shares a code, plain "Tax:" when they differ (2026) */
+        private string taxCaption()
+        {
+            string code = null;
+            string rate = null;
+
+            foreach (DataRow row in consignment_db.Tables["CSTITEM"].Rows)
+            {
+                string row_code = mysqlglobal.field(row, "tax_code", "").Trim().ToUpper();
+                if (row_code == "") row_code = taxglobal.defaultCode();
+
+                string row_rate = Convert.ToDecimal("0" + mysqlglobal.field(row, "tax_rate", "")).ToString("#0.##");
+
+                if (code != null && (code != row_code || rate != row_rate)) return "Tax:";
+
+                code = row_code;
+                rate = row_rate;
+            }
+
+            if (code == null) return "Tax:";
+
+            return "Tax (" + code + " " + rate + "%):";
+        }
+
         private void print_report_Load(object sender, EventArgs e)
         {
+            windowglobal.centre(this); // (2026)
+
             /* Set Current Working Folder to Application Path */
             Directory.SetCurrentDirectory(Path.GetDirectoryName(Application.ExecutablePath));
 
@@ -435,6 +461,9 @@ namespace Multi_Express_Consignment
                 crystalreportglobal.SetFormulaFieldString(cryRpt, "order_date", mysqlglobal.formatDate(mysqlglobal.ConvertFromUnixTimestamp(order_date)));
 
                 crystalreportglobal.SetFormulaFieldString(cryRpt, "order_header_total", cg.price(order_header_row["total"]));
+
+                /* Text20 is the receipt's tax caption, name the code the items were sold under (2026) */
+                crystalreportglobal.SetTextObject(cryRpt, "Text20", taxCaption());
 
                 /* Connect Report to DataSet */
                 cryRpt.SetDataSource(consignment_db);

@@ -25,6 +25,7 @@ namespace Multi_Express_Consignment
         public Form select_customer = null;
         public Form print_reports_form = null;
         public Form item_search_form = null;
+        public Form tax_codes_form = null;
 
         public Form1()
         {
@@ -49,6 +50,10 @@ namespace Multi_Express_Consignment
         public void onConnect()
         {
             status.Text = "MySQL Connected.";
+
+            // Tax table and item tax column, created here so an existing database needs no manual SQL
+            taxglobal.ensureSchema();
+
             // Connect DBF
             string dataSource = iniglobal.ini.IniReadValue("dbase", "path");
             string connectionVar = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + dataSource + ";Extended Properties=dBASE IV;User ID=Admin;Password=";
@@ -146,6 +151,18 @@ namespace Multi_Express_Consignment
         }
 
 
+
+        private void toolStripButton11_Click(object sender, EventArgs e)
+        {
+            // Tax Codes
+            if (tax_codes_form == null || tax_codes_form.IsDisposed == true)
+            {
+                tax_codes_form = new tax_codes();
+            }
+            tax_codes_form.MdiParent = this;
+            tax_codes_form.Show();
+            tax_codes_form.Focus();
+        }
 
         private void toolStripButton9_Click(object sender, EventArgs e)
         {

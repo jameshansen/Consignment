@@ -52,8 +52,31 @@ CREATE TABLE IF NOT EXISTS `CSTITEM` (
   `desc_material` text NOT NULL,
   `desc_colour` text NOT NULL,
   `desc_size` text NOT NULL,
+  `tax_code` varchar(2) NOT NULL DEFAULT '',
+  `tax_rate` decimal(7,4) NOT NULL DEFAULT '0.0000',
   PRIMARY KEY (`upc`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `CSTTBLTAX`
+--
+
+CREATE TABLE IF NOT EXISTS `CSTTBLTAX` (
+  `tax_code` varchar(2) NOT NULL,
+  `tax_desc` varchar(30) NOT NULL DEFAULT '',
+  `tax_rate` decimal(7,4) NOT NULL DEFAULT '0.0000',
+  `tax_icon` varchar(8) NOT NULL DEFAULT '',
+  PRIMARY KEY (`tax_code`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+INSERT INTO `CSTTBLTAX` (`tax_code`, `tax_desc`, `tax_rate`, `tax_icon`) VALUES
+('PG', 'PST AND GST', 12.0000, 'METAX1'),
+('P', 'PST ONLY', 7.0000, 'METAX2'),
+('G', 'GST ONLY', 5.0000, 'METAX3'),
+('NO', 'NO TAX', 0.0000, 'METAX4'),
+('H', 'HST', 12.0000, 'METAX9');
 
 -- --------------------------------------------------------
 

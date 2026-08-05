@@ -325,6 +325,18 @@
     <Compile Include="select_vendor_or_customer.Designer.cs">
       <DependentUpon>select_vendor_or_customer.cs</DependentUpon>
     </Compile>
+    <Compile Include="tax_codes.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="tax_codes.Designer.cs">
+      <DependentUpon>tax_codes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="tax_code_entry.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="tax_code_entry.Designer.cs">
+      <DependentUpon>tax_code_entry.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="add_item_to_cpo.resx">
       <DependentUpon>add_item_to_cpo.cs</DependentUpon>
     </EmbeddedResource>
@@ -448,6 +460,15 @@
     <EmbeddedResource Include="select_vendor_or_customer.resx">
       <DependentUpon>select_vendor_or_customer.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="tax_codes.resx">
+      <DependentUpon>tax_codes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="tax_code_entry.resx">
+      <DependentUpon>tax_code_entry.cs</DependentUpon>
+    </EmbeddedResource>
+    <Content Include="icons\tax\*.BMP">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="app.config" />
     <None Include="ClassDiagram1.cd" />
     <None Include="ClassDiagram2.cd" />

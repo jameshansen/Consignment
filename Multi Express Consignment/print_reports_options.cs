@@ -23,6 +23,8 @@ namespace Multi_Express_Consignment
 
         private void print_reports_options_Load(object sender, EventArgs e)
         {
+            windowglobal.centre(this); // (2026)
+
             this.Width = 384;
 
             if (report_name == "Consolidated Consignor Report")

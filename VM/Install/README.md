@@ -8,7 +8,7 @@ run on their own.
 
 | | |
 |:--- |:--- |
-| `Deps/` | every dependency in one place: the XP media, MySQL, the SQL, .NET 4, Crystal Reports, the barcode font |
+| `Deps/` | every dependency in one place: the XP media, MySQL, .NET 4, Crystal Reports, the barcode font |
 | `XPSetupFiles/` | the answer file and the scripts that run inside the guest |
 | `XPDrives/` | build output: the ISO, the disk image, and the staging tree |
 | `stage_setupcd.py` | collect the program and its dependencies into `XPDrives/setupcd/SETUP` |
@@ -20,7 +20,7 @@ run on their own.
 | `set_resolution.py` | rewrite the screen resolution registry values in a finished image |
 | `build_patch_iso.py`, `Patch/` | a small CD for fixing an image without rebuilding it |
 
-`Deps/MYSQL` must be exactly there, not nested under `SQL`.
+The schema and the demo data come from the repository root, not from `Deps/`.
 
 ## The answer file
 

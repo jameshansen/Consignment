@@ -27,6 +27,8 @@ namespace Multi_Express_Consignment
 
         private void purge_consignments_Load(object sender, EventArgs e)
         {
+            windowglobal.centre(this); // (2026)
+
             // Set width
             this.Width = 266;
 

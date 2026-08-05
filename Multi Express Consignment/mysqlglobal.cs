@@ -8,6 +8,7 @@ using MySql.Data.MySqlClient;
 using MySql.Data.Types;
 
 using System.Data.OleDb;
+using System.Drawing;
 using System.IO;
 
 using Ini;
@@ -148,6 +149,13 @@ namespace Multi_Express_Consignment
 
         }
 
+        /* Reads a column that may not exist yet on an older database. */
+        public static string field(DataRow row, string column, string fallback)
+        {
+            if (row.Table.Columns.Contains(column) == false) return fallback;
+            return Convert.ToString(row[column]);
+        }
+
         public static string escapeString(string input)
         {
             string output = input;
@@ -218,6 +226,23 @@ namespace Multi_Express_Consignment
         public static IniFile ini = null;
     }
 
+    public class windowglobal
+    {
+        /* Opens a window centred on the one that opened it, so it lands on the same monitor (2026) */
+        public static void centre(Form window)
+        {
+            Form on = window.Owner;
+            if (on == null && Application.OpenForms.Count > 0) on = Application.OpenForms[0]; // Shown without an owner, use the main window
+            if (on == null) return;
+
+            Rectangle area = on.RectangleToScreen(on.ClientRectangle);
+
+            window.StartPosition = FormStartPosition.Manual;
+            window.Left = area.Left + ((area.Width - window.Width) / 2);
+            window.Top = area.Top + ((area.Height - window.Height) / 2);
+        }
+    }
+
     public class cg
     {
         public static string price(object input)
@@ -271,6 +296,209 @@ namespace Multi_Express_Consignment
 
             output = Convert.ToString(Math.Floor(decimal_input));
             return output;
+        }
+    }
+
+    /* Tax codes and rates */
+    public class taxglobal
+    {
+        public const string table = "CSTTBLTAX";
+
+        public const string iconFolder = @"icons\tax"; // Beside the executable, drop in your own bitmaps
+
+        private static Dictionary<string, decimal> rates = null; // Small lookup, cached until the tax window changes it
+        private static Dictionary<string, string> descriptions = null;
+        private static Dictionary<string, string> icons = null;
+        private static Dictionary<string, Image> loaded_icons = new Dictionary<string, Image>();
+
+        /* Used by items with no code of their own */
+        public static string defaultCode()
+        {
+            string code = "";
+            try
+            {
+                code = iniglobal.ini.IniReadValue("company", "taxcode");
+            }
+            catch
+            {
+                /* Not set */
+            }
+            if (code == "") code = "PG"; // PST and GST
+            return code.Trim().ToUpper();
+        }
+
+        public static void reload()
+        {
+            rates = null;
+            descriptions = null;
+            icons = null;
+            loaded_icons.Clear(); // Pick up a replaced bitmap file too
+        }
+
+        public static Dictionary<string, decimal> load()
+        {
+            if (rates != null) return rates;
+
+            rates = new Dictionary<string, decimal>();
+            descriptions = new Dictionary<string, string>();
+            icons = new Dictionary<string, string>();
+
+            DataSet tax_file = mysqlglobal.executeDataSetQuery("SELECT * FROM `" + table + "` ORDER BY `tax_code`", table, null);
+            foreach (DataRow row in tax_file.Tables[table].Rows)
+            {
+                string code = Convert.ToString(row["tax_code"]).Trim().ToUpper();
+                rates[code] = Convert.ToDecimal(row["tax_rate"]);
+                descriptions[code] = Convert.ToString(row["tax_desc"]).Trim();
+                icons[code] = mysqlglobal.field(row, "tax_icon", "").Trim();
+            }
+
+            return rates;
+        }
+
+        /* Bitmap name held against the code */
+        public static string iconName(object tax_code)
+        {
+            load();
+
+            string code = Convert.ToString(tax_code).Trim().ToUpper();
+            return icons.ContainsKey(code) ? icons[code] : "";
+        }
+
+        /* The bitmap held against a code, or null if there is none */
+        public static Image icon(object tax_code)
+        {
+            return iconFile(iconName(tax_code));
+        }
+
+        /* A bitmap from the icon folder, by name */
+        public static Image iconFile(object icon_name)
+        {
+            string name = Convert.ToString(icon_name).Trim().ToUpper();
+            if (name == "") return null;
+
+            if (loaded_icons.ContainsKey(name) == false)
+            {
+                Image image = null;
+                try
+                {
+                    string file = Path.Combine(Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), iconFolder), name + ".BMP");
+
+                    // Copied into memory so the file is not held open
+                    if (File.Exists(file)) using (Image onDisk = Image.FromFile(file)) image = new Bitmap(onDisk);
+                }
+                catch
+                {
+                    /* Unreadable bitmap, show nothing */
+                }
+                loaded_icons[name] = image;
+            }
+
+            return loaded_icons[name];
+        }
+
+        /* Puts the icon in a grid cell, with the code, description and rate as its tooltip */
+        public static void showIcon(DataGridViewCell cell, object tax_code)
+        {
+            string code = Convert.ToString(tax_code).Trim().ToUpper();
+            if (load().ContainsKey(code) == false) code = defaultCode(); // Blank or unknown, the rate falls back too
+
+            cell.Value = icon(code);
+            cell.ToolTipText = label(code);
+        }
+
+        /* Code, description and rate as one line for a drop down. */
+        public static string label(string tax_code)
+        {
+            load();
+
+            string code = Convert.ToString(tax_code).Trim().ToUpper();
+            string description = descriptions.ContainsKey(code) ? descriptions[code] : "";
+
+            if (description != "") description = " " + description;
+
+            return code + " -" + description + " (" + rate(code).ToString("#0.##") + "%)";
+        }
+
+        /* Percentage for a code, unknown or blank falls back to the default code */
+        public static decimal rate(object tax_code)
+        {
+            Dictionary<string, decimal> table_rates = load();
+
+            string code = Convert.ToString(tax_code).Trim().ToUpper();
+            if (code != "" && table_rates.ContainsKey(code)) return table_rates[code];
+
+            string fallback = defaultCode();
+            if (table_rates.ContainsKey(fallback)) return table_rates[fallback];
+
+            return 12; // No tax table
+        }
+
+        /* Creates the tax table and columns so an existing database needs no manual SQL */
+        public static void ensureSchema()
+        {
+            mysqlglobal.executeNonQuery(
+            @"CREATE TABLE IF NOT EXISTS `" + table + @"` (
+              `tax_code` varchar(2) NOT NULL,
+              `tax_desc` varchar(30) NOT NULL DEFAULT '',
+              `tax_rate` decimal(7,4) NOT NULL DEFAULT '0.0000',
+              `tax_icon` varchar(8) NOT NULL DEFAULT '',
+              PRIMARY KEY (`tax_code`)
+            ) ENGINE=MyISAM DEFAULT CHARSET=latin1", null);
+
+            /* One time column rename */
+            if (Convert.ToString(mysqlglobal.executeScalarQuery("SHOW COLUMNS FROM `" + table + "` LIKE 'txcode'", null)) != "")
+            {
+                mysqlglobal.executeNonQuery(
+                @"ALTER TABLE `" + table + @"`
+                  CHANGE `txcode` `tax_code` varchar(2) NOT NULL,
+                  CHANGE `txdesc` `tax_desc` varchar(30) NOT NULL DEFAULT '',
+                  CHANGE `txrate` `tax_rate` decimal(7,4) NOT NULL DEFAULT '0.0000'", null);
+            }
+
+            if (Convert.ToString(mysqlglobal.executeScalarQuery("SHOW COLUMNS FROM `" + table + "` LIKE 'tax_icon'", null)) == "")
+            {
+                mysqlglobal.executeNonQuery("ALTER TABLE `" + table + "` ADD COLUMN `tax_icon` varchar(8) NOT NULL DEFAULT ''", null);
+
+                /* Default icons */
+                mysqlglobal.executeNonQuery(
+                @"UPDATE `" + table + @"` SET `tax_icon` = CASE `tax_code`
+                  WHEN 'PG' THEN 'METAX1'
+                  WHEN 'P' THEN 'METAX2'
+                  WHEN 'G' THEN 'METAX3'
+                  WHEN 'NO' THEN 'METAX4'
+                  WHEN 'H' THEN 'METAX9'
+                  ELSE '' END
+                  WHERE `tax_icon` = ''", null);
+            }
+
+            /* Seed the default codes, once */
+            if (Convert.ToString(mysqlglobal.executeScalarQuery("SELECT COUNT(*) FROM `" + table + "`", null)) == "0")
+            {
+                mysqlglobal.executeNonQuery(
+                @"INSERT INTO `" + table + @"` (`tax_code`, `tax_desc`, `tax_rate`, `tax_icon`) VALUES
+                  ('PG', 'PST AND GST', 12.0000, 'METAX1'),
+                  ('P', 'PST ONLY', 7.0000, 'METAX2'),
+                  ('G', 'GST ONLY', 5.0000, 'METAX3'),
+                  ('NO', 'NO TAX', 0.0000, 'METAX4'),
+                  ('H', 'HST', 12.0000, 'METAX9')", null);
+            }
+
+            /* Items carry the tax code they are sold under. */
+            if (Convert.ToString(mysqlglobal.executeScalarQuery("SHOW COLUMNS FROM `CSTITEM` LIKE 'tax_code'", null)) == "")
+            {
+                mysqlglobal.executeNonQuery("ALTER TABLE `CSTITEM` ADD COLUMN `tax_code` varchar(2) NOT NULL DEFAULT ''", null);
+            }
+
+            /* And the rate they were sold at, so a later rate change cannot rewrite a past sale */
+            if (Convert.ToString(mysqlglobal.executeScalarQuery("SHOW COLUMNS FROM `CSTITEM` LIKE 'tax_rate'", null)) == "")
+            {
+                mysqlglobal.executeNonQuery("ALTER TABLE `CSTITEM` ADD COLUMN `tax_rate` decimal(7,4) NOT NULL DEFAULT '0.0000'", null);
+
+                /* Anything already sold was charged 12% */
+                mysqlglobal.executeNonQuery("UPDATE `CSTITEM` SET `tax_rate` = 12.0000 WHERE `status` = 'sold'", null);
+            }
+
+            reload();
         }
     }
 

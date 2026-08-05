@@ -63,6 +63,10 @@ namespace Multi_Express_Consignment
             // Drop Down Share Type Default
             input_share_type.SelectedIndex = input_share_type.FindString(@"%");
 
+            // Tax Codes
+            loadTaxCodes();
+            selectTaxCode(taxglobal.defaultCode());
+
             // Clear existing UPC since no two items would have the same
             existing_upc.Text = "";
 
@@ -141,6 +145,7 @@ namespace Multi_Express_Consignment
                 input_desc_material.Text = Convert.ToString(m_parent.dataGridView1.Rows[m_rowIndex].Cells[m_parent.ig_desc_material.Index].Value);
                 input_desc_colour.Text = Convert.ToString(m_parent.dataGridView1.Rows[m_rowIndex].Cells[m_parent.ig_desc_colour.Index].Value);
                 input_desc_size.Text = Convert.ToString(m_parent.dataGridView1.Rows[m_rowIndex].Cells[m_parent.ig_desc_size.Index].Value);
+                selectTaxCode(Convert.ToString(m_parent.dataGridView1.Rows[m_rowIndex].Cells[m_parent.ig_tax_code.Index].Value));
             }
             else
             {
@@ -161,6 +166,36 @@ namespace Multi_Express_Consignment
 
         }
      
+
+        /* Tax codes come from CSTTBLTAX, maintained in the Tax Codes window. */
+        private void loadTaxCodes()
+        {
+            input_tax_code.Items.Clear();
+
+            foreach (KeyValuePair<string, decimal> tax in taxglobal.load())
+            {
+                input_tax_code.Items.Add(taxglobal.label(tax.Key));
+            }
+        }
+
+        private void selectTaxCode(string tax_code)
+        {
+            if (input_tax_code.Items.Count == 0) return; // No tax table yet
+
+            int found = input_tax_code.FindStringExact(taxglobal.label(tax_code));
+            if (found == -1) found = input_tax_code.FindStringExact(taxglobal.label(taxglobal.defaultCode()));
+            if (found == -1) found = 0;
+
+            input_tax_code.SelectedIndex = found;
+        }
+
+        private string selectedTaxCode()
+        {
+            if (input_tax_code.SelectedIndex == -1) return taxglobal.defaultCode();
+
+            string entry = Convert.ToString(input_tax_code.SelectedItem);
+            return entry.Substring(0, entry.IndexOf(" -")).Trim();
+        }
 
         private void button2_Click(object sender, EventArgs e)
         {
@@ -189,7 +224,7 @@ namespace Multi_Express_Consignment
             }
 
             /* Add Item */
-            m_parent.addItem(input_description.Text, cg.price(input_price_minimum.Text), cg.price(input_price_suggested.Text), cg.price(input_share.Text), input_share_type.Text, input_desc_brand.Text, input_desc_gender.Text, input_desc_garment.Text, input_desc_material.Text, input_desc_colour.Text, input_desc_size.Text, input_date_received.Value, input_date_expiry.Value, existing_upc.Text, m_rowIndex);
+            m_parent.addItem(input_description.Text, cg.price(input_price_minimum.Text), cg.price(input_price_suggested.Text), cg.price(input_share.Text), input_share_type.Text, input_desc_brand.Text, input_desc_gender.Text, input_desc_garment.Text, input_desc_material.Text, input_desc_colour.Text, input_desc_size.Text, input_date_received.Value, input_date_expiry.Value, existing_upc.Text, selectedTaxCode(), m_rowIndex);
             this.Close();
         }
 

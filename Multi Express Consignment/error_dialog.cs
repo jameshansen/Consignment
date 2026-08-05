@@ -21,6 +21,8 @@ namespace Multi_Express_Consignment
 
         private void error_dialog_Load(object sender, EventArgs e)
         {
+            windowglobal.centre(this); // (2026)
+
             errorMsg.Text = global_e.Message;
             errorMsg.Text += Environment.NewLine;
             errorMsg.Text += Environment.NewLine;

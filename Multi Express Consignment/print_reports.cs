@@ -203,12 +203,13 @@ namespace Multi_Express_Consignment
                 /* Load Payment Data */
 
                 // Orders
-                strSQL = "(SELECT p.*,o.date_order,o.total FROM `CSTPAYMENT` AS p, `CSTORDER` AS o WHERE p.`order_number` = o.`order_number` AND ( p.`date` >= " + Convert.ToString(start_unixtime) + " AND p.`date` <= " + Convert.ToString(end_unixtime) + " AND p.`order_number` != \"\") ORDER BY p.`date` ASC)";
+                // `tax_amount` is this payment's share of the tax charged on the order (2026)
+                strSQL = "(SELECT p.*,o.date_order,o.total, CASE WHEN o.`total` > 0 THEN p.`amount` * ((SELECT COALESCE(SUM(i.`price_sale` * i.`tax_rate` / 100),0) FROM `CSTITEM` AS i WHERE i.`order_number` = o.`order_number`) / o.`total`) ELSE 0 END AS `tax_amount` FROM `CSTPAYMENT` AS p, `CSTORDER` AS o WHERE p.`order_number` = o.`order_number` AND ( p.`date` >= " + Convert.ToString(start_unixtime) + " AND p.`date` <= " + Convert.ToString(end_unixtime) + " AND p.`order_number` != \"\") ORDER BY p.`date` ASC)";
 
                 strSQL += " UNION ";
 
-                // Consignments
-                strSQL += "(SELECT p.*,0,0 FROM `CSTPAYMENT` AS p WHERE  p.`date` >= " + Convert.ToString(start_unixtime) + " AND p.`date` <= " + Convert.ToString(end_unixtime) + " AND p.`consignment_code` != \"\" ORDER BY p.`date` ASC)";
+                // Consignments. A payout to a consignor carries no tax.
+                strSQL += "(SELECT p.*,0,0,0 FROM `CSTPAYMENT` AS p WHERE  p.`date` >= " + Convert.ToString(start_unixtime) + " AND p.`date` <= " + Convert.ToString(end_unixtime) + " AND p.`consignment_code` != \"\" ORDER BY p.`date` ASC)";
 
                 consignment_db_var = mysqlglobal.executeDataSetQuery(strSQL, "CSTPAYMENT", this, consignment_db_var); // Fill consignment_db_var CSTPAYMENT File
 
@@ -281,6 +282,9 @@ namespace Multi_Express_Consignment
 
                 cryRpt.Load("report_cash_log_report.rpt");
 
+                /* Tax comes from the query above (2026) */
+                crystalreportglobal.SetFormulaFieldText(cryRpt, null, "subtotal", "{CSTPAYMENT.amount} - {CSTPAYMENT.tax_amount}");
+
                 crystalreportglobal.SetFormulaFieldString(cryRpt, "date_from", start_unixtime.ToString());
                 crystalreportglobal.SetFormulaFieldString(cryRpt, "date_to", end_unixtime.ToString());
 
@@ -302,7 +306,8 @@ namespace Multi_Express_Consignment
                 //strSQL = "SELECT * FROM `CSTORDER` WHERE `date_order` >= " + Convert.ToString(start_unixtime) + " ORDER BY `order_number` ASC";
                 //consignment_db_var = mysqlglobal.executeDataSetQuery(strSQL, "CSTORDER", this, consignment_db_var); // Fill consignment_db_var CSTORDER File
 
-                strSQL = "SELECT * FROM `CSTITEM` WHERE `order_number` != \"\"";
+                // `tax_amount` is the tax each item was sold at (2026)
+                strSQL = "SELECT *, `price_sale` * `tax_rate` / 100 AS `tax_amount` FROM `CSTITEM` WHERE `order_number` != \"\"";
                 consignment_db_var = mysqlglobal.executeDataSetQuery(strSQL, "CSTITEM", this, consignment_db_var); // Fill consignment_db_var CSTITEM File
 
                 /* Populate Totals Data for Report */
@@ -341,6 +346,9 @@ namespace Multi_Express_Consignment
 
 
                 cryRpt.Load("report_daily_sales_report.rpt");
+
+                /* Sum the tax the items were sold at (2026) */
+                crystalreportglobal.SetFormulaFieldText(cryRpt, "report_order_totals", "hst", "Sum({CSTITEM.tax_amount})");
 
                 crystalreportglobal.SetFormulaFieldString(cryRpt, "date_from", start_unixtime.ToString());
                 crystalreportglobal.SetFormulaFieldString(cryRpt, "date_to", end_unixtime.ToString());

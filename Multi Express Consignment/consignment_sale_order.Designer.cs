@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(consignment_sale_order));
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle_tax = new System.Windows.Forms.DataGridViewCellStyle();
             this.customer_code_textbox = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
@@ -87,6 +88,10 @@
             this.ig_display_date_sold = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ig_date_sold = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ig_status = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ig_tax_rate = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ig_tax_amount = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ig_tax_icon = new System.Windows.Forms.DataGridViewImageColumn();
+            this.ig_tax_code = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.button7 = new System.Windows.Forms.Button();
             this.button8 = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
@@ -101,6 +106,7 @@
             this.label14 = new System.Windows.Forms.Label();
             this.output_totalbeforetax = new System.Windows.Forms.TextBox();
             this.label17 = new System.Windows.Forms.Label();
+            this.output_tax = new System.Windows.Forms.TextBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.button12 = new System.Windows.Forms.Button();
             this.button11 = new System.Windows.Forms.Button();
@@ -620,7 +626,11 @@
             this.ig_price_sale,
             this.ig_display_date_sold,
             this.ig_date_sold,
-            this.ig_status});
+            this.ig_status,
+            this.ig_tax_amount,
+            this.ig_tax_icon,
+            this.ig_tax_code,
+            this.ig_tax_rate});
             this.dataGridView1.Location = new System.Drawing.Point(12, 48);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
@@ -670,11 +680,43 @@
             this.ig_status.ReadOnly = true;
             this.ig_status.Visible = false;
             // 
+            // ig_tax_rate
+            // 
+            this.ig_tax_rate.HeaderText = "tax_rate";
+            this.ig_tax_rate.Name = "ig_tax_rate";
+            this.ig_tax_rate.ReadOnly = true;
+            this.ig_tax_rate.Visible = false;
+            // 
+            // ig_tax_icon
+            // 
+            this.ig_tax_icon.HeaderText = "";
+            this.ig_tax_icon.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Normal;
+            this.ig_tax_icon.Name = "ig_tax_icon";
+            this.ig_tax_icon.ReadOnly = true;
+            this.ig_tax_icon.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.ig_tax_icon.Width = 24;
+            // 
+            // ig_tax_amount
+            // 
+            dataGridViewCellStyle_tax.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.ig_tax_amount.DefaultCellStyle = dataGridViewCellStyle_tax;
+            this.ig_tax_amount.HeaderText = "Tax";
+            this.ig_tax_amount.Name = "ig_tax_amount";
+            this.ig_tax_amount.ReadOnly = true;
+            this.ig_tax_amount.Width = 70;
+            // 
+            // ig_tax_code
+            // 
+            this.ig_tax_code.HeaderText = "Tax Code";
+            this.ig_tax_code.Name = "ig_tax_code";
+            this.ig_tax_code.ReadOnly = true;
+            this.ig_tax_code.Visible = false;
+            // 
             // button7
             // 
             this.button7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(189)))), ((int)(((byte)(182)))));
             this.button7.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button7.Location = new System.Drawing.Point(474, 704);
+            this.button7.Location = new System.Drawing.Point(474, 730);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(133, 37);
             this.button7.TabIndex = 13;
@@ -687,7 +729,7 @@
             this.button8.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(189)))), ((int)(((byte)(182)))));
             this.button8.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button8.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.button8.Location = new System.Drawing.Point(360, 704);
+            this.button8.Location = new System.Drawing.Point(360, 730);
             this.button8.Name = "button8";
             this.button8.Size = new System.Drawing.Size(108, 37);
             this.button8.TabIndex = 34;
@@ -705,7 +747,7 @@
             // 
             // output_totaloutstanding
             // 
-            this.output_totaloutstanding.Location = new System.Drawing.Point(116, 722);
+            this.output_totaloutstanding.Location = new System.Drawing.Point(116, 748);
             this.output_totaloutstanding.Name = "output_totaloutstanding";
             this.output_totaloutstanding.ReadOnly = true;
             this.output_totaloutstanding.Size = new System.Drawing.Size(132, 20);
@@ -713,7 +755,7 @@
             // 
             // output_totalpaid
             // 
-            this.output_totalpaid.Location = new System.Drawing.Point(116, 696);
+            this.output_totalpaid.Location = new System.Drawing.Point(116, 722);
             this.output_totalpaid.Name = "output_totalpaid";
             this.output_totalpaid.ReadOnly = true;
             this.output_totalpaid.Size = new System.Drawing.Size(132, 20);
@@ -722,7 +764,7 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(10, 699);
+            this.label11.Location = new System.Drawing.Point(10, 725);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(94, 13);
             this.label11.TabIndex = 44;
@@ -735,11 +777,11 @@
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(86, 13);
             this.label10.TabIndex = 43;
-            this.label10.Text = "Total Before Tax";
+            this.label10.Text = "Subtotal";
             // 
             // output_totalowed
             // 
-            this.output_totalowed.Location = new System.Drawing.Point(116, 673);
+            this.output_totalowed.Location = new System.Drawing.Point(116, 699);
             this.output_totalowed.Name = "output_totalowed";
             this.output_totalowed.ReadOnly = true;
             this.output_totalowed.Size = new System.Drawing.Size(132, 20);
@@ -756,7 +798,7 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(13, 725);
+            this.label12.Location = new System.Drawing.Point(13, 751);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(91, 13);
             this.label12.TabIndex = 46;
@@ -776,7 +818,7 @@
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(9, 673);
+            this.label14.Location = new System.Drawing.Point(9, 699);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(101, 13);
             this.label14.TabIndex = 48;
@@ -793,12 +835,19 @@
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label17.Location = new System.Drawing.Point(254, 650);
+            this.label17.Location = new System.Drawing.Point(9, 673);
             this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(70, 13);
+            this.label17.Size = new System.Drawing.Size(25, 13);
             this.label17.TabIndex = 49;
-            this.label17.Text = "+ 12% HST";
+            this.label17.Text = "Tax";
+            // 
+            // output_tax
+            // 
+            this.output_tax.Location = new System.Drawing.Point(116, 670);
+            this.output_tax.Name = "output_tax";
+            this.output_tax.ReadOnly = true;
+            this.output_tax.Size = new System.Drawing.Size(132, 20);
+            this.output_tax.TabIndex = 50;
             // 
             // groupBox5
             // 
@@ -836,9 +885,10 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(619, 753);
+            this.ClientSize = new System.Drawing.Size(619, 779);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.label17);
+            this.Controls.Add(this.output_tax);
             this.Controls.Add(this.label14);
             this.Controls.Add(this.output_totalbeforetax);
             this.Controls.Add(this.label12);
@@ -953,9 +1003,14 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn ig_display_date_sold;
         private System.Windows.Forms.DataGridViewTextBoxColumn ig_date_sold;
         private System.Windows.Forms.DataGridViewTextBoxColumn ig_status;
+        public System.Windows.Forms.DataGridViewTextBoxColumn ig_tax_rate;
+        public System.Windows.Forms.DataGridViewTextBoxColumn ig_tax_amount;
+        public System.Windows.Forms.DataGridViewImageColumn ig_tax_icon;
+        public System.Windows.Forms.DataGridViewTextBoxColumn ig_tax_code;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.TextBox output_totalbeforetax;
         private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.TextBox output_tax;
         private System.Windows.Forms.DateTimePicker date_order;
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.Button button11;

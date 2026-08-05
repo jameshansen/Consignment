@@ -22,6 +22,8 @@ namespace Multi_Express_Consignment
 
         private void exportimport_form_Load(object sender, EventArgs e)
         {
+            windowglobal.centre(this); // (2026)
+
             // Switch Mode if Specified
             if (m_mode.Substring(0,6) == "import")
             {

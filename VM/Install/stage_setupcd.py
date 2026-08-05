@@ -41,9 +41,16 @@ import dateblock
 # consolidated in Deps/ so the install has one place to look.
 APP_SRC = os.path.join(HERE, "..", "..", "Multi Express Consignment",
                        "bin", "Release")
+
+# copy_app takes the files beside the exe, the tax code bitmaps sit in a folder
+ICONS_SRC = os.path.join(APP_SRC, "icons")
 DEPS = os.path.join(HERE, "Deps")
 MYSQL_SRC = os.path.join(DEPS, "MYSQL")
-SQL_SRC = os.path.join(DEPS, "SQL")
+
+# The schema and the demo data are taken from the repository root, so the guest
+# and the host test database load the same files.
+REPO = os.path.join(HERE, "..", "..")
+SQL_FILES = ("consignment_db_structure.sql", "demo_database.sql")
 DOTNET = os.path.join(DEPS, "dotNetFx40_Full_x86_x64.exe")
 CRYSTAL = os.path.join(DEPS, "CRRuntime_32bit_13_0.msi")
 FONT = os.path.join(DEPS, "3of9.ttf")
@@ -114,7 +121,8 @@ def main():
     stage = sys.argv[1] if len(sys.argv) > 1 else \
         os.path.join(HERE, "XPDrives", "setupcd")
 
-    for path in (DOTNET, CRYSTAL, FONT, APP_SRC, MYSQL_SRC, SQL_SRC, VBEMP_ZIP):
+    for path in (DOTNET, CRYSTAL, FONT, APP_SRC, ICONS_SRC, MYSQL_SRC, VBEMP_ZIP) + \
+            tuple(os.path.join(REPO, name) for name in SQL_FILES):
         if not os.path.exists(path):
             raise SystemExit("missing: %s" % path)
 
@@ -129,9 +137,16 @@ def main():
     print("  APP     %d files kept, %d framework/debug files dropped"
           % (kept, dropped))
 
-    for name, src in (("MYSQL", MYSQL_SRC), ("SQL", SQL_SRC)):
-        shutil.copytree(src, os.path.join(root, name))
-        print("  %-8sDeps/%s" % (name, name))
+    shutil.copytree(ICONS_SRC, os.path.join(root, "APP", "icons"))
+    print("  icons   tax code bitmaps")
+
+    shutil.copytree(MYSQL_SRC, os.path.join(root, "MYSQL"))
+    print("  MYSQL   Deps/MYSQL")
+
+    os.makedirs(os.path.join(root, "SQL"))
+    for name in SQL_FILES:
+        shutil.copy2(os.path.join(REPO, name), os.path.join(root, "SQL"))
+    print("  SQL     %s" % ", ".join(SQL_FILES))
 
     for src in (DOTNET, CRYSTAL, FONT):
         shutil.copy2(src, root)

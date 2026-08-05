@@ -177,6 +177,8 @@ namespace Multi_Express_Consignment
                     outputRow.Cells[ig_desc_material.Index].Value = row["desc_material"];
                     outputRow.Cells[ig_desc_colour.Index].Value = row["desc_colour"];
                     outputRow.Cells[ig_desc_size.Index].Value = row["desc_size"];
+                    outputRow.Cells[ig_tax_code.Index].Value = mysqlglobal.field(row, "tax_code", "");
+                    taxglobal.showIcon(outputRow.Cells[ig_tax_icon.Index], outputRow.Cells[ig_tax_code.Index].Value);
 
                     // JH: 2011-11-16 Load Date Sold, Date Paid (BUG 2)
                     outputRow.Cells[ig_date_sold.Index].Value = row["date_sold"];
@@ -233,7 +235,7 @@ namespace Multi_Express_Consignment
 
             DataSet vendor_data = mysqlglobal.executeDataSetQuery(query, "PSVEMAST", this);
 
-            // Fix for missing record bug (2026): A deleted vendor (or a consignment with no items left) leaves a blank panel rather than crashing
+            // Fix for missing record bug (2026): A deleted vendor leaves a blank panel rather than crashing
             DataRow vendor_row = vendor_data.Tables["PSVEMAST"].Rows.Count > 0 ? vendor_data.Tables["PSVEMAST"].Rows[0] : vendor_data.Tables["PSVEMAST"].NewRow();
 
             input_CMADD1.Text = vendor_row["CMADD1"].ToString();
@@ -471,6 +473,8 @@ namespace Multi_Express_Consignment
                     string desc_colour = Convert.ToString(dataGridView1.Rows[i].Cells[ig_desc_colour.Index].Value);
                     string desc_size = Convert.ToString(dataGridView1.Rows[i].Cells[ig_desc_size.Index].Value);
 
+                    string tax_code = Convert.ToString(dataGridView1.Rows[i].Cells[ig_tax_code.Index].Value);
+
                     if (share_type == "$") share_type = "value";
                     if (share_type == "%") share_type = "percentage";
 
@@ -509,7 +513,8 @@ namespace Multi_Express_Consignment
                     `desc_garment`,
                     `desc_material`,
                     `desc_colour`,
-                    `desc_size`
+                    `desc_size`,
+                    `tax_code`
                     ) VALUES (
                     " + existing_upc + @",
                     '" + consignment_code + @"',
@@ -531,7 +536,8 @@ namespace Multi_Express_Consignment
                     '" + desc_garment + @"',
                     '" + desc_material + @"',
                     '" + desc_colour + @"',
-                    '" + desc_size + "');";
+                    '" + desc_size + @"',
+                    '" + tax_code + "');";
                         //'" + date_paid + @"',
                     }
                     else
@@ -554,7 +560,8 @@ namespace Multi_Express_Consignment
                     `desc_garment` = '" + desc_garment + @"',
                     `desc_material` = '" + desc_material + @"',
                     `desc_colour`= '" + desc_colour + @"',
-                    `desc_size`= '" + desc_size + "' WHERE `upc` = '" + upc + "'";
+                    `desc_size`= '" + desc_size + @"',
+                    `tax_code`= '" + tax_code + "' WHERE `upc` = '" + upc + "'";
                     }
                 }
                 else
@@ -633,7 +640,7 @@ namespace Multi_Express_Consignment
 
         }
 
-        public void addItem(string description, string price_minimum, string price_suggested, string share, string share_type, string desc_brand, string desc_gender, string desc_garment, string desc_material, string desc_colour, string desc_size, DateTime input_date_received, DateTime input_date_expiry, string existing_upc, int rowIndex)
+        public void addItem(string description, string price_minimum, string price_suggested, string share, string share_type, string desc_brand, string desc_gender, string desc_garment, string desc_material, string desc_colour, string desc_size, DateTime input_date_received, DateTime input_date_expiry, string existing_upc, string tax_code, int rowIndex)
         {
             // Convert Date Received
             //string date_received = mysqlglobal.formatDate(input_date_received); // yyyy-MM-dd
@@ -679,6 +686,8 @@ namespace Multi_Express_Consignment
                 outputRow.Cells[ig_desc_material.Index].Value = desc_material;
                 outputRow.Cells[ig_desc_colour.Index].Value = desc_colour;
                 outputRow.Cells[ig_desc_size.Index].Value = desc_size;
+                outputRow.Cells[ig_tax_code.Index].Value = tax_code;
+                taxglobal.showIcon(outputRow.Cells[ig_tax_icon.Index], tax_code);
 
                 dataGridView1.Rows.Add(outputRow);
                 // If Success
@@ -702,6 +711,8 @@ namespace Multi_Express_Consignment
                 dataGridView1.Rows[rowIndex].Cells[ig_desc_material.Index].Value = desc_material;
                 dataGridView1.Rows[rowIndex].Cells[ig_desc_colour.Index].Value = desc_colour;
                 dataGridView1.Rows[rowIndex].Cells[ig_desc_size.Index].Value = desc_size;
+                dataGridView1.Rows[rowIndex].Cells[ig_tax_code.Index].Value = tax_code;
+                taxglobal.showIcon(dataGridView1.Rows[rowIndex].Cells[ig_tax_icon.Index], tax_code);
 
                 additem.Dispose(); // Remove all traces
             }
@@ -710,7 +721,7 @@ namespace Multi_Express_Consignment
 
         private void consignment_purchase_order_Load(object sender, EventArgs e)
         {
-
+            windowglobal.centre(this); // (2026)
         }
 
         private void button5_Click(object sender, EventArgs e)
